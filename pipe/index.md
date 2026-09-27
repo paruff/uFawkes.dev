@@ -12,8 +12,8 @@ features:
   - Opinionated pipeline templates for fast feedback loops
   - Delivery metrics hooks that feed DORA reporting
   - Release controls for safer deploys and rollbacks
-  - Policy-as-code with OPA/Rego, supply chain scanning, and admission control (merged from uFawkesSec)
-  - Jenkins integration for existing controller and agent fleets
+  - Policy-as-code (Conftest/Rego `policy-check` step) and supply-chain scanning with Trivy, Gitleaks, SonarQube, and DefectDojo (merged from uFawkesSec)
+  - Woodpecker CI pipelines driven by a standard `.fawkespipe.yml` contract
   - Education layer to help teams adopt delivery best practices
 quick_start:
   - git clone https://github.com/paruff/ufawkespipe.git
