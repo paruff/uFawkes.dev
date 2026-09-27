@@ -14,13 +14,13 @@ disagree, the README wins. Fix the page.
 
 ## What it holds
 
-| Thing | Where |
-|---|---|
-| Stack pages, blog, learn guides | The Jekyll site (`_posts/`, stack pages, `_data/navigation.yml`) |
-| Suite release plan: goals, decisions, sequence | [`docs/ai-sdlc/suite-release/`](docs/ai-sdlc/suite-release/) |
-| Live status across all repos | [uFawkes Suite Release Project](https://github.com/users/paruff/projects/7) |
-| Research foundation | [`docs/research-foundation.md`](docs/research-foundation.md) |
-| What happened to the old roadmap's goals | [`docs/roadmap.md`](docs/roadmap.md) |
+| Thing                                          | Where                                                                       |
+| ---------------------------------------------- | --------------------------------------------------------------------------- |
+| Stack pages, blog, learn guides                | The Jekyll site (`_posts/`, stack pages, `_data/navigation.yml`)            |
+| Suite release plan: goals, decisions, sequence | [`docs/ai-sdlc/suite-release/`](docs/ai-sdlc/suite-release/)                |
+| Live status across all repos                   | [uFawkes Suite Release Project](https://github.com/users/paruff/projects/7) |
+| Research foundation                            | [`docs/research-foundation.md`](docs/research-foundation.md)                |
+| What happened to the old roadmap's goals       | [`docs/roadmap.md`](docs/roadmap.md)                                        |
 
 ## What "done" means here
 
@@ -29,7 +29,7 @@ disagree, the README wins. Fix the page.
   verification).
 - **Plan docs hold decisions, not status.** Status lives in issues and the
   Project; a task list in a doc drifts.
-- **A page describes what a *released* stack version actually does.**
+- **A page describes what a _released_ stack version actually does.**
   Update it through the uFawkesAI `release` agent on each release, not
   ahead of one.
 
