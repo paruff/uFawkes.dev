@@ -73,9 +73,11 @@ pre-convention and get consolidated.
 
 ### AC-OBS-03: The 1.0 public contract is written down
 
-- **Expected:** `docs/ai-sdlc/v1.0.0/spec.md` in uFawkesObs lists the
-  surfaces semver covers (see open question 1 in `intent.md`), plus an
-  upgrade note from 0.4.x
+- **Expected:** `docs/ai-sdlc/v1.0.0/spec.md` in uFawkesObs states the
+  contract decided in `intent.md`. Semver covers compose service names,
+  published ports, and `.env.example` variables. It explicitly excludes
+  datasource UIDs, dashboard UIDs and DORA metric names. The doc also
+  includes an upgrade note from 0.4.x.
 - **Verification:** The doc exists and is linked from the release notes
 - **Priority:** Required. "Stable" means nothing without a stated contract.
 
@@ -91,8 +93,9 @@ pre-convention and get consolidated.
 ### AC-PIPE-01: First stable uFawkesPipe release claims only what works
 
 - **Expected:** The `build-image` step is either implemented (CNB build
-  producing an image) or removed from the README's feature claims. The
-  version follows your answer to open question 2.
+  producing an image) or removed from the README's feature claims. It
+  ships as `v2.0.0`, and the release notes explain the jump from the 1.x
+  beta line.
 - **Verification:** A real pipeline run on a sample repo, with output
   linked
 - **Priority:** Required before any "stable" label

@@ -53,20 +53,22 @@ they have drifted apart:
 - New features in any stack. This plan releases what exists; it doesn't
   add scope.
 
-## Open questions (need your answer — not inferable from the repos)
+## Release decisions (answered 2026-09-27)
 
-1. **The v1.0.0 public contract for uFawkesObs.** Which surfaces does semver
-   cover? Candidates: compose service names, published ports, `.env`
-   variables, Grafana datasource UIDs, and dashboard UIDs.
-2. **uFawkesPipe versioning.** It has had no stable release despite being
-   at 1.7. Options: make `v1.8.0` the first stable, or document why 1.x
-   betas preceded any 1.0. Renumbering downward isn't an option, because
-   it breaks semver ordering for anyone pinned.
-3. **What counts as adoption success?** For example GitHub stars, issues
-   from people other than you, or install reports. Pick a signal before
-   launch so the post-release "measure" issue has something to measure.
-4. **Target date for uFawkesObs v1.0.0**, if you have one. The plan is
-   gate-driven, not date-driven, until you set one.
-5. **Dojo ordering.** The Dojo integration spec starts White Belt on
-   uFawkesDevX, but DevX releases last. Should Dojo instead ship a
-   uFawkesObs lab first, following release order?
+1. **uFawkesObs v1.0.0 public contract:** semver covers compose service
+   names, published ports, and documented `.env.example` variables. A
+   breaking change to any of these needs v2.0.0. Not covered: Grafana
+   datasource UIDs, dashboard UIDs, and DORA metric names. They may change
+   in a minor release, and the release notes must say so.
+2. **uFawkesPipe versioning:** `v2.0.0` is its first stable release. That
+   signals "this is the real one" after the 1.x beta line, and the release
+   notes say why the major version jumped.
+3. **Adoption signals:** GitHub stars/forks, and issues or PRs from anyone
+   other than @paruff. The post-release `measure:` issue tracks both.
+4. **Dojo ordering:** follow release order. Ship a uFawkesObs lab first,
+   then Pipe (Yellow Belt), then DevX (White Belt).
+
+## Still open
+
+- **Target date for uFawkesObs v1.0.0**, if you want one. Until then the
+  plan is gate-driven, not date-driven.

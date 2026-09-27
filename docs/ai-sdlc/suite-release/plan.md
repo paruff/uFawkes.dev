@@ -67,8 +67,9 @@ Small, parallel work. Most items are one PR each.
 This is the critical path. It's the first stable release and the first
 public announcement, so everything the announcement links to has to hold up.
 
-1. Answer open question 1 (the public contract) and write
-   `uFawkesObs/docs/ai-sdlc/v1.0.0/{intent,spec,plan}.md`
+1. Write `uFawkesObs/docs/ai-sdlc/v1.0.0/{intent,spec,plan}.md`. The spec
+   states the decided contract: service names, ports and `.env` variables
+   are covered; UIDs and metric names are not.
 2. Triage the six candidate blockers in AC-OBS-02 into the `v1.0.0`
    milestone. Blocker vs. post-1.0 is your call. #381 is already labeled.
 3. Fix the blockers. Cut `v1.0.0-rc.1` through the existing release-please
@@ -81,13 +82,14 @@ public announcement, so everything the announcement links to has to hold up.
    agent. It produces the GitHub Release, the ufawkes.dev page update, a
    dev.to draft and a LinkedIn draft (AC-OBS-04). You review and publish
    the posts.
-7. The release agent files the `measure:` issue. Set it to track the
-   adoption signal you choose (open question 3).
+7. The release agent files the `measure:` issue. Set it to track GitHub
+   stars/forks, and issues or PRs from anyone other than @paruff.
 
 ## Phase 2 — uFawkesPipe first stable (gate: AC-PIPE-01)
 
-1. Answer open question 2 (versioning). Consolidate the duplicate
-   spec/design/plan files into `docs/ai-sdlc/<first-stable>/`.
+1. Consolidate the duplicate spec/design/plan files into
+   `docs/ai-sdlc/v2.0.0/`. `v2.0.0` is the first stable release, per
+   `intent.md`.
 2. Make `build-image` real, or drop it from the README's claims.
 3. Do a real pipeline run on a sample app. Release, then announce with
    the same release-agent flow.
@@ -104,13 +106,17 @@ public announcement, so everything the announcement links to has to hold up.
 
 ## Phase 4 — uFawkesDojo curriculum follows releases
 
-Each Dojo lab targets a _released, pinned_ stack version, never `main`. The
-order depends on open question 5:
+Each Dojo lab targets a _released, pinned_ stack version, never `main`.
+Labs follow release order (decided 2026-09-27):
 
-- **Follow release order (recommended for adoption):** ship a uFawkesObs
-  lab right after Obs 1.0. It gives new adopters a guided path, and it's
-  another announcement. Then Pipe (Yellow Belt), then DevX (White Belt).
-- **Follow belt order:** White Belt waits for DevX v0.1.0.
+1. **uFawkesObs lab**, right after Obs 1.0. It gives new adopters a guided
+   path, and it's a second announcement.
+2. **uFawkesPipe → Yellow Belt**, after Pipe v2.0.0.
+3. **uFawkesDevX → White Belt**, after DevX v0.1.0.
+
+The Dojo's own `compose-curriculum` spec proposed belt order (White Belt
+first). Update it to match this order when it moves into
+`docs/ai-sdlc/compose-curriculum/` (Phase 0).
 
 ## Verification Strategy
 
