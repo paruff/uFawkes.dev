@@ -2,7 +2,7 @@
 
 Open-source platform engineering ecosystem — observability, pipelines, and developer experience.
 
-**Live site:** [ufawkes.dev](https://ufawkes.dev) | **Roadmap:** [docs/roadmap.md](docs/roadmap.md)
+**Live site:** [ufawkes.dev](https://ufawkes.dev) | **Release plan:** [docs/ai-sdlc/suite-release/](docs/ai-sdlc/suite-release/) | **Status:** [Project](https://github.com/users/paruff/projects/7) | **Start here:** [INTENT.md](INTENT.md)
 
 ## What is uFawkes?
 
@@ -14,7 +14,7 @@ uFawkes is a collection of opinionated, ready-to-run stacks for platform enginee
 | [uFawkesPipe](https://ufawkes.dev/pipe/) | Live   | CI/CD pipeline orchestration + secure-by-default guardrails (merged uFawkesSec) | [GitHub](https://github.com/paruff/ufawkespipe) |
 | [uFawkesDevX](https://ufawkes.dev/devx/) | Live   | Golden paths for platform adoption                                              | [GitHub](https://github.com/paruff/ufawkesdevx) |
 
-> uFawkesDORA and uFawkesSec are retired as standalone stacks — see [docs/roadmap.md](docs/roadmap.md) for the consolidation notes.
+> uFawkesDORA and uFawkesSec are retired as standalone stacks (merged into uFawkesObs and uFawkesPipe). See [docs/roadmap.md](docs/roadmap.md) for what happened to each goal from the retired roadmap.
 
 ## Research Foundation
 

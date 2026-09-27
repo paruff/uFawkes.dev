@@ -503,7 +503,7 @@ gemini
 [ ] Blockers: none
 [ ] Next task: GitOps agent (Phase 4) — create opencode GitOps agent
 [ ] PR 4 plan: .opencode/plans/pr4-plan.md
-[ ] Product roadmap: docs/roadmap.md
+[ ] Suite release plan: docs/ai-sdlc/suite-release/ (docs/roadmap.md is retired)
 [ ] GitOps plan: .opencode/plans/gitops-migration.md
 ```
 

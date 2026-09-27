@@ -15,10 +15,13 @@ uFawkesAI's convention has two layers:
 - **Per-release docs** live in `docs/ai-sdlc/<release>/` as `intent.md` →
   `spec.md` → `plan.md`.
 
-There is no separate `design.md`. uFawkesAI's design agent writes the design
-into `plan.md`, and ADRs plus `docs/ARCHITECTURE.md` record lasting
-decisions. Root-level `design.md` / `specification.md` / `plan.md` files are
-pre-convention and get consolidated.
+There is no separate `design.md`. Per uFawkesAI's
+[`docs/ai-sdlc/README.md`](https://github.com/paruff/uFawkesAI/blob/main/docs/ai-sdlc/README.md),
+`spec.md` carries "requirements, design, policy constraints, and concerns",
+so each spec has a `## Design` section. ADRs plus `docs/ARCHITECTURE.md`
+record lasting decisions. Root-level `design.md` / `specification.md` /
+`plan.md` files are pre-convention and get consolidated. (Revision 1 wrongly
+said the design goes in `plan.md`; corrected 2026-09-27.)
 
 | Repo            | Repo `INTENT.md`                                                               | Release docs needed                               | Design lives in                                                          | Doc cleanup                                                                                                                                         |
 | --------------- | ------------------------------------------------------------------------------ | ------------------------------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
