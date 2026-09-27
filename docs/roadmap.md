@@ -1,248 +1,71 @@
-    # uFawkes Platform — Product Suite Roadmap
+# uFawkes Roadmap (retired — see the suite release plan)
 
-    > **Owner**: @paruff | **Status**: Living document | **Updated**: 2026-08-15
-    > **Research Basis**: DORA 2025-2026, CNCF Platform Engineering, SPACE Framework
+This roadmap (last updated 2026-08-15) was replaced on 2026-09-27. Where
+things live now:
 
-    > **Consolidation (2026-08)**: uFawkesDORA merged into uFawkesObs; uFawkesSec merged into uFawkesPipe. The suite is now 5 repos (fawkes, uFawkesObs, uFawkesPipe, uFawkesAI, uFawkesDevX) plus uFawkes.dev, down from 7 stacks. `ufawkesdora` is archived on GitHub; `ufawkessec` archival is pending.
+| Need                                                                       | Go to                                                                          |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Goals, decisions, release sequence                                         | [`docs/ai-sdlc/suite-release/`](ai-sdlc/suite-release/) (intent → spec → plan) |
+| Live status across all repos                                               | [uFawkes Suite Release Project](https://github.com/users/paruff/projects/7)    |
+| Research foundation (DORA, CNCF, SPACE; capability and archetype mappings) | [`docs/research-foundation.md`](research-foundation.md)                        |
 
-    ---
+The old file was indented four spaces throughout, so it rendered as one
+code block. Its full text is in git history (`git log -p -- docs/roadmap.md`).
 
-    ## 1. Vision & Strategy
+## What happened to each roadmap goal
 
-    **Mission**: Deliver platform engineering stacks that achieve DORA Elite performance in 60 seconds.
+Every goal was given one of four outcomes: **tracked** (it has an issue),
+**done**, **superseded** (by the suite plan or a later decision), or
+**open, not filed** (still true, but not chosen for filing on 2026-09-27).
 
-    **North Star**: Teams using uFawkes stacks measurably improve their DORA metrics (deployment frequency, lead time for changes, change failure rate, time to restore service) within 30 days.
+### Phase 0 — Foundation
 
-    **Differentiation**: The only platform engineering suite that maps stacks → DORA AI Capabilities → measurable ROI, backed by objective research.
+| #         | Goal                                                          | Outcome                                                                                                                                           |
+| --------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0.1       | Create `fawkes/ROADMAP.md`                                    | Done                                                                                                                                              |
+| 0.2       | Create uFawkesDORA                                            | Superseded: merged into uFawkesObs; `ufawkesdora` is archived                                                                                     |
+| 0.3, 0.16 | Create, then consolidate, uFawkesSec                          | Merged into uFawkesPipe. The archival is **tracked**: #68                                                                                         |
+| 0.4–0.8   | Repo descriptions, cross-links, stack pages, Roadmap nav link | Done. The nav link now points at the suite plan instead of `fawkes/ROADMAP.md`.                                                                   |
+| 0.9       | GitHub Sponsors                                               | **Tracked:** #63                                                                                                                                  |
+| 0.10–0.13 | GitOps templates, migration, branch-protection rulesets       | Done for 6 of 7 repos (verified 2026-09-27: ruleset, pre-commit, Dependabot, CODEOWNERS). uFawkesDojo's gap is **tracked**: paruff/uFawkesDojo#20 |
+| 0.14      | opencode GitOps agent (migration Phase 4)                     | **Tracked:** #64                                                                                                                                  |
+| 0.15      | Consolidate uFawkesDORA into uFawkesObs                       | Done: repo archived; `/dora/` and `/sec/` pages retired 2026-08-15                                                                                |
 
-    **Sustainability Model**: Open source core with GitHub Sponsors for members who derive value from the repos. No paywalled features in core stacks.
+### Phase 1 — Stack parity and DORA integration
 
-    ---
+| Goal                                                                | Outcome                                                                                                                                                                                                    |
+| ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Each stack runnable in under 60s, with DORA dashboards and emission | Superseded by the per-release acceptance criteria in the suite plan (e.g. uFawkesObs v1.0.0: clean-machine install, paruff/uFawkesObs#494). The Pipe row's "Jenkins" was wrong; uFawkesPipe is Woodpecker. |
 
-    ## 2. Research Foundation
+### Phase 2 — Dojo
 
-    ### DORA 2025-2026 — Core Findings
+| Goal                                                                               | Outcome                                                                                                                                                      |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Dojo repo live, 3+ modules                                                         | Done: 20 modules, 2 runnable labs                                                                                                                            |
+| 100+ learners                                                                      | Superseded by the suite's adoption measure: stars and forks, plus outside issues and PRs                                                                     |
+| Restructure around the DORA AI Capabilities Model; capability maturity assessments | Superseded: the Dojo's direction is Compose-first, following release order (paruff/uFawkesDojo `docs/ai-sdlc/compose-curriculum/`). Revisit if still wanted. |
+| Paid cohorts and certification                                                     | Superseded: certification isn't built and is no longer claimed on the Dojo site (paruff/uFawkesDojo#18)                                                      |
 
-    | Finding | Source | uFawkes Implication |
-    |---------|--------|---------------------|
-    | **AI is an amplifier** — magnifies strengths AND dysfunctions | DORA 2025 State of AI-Assisted Software Development | Every stack must strengthen foundations (observability, pipelines, small batches) before adding AI features |
-    | **7 AI Capabilities** amplify AI benefits — clear AI stance, healthy data ecosystems, AI-accessible internal data, quality internal platform, user-centric focus, strong version control, working in small batches | DORA AI Capabilities Model 2025 | Map each stack to specific capabilities; stack combinations address all 7 |
-    | **AI Productivity Paradox** — individual output up 21%, PRs merged up 98%, but organizational delivery metrics flat | Faros.ai telemetry (10k devs) + DORA 2025 | Stacks must include delivery metrics (DORA), not just coding metrics |
-    | **ROI framework** — AI creates ROI when org converts local speed → stable delivery, reduced rework, better experiments, reinvested engineering capacity | DORA ROI of AI-Assisted Software Development 2026 | Each stack must demonstrate end-to-end flow improvement |
-    | **7 team archetypes** need different AI strategies | DORA 2025 | Offer stack profiles for different maturity levels |
-    | **VSM as force multiplier** — Value Stream Management ensures local gains translate to product outcomes | DORA 2025 + Honeycomb analysis | uFawkesDORA connects value streams to delivery metrics |
+### Phase 3 — Research integration
 
-    ### CNCF Platform Engineering Research
+| Goal                                                   | Outcome          |
+| ------------------------------------------------------ | ---------------- |
+| Research cited in every stack README; quarterly review | **Tracked:** #65 |
 
-    | Finding | Source | uFawkes Implication |
-    |---------|--------|---------------------|
-    | **Platform engineering reduces cognitive load** — developers focus on business value, not infrastructure | CNCF Platforms White Paper (2023) | DevX stack abstracts infrastructure complexity via golden paths |
-    | **85% of orgs implementing IDPs** — market is maturing rapidly | Port 2025 State of Internal Developer Portals | Timing is right for open-source IDP stack |
-    | **Developer tool sprawl costs $1M/year** in lost productivity (7.4 tools avg, 75% lose 6-15 hrs/week) | Port 2025 | Composable stacks reduce tool sprawl — one stack, one concern |
-    | **78% of teams wait 1+ day for SRE/DevOps assistance** | Port 2025 | Self-service stacks eliminate ticket-ops bottleneck |
-    | **Only 34% use portals to drive engineering standards** | Port 2025 | uFawkesDevX enforces standards via templates + scorecards |
-    | **Hybrid platform approaches** emerging as dominant model for AI workloads | CNCF Technology Radar Q1 2026 | Composable stacks support hybrid AI platform patterns |
-    | **Platform maturity model** — 5 aspects × 4 levels (Ad-Hoc → Standardized → Optimized → Advanced) | CNCF Platform Engineering Maturity Model 2023-2025 | Stack profiles map to maturity levels |
-    | **Helm, Backstage, kro** are "Adopt" technologies | CNCF Technology Radar Q1 2026 | Align stack tech choices with CNCF recommendations |
+### Impact on uFawkes.dev
 
-    ### SPACE Framework — Developer Productivity
+| Item                                                                     | Outcome                                                                                                        |
+| ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| Real stack screenshots; blog launch posts                                | **Tracked:** #66 (part of the uFawkesObs v1.0.0 release)                                                       |
+| Learn guides aligned with the Dojo                                       | **Tracked:** #67                                                                                               |
+| `AGENTS.md` references uFawkesAI patterns                                | **Open, not filed.** Checked 2026-09-27: `AGENTS.md` has no uFawkesAI reference. File an issue if you want it. |
+| Stack page content, DORA AI capability section, DORA/Sec page retirement | Done                                                                                                           |
 
-    | Dimension | What It Measures | uFawkes Alignment |
-    |-----------|------------------|-------------------|
-    | **Satisfaction & Well-being** | Developer happiness, burnout, work-life balance | DevX stack reduces cognitive load; Obs stack provides actionable (not overwhelming) alerts |
-    | **Performance** | Code quality, reliability, user satisfaction | DORA stack measures delivery performance; Sec stack prevents rework |
-    | **Activity** | Commits, PRs, deployments (in context) | Pipe stack tracks deployment frequency; DORA stack contextualizes activity |
-    | **Communication & Collaboration** | Code reviews, knowledge sharing, documentation | DevX stack provides golden paths that encode team knowledge |
-    | **Efficiency & Flow** | Flow state time, context switching, blocked time | Composable stacks reduce context switching; self-service eliminates blocked time |
+### Open questions from the old roadmap
 
-    **Key insight from Microsoft Research (Brian Houck, STACK 2024)**: AI is reshaping traditional workflows — SPACE dimensions remain relevant but measurement must adapt. PR throughput is useful when viewed across all five dimensions, not in isolation.
-
-    ---
-
-    ## 3. Current State
-
-    ### Repos (as of 2026-08-15)
-
-    | Repo | Status | Description | Topics | DORA AI Capability |
-    |------|--------|-------------|--------|-------------------|
-    | **fawkes** | ✅ Exists | Modular GitOps IDP — core platform | 6 topics | Quality internal platform |
-    | **uFawkesObs** | ✅ Fixed | Observability — Prometheus + Grafana + AI + DORA dashboards/VSM (merged from uFawkesDORA) | 8 topics | Healthy data ecosystem, AI-accessible data, all 7 capabilities measured |
-    | **uFawkesPipe** | ✅ Exists | CI/CD — Jenkins + Buildpacks + DevSecOps + policy-as-code/guardrails (merged from uFawkesSec) | 13 topics | Strong version control, working in small batches, quality internal platform |
-    | **uFawkesAI** | ✅ Exists | Agent templates for golden paths | 10 topics | Clear AI stance, user-centric focus |
-    | **uFawkesDevX** | ✅ Fixed | Golden paths + developer experience | 7 topics | Quality internal platform, user-centric focus |
-    | **uFawkes.dev** | ✅ Live | Marketing site + learning hub | Set | Drives adoption |
-
-    > **uFawkesDORA** and **uFawkesSec** are retired as standalone repos — see Consolidation note above. `ufawkesdora` is archived; `ufawkessec` archival is pending.
-
-    ### Marketing Site (uFawkes.dev)
-
-    - ✅ All stack pages link to real GitHub repos
-    - ✅ DORA AI Capabilities section uses correct 7 capabilities from research
-    - ✅ Research-backed positioning with citations
-    - ✅ "Roadmap" link in navigation
-    - ✅ Live badges on all stack pages
-    - ✅ Features, quick start, compose-with on all stack pages
-
-    ---
-
-    ## 4. Portfolio Map
-
-    | Repo | Description | Stars | DORA AI Capability | Research Alignment |
-    |------|-------------|-------|-------------------|-------------------|
-    | **fawkes** | Modular GitOps IDP — core platform | 1 | Quality internal platform | CNCF Platforms White Paper |
-    | **uFawkesObs** | Observability — Prometheus + Grafana + AI + DORA dashboards/VSM (merged from uFawkesDORA) | 0 | Healthy data ecosystem, AI-accessible data, all 7 capabilities measured | DORA AI Capabilities, DORA metrics, VSM |
-    | **uFawkesPipe** | CI/CD — Jenkins + Buildpacks + DevSecOps + policy-as-code/guardrails (merged from uFawkesSec) | 0 | Strong version control, working in small batches, quality internal platform | CNCF App Delivery, DORA, CNCF Security, SLSA, SSDF |
-    | **uFawkesAI** | Agent templates for golden paths | 2 | Clear AI stance, user-centric focus | DORA AI Capabilities |
-    | **uFawkesDevX** | Golden paths + developer experience | 0 | Quality internal platform, user-centric focus | CNCF Platforms, SPACE |
-    | **uFawkes.dev** | Marketing site + learning hub | N/A | — | Drives adoption |
-
-    ---
-
-    ## 5. DORA AI Capabilities → Stack Mapping
-
-    | Capability | Primary Stack | Supporting Stacks | Measurable Outcome |
-    |------------|---------------|-------------------|-------------------|
-    | **Clear + communicated AI stance** | AI | All | AI policy doc in repo README |
-    | **Healthy data ecosystems** | Obs (incl. DORA metrics) | Pipe | Data quality SLIs defined |
-    | **AI-accessible internal data** | Obs | DevX | Feature store / context API accessible |
-    | **Quality internal platform** | DevX | Pipe (incl. Sec guardrails) | Platform adoption rate >80% |
-    | **User-centric focus** | DevX | All | DX Core 4 satisfaction scores |
-    | **Strong version control** | Pipe | All | Trunk-based adoption %, branch lifetime |
-    | **Working in small batches** | Pipe | Obs (DORA metrics) | Batch size, deployment frequency |
-
-    ---
-
-    ## 6. Team Archetype → Stack Profile Mapping
-
-    | DORA Archetype | Recommended Stacks | Entry Point | Priority |
-    |----------------|-------------------|-------------|----------|
-    | **Harmonious High-Achievers** | All (composable) | DevX golden paths | Low — they're already winning |
-    | **Legacy Bottleneck** | Obs → Pipe | Observability first | High — biggest ROI opportunity |
-    | **AI Experimenters** | AI → Obs | Agent templates | Medium — need guardrails fast |
-    | **Platform Builders** | DevX → Pipe | IDP scaffolding | High — aligns with CNCF recommendations |
-    | **Security-First** | Pipe → Obs | Policy-as-code | Medium — regulated industries |
-    | **Metrics-Driven** | Obs → Pipe | Dashboard starter | Medium — need data to act |
-    | **Starting Out** | Obs (only) | 60-second Grafana | High — lowest barrier to entry |
-
-    ---
-
-    ## 7. Roadmap Phases
-
-    ### Phase 0: Foundation (Now — 2 weeks)
-    **Goal**: Establish governance, create missing repos, align marketing site, GitOps standards
-
-    | # | Task | Owner | Repo | Status |
-    |---|------|-------|------|--------|
-    | 0.1 | Create `fawkes/ROADMAP.md` (this doc) | You | fawkes | ✅ Done |
-    | 0.2 | Create `uFawkesDORA` repo with description, topics, README | You | uFawkesDORA | ⚠️ Superseded — merged into uFawkesObs, repo archived |
-    | 0.3 | Create `uFawkesSec` repo with description, topics, README | You | uFawkesSec | ⚠️ Superseded — merged into uFawkesPipe, repo archival pending |
-    | 0.4 | Fix uFawkesObs: add description, topics, README | You | uFawkesObs | ✅ Done (description + topics) |
-    | 0.5 | Fix uFawkesDevX: add description, topics, README | You | uFawkesDevX | ✅ Done (description + topics) |
-    | 0.6 | Add cross-repo links in all READMEs (↔ fawkes, ↔ uFawkes.dev) | You | All | ✅ Done (all 7 repos + fawkes) |
-    | 0.7 | Update uFawkes.dev stack pages to link real repos | You | uFawkes.dev | ✅ Done |
-    | 0.8 | Add "Roadmap" link to uFawkes.dev navigation | You | uFawkes.dev | ✅ Done |
-    | 0.9 | GitHub Sponsors setup | You | GitHub | ⬜ Pending |
-    | 0.10 | GitOps: Create `.gitops-templates/` in fawkes (pre-commit, CI, dependabot, CODEOWNERS, Makefile, configs) | You | fawkes | 🔄 In progress |
-    | 0.11 | GitOps: Initialize DevX with GitOps templates | You | DevX | ⬜ Not started |
-    | 0.15 | Consolidate uFawkesDORA into uFawkesObs (content, features, repo archival) | You | uFawkesObs, uFawkesDORA | ✅ Repo archived — site content pending |
-    | 0.16 | Consolidate uFawkesSec into uFawkesPipe (content, features, repo archival) | You | uFawkesPipe, uFawkesSec | 🔄 In progress — repo not yet archived |
-    | 0.12 | GitOps: Migrate Obs, Pipe, AI, .dev to GitOps standards | You | Obs, Pipe, AI, .dev | ⬜ Not started |
-    | 0.13 | GitOps: Apply branch protection Rulesets (all 8 repos) | You | All | ⬜ Not started |
-    | 0.14 | GitOps: Create opencode GitOps agent + update AGENTS.md | You | opencode config | ⬜ Not started |
-
-    **Acceptance criteria**: All 7 repos exist, documented, linked. All 8 repos have pre-commit, CI validation, dependabot, CODEOWNERS, branch protection.
-
-    ### Phase 1: Stack Parity & DORA Integration (2—6 weeks)
-    **Goal**: Each stack runnable in 60s, DORA metrics integrated
-
-    | Stack | Deliverable | DORA Capability | Status |
-    |-------|-------------|-----------------|--------|
-    | **Obs** | Prometheus + Grafana + DORA dashboards pre-wired, unified DORA metrics/VSM (absorbed from uFawkesDORA) | Observability, Data ecosystem, all 7 capabilities measured | In progress (ufawkesobs exists) |
-    | **Pipe** | Jenkins + Buildpacks + DORA metric emission, policy-as-code/OPA-Rego guardrails (absorbed from uFawkesSec) | Small batches, Version control, Quality platform | In progress (uFawkesPipe exists) |
-    | **DevX** | Backstage-alternative templates, golden path scaffolding | User-centric, Internal platform | Repo created, ready for development |
-    | **AI** | Agent templates per team archetype (7 types from DORA) | All capabilities via agents | Model repo exists (uFawkesAI) |
-
-    **Acceptance criteria**: Each stack has `docker compose up` → running + DORA dashboards populated.
-
-    ### Phase 2: Dojo Spin-out & Learning Platform (6—10 weeks)
-    **Goal**: Unbiased, evidence-based learning platform
-
-    | Decision | Recommendation | Rationale |
-    |----------|----------------|-----------|
-    | **Repo location** | New repo `uFawkesDojo` | Separates learning from platform; enables community contribution; unbiased positioning |
-    | **Content model** | Restructure around DORA AI Capabilities Model | Each module maps to a capability; aligns with research |
-    | **Assessment** | Add capability maturity assessments | Diagnostic for which stack/profile fits (maps to CNCF maturity levels) |
-    | **Monetization** | Free core, paid cohorts/certification | Sustainable via GitHub Sponsors |
-
-    **Acceptance criteria**: Dojo repo live, 3+ capability modules published, 100+ learners.
-
-    ### Phase 3: Platform Engineering Research Integration (Ongoing)
-    **Goal**: Incorporate objective research beyond DORA
-
-    | Research Area | Sources | uFawkes Application | Review Cadence |
-    |---------------|---------|---------------------|----------------|
-    | **Internal Developer Platforms** | CNCF Platforms White Paper, IDP maturity model, Port reports | DevX stack patterns, golden path criteria | Quarterly |
-    | **Platform Maturity Models** | CNCF Platform Engineering Maturity Model (5 aspects × 4 levels) | Stack profile progression (starter → pro → enterprise) | Quarterly |
-    | **Developer Productivity** | SPACE Framework (Microsoft Research), DX Core 4 | DevX stack instrumentation, measurement guidance | Quarterly |
-    | **Security in Platform Engineering** | SLSA, SSDF, CNCF TAG Security, CNCF security best practices | Sec stack policy library, supply chain integrity | Quarterly |
-    | **AI in Platform Engineering** | DORA AI reports, METR, Stanford HAI, CNCF Technology Radar | AI stack templates, capability mapping | Quarterly |
-    | **AI Productivity Paradox** | Faros.ai telemetry (10k devs), DORA ROI framework | Ensure stacks measure outcomes, not just output | Quarterly |
-
-    **Acceptance criteria**: Research library cited in stack docs, quarterly research review completed.
-
-    ---
-
-    ## 8. Success Metrics (per Phase)
-
-    | Phase | Metric | Target | Status |
-    |-------|--------|--------|--------|
-    | **Phase 0** | All 7 repos exist | 7/7 repos with description, topics | ✅ Done |
-    | **Phase 0** | Cross-repo links | Every README links to fawkes + uFawkes.dev | ✅ Done |
-    | **Phase 1** | Stack operability | Each stack `docker compose up` → running in <60s | Not started |
-    | **Phase 1** | DORA dashboards | Each stack has at least 1 pre-configured DORA dashboard | Not started |
-    | **Phase 1** | DORA metric emission | Each stack emits deployment frequency, lead time, change failure rate, MTTR | Not started |
-    | **Phase 2** | Dojo modules | 3+ capability-based modules published | 🟡 In progress — uFawkesDojo repo live (5 belt modules: White/Yellow/Green/Brown/Black), learner-count unverified |
-    | **Phase 2** | Learner adoption | 100+ registered learners | Not started |
-    | **Phase 3** | Research citations | Each stack README cites relevant research | Not started |
-    | **Phase 3** | Quarterly review | Research library updated quarterly | Not started |
-
-    ---
-
-    ## 9. Governance
-
-    - **Roadmap reviewed monthly** — update status, adjust priorities
-    - **ADRs for architectural decisions** — stored in `fawkes/docs/adr/`
-    - **Stack maintainers assigned per repo** — see individual READMEs
-    - **Community advisory board** — see `fawkes/CUSTOMER_ADVISORY_BOARD.md`
-    - **Open source with sponsorship** — GitHub Sponsors for members who derive value
-    - **Research objectivity** — all research citations must be from peer-reviewed or industry-standard sources (DORA, CNCF, Microsoft Research, ACM)
-
-    ---
-
-    ## 10. Impact on uFawkes.dev (Marketing Site)
-
-    | Current Item | Impact | Action | Status |
-    |--------------|--------|--------|--------|
-    | PR 4 Sprint 6 (Screenshots) | Blocked — needs real stack screenshots | Defer until Phase 1 stacks runnable | ⬜ Deferred |
-    | PR 5 (Agent infrastructure) | Align — agents should reference uFawkesAI patterns | Update AGENTS.md to reference uFawkesAI | ⬜ Pending |
-    | Stack page content | Update — replace "coming soon" with real stack descriptions | Sync after Phase 1 repos ready | ✅ Done |
-    | DORA AI Capabilities section | Enhance — deepen capability-to-stack mapping | Already done in Sprint 4, add research citations | ✅ Done |
-    | Learn guides | Restructure — align to Dojo spin-out capability modules | Coordinate with Phase 2 | ⬜ Pending |
-    | Navigation | Add — "Roadmap" link to fawkes/ROADMAP.md | Add to nav dropdown | ✅ Done |
-    | Blog | Add — research summaries, stack launch posts | Ongoing content marketing | ⬜ Pending |
-    | DORA/Sec consolidation | Retire `/dora/` and `/sec/` pages, absorb features into `/obs/` and `/pipe/`, update nav/README | Phase A of beta plan | ✅ Done (2026-08-15) |
-
-    ---
-
-    ## 11. Open Questions
-
-    1. **Backstage in DevX stack**: Adopt Backstage (CNCF "Adopt" status) or build lighter alternative? Backstage adds complexity but has ecosystem.
-    2. **uFawkesAI scope**: Agent templates only, or also agent runtime framework? Currently templates align with uFawkesPipe golden paths.
-    3. **Sec stack tooling**: OPA/Rego for policy-as-code, or Kyverno (CNCF sandbox)? Depends on Kubernetes integration depth.
-    4. **Dojo community model**: Discord, Slack, or GitHub Discussions? Needs to be accessible but not fragmented.
-
-    ---
-
-    *Last updated: 2026-06-11*
-    *Review schedule: Monthly*
-    *Next review: 2026-07-11*
+| Question                                              | Outcome                                                                                                                     |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Backstage in DevX, or something lighter?              | Resolved: uFawkesDevX uses Backstage                                                                                        |
+| Sec tooling: OPA/Rego or Kyverno?                     | Resolved: uFawkesPipe uses a Conftest/Rego `policy-check` step                                                              |
+| Dojo community model                                  | Resolved for now: GitHub Issues. Mattermost references were removed (paruff/uFawkesDojo#18), and Discussions isn't enabled. |
+| uFawkesAI scope: templates only, or an agent runtime? | **Open, not filed.** This is a product decision for @paruff.                                                                |

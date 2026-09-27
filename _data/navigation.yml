@@ -17,5 +17,5 @@ main:
     external: true
     accent: true
   - title: "Roadmap"
-    url: "https://github.com/paruff/fawkes/blob/main/ROADMAP.md"
+    url: "https://github.com/paruff/uFawkes.dev/blob/main/docs/ai-sdlc/suite-release/plan.md"
     external: true
