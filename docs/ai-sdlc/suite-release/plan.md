@@ -25,9 +25,10 @@ Each place is the source of truth for one kind of information:
   below. It links to Project views instead. Two task lists drift, so one of
   them has to not exist.
 - **Project fields:**
-  - `Release` (single-select): Obs 1.0, Pipe stable, DevX 0.1, Dojo compose, Suite hygiene
-  - `Phase` (0–4)
-  - `Status`
+  - `Release` (single-select): Suite hygiene, Obs 1.0, Pipe 2.0, DevX 0.1,
+    Dojo compose. These map one-to-one to Phases 0–4, so there is no
+    separate Phase field.
+  - `Status` (the Project's built-in field)
 - **Project views:** by Release, by Repo, and "Blockers"
   (`label:release-blocker`).
 - **Standardize the `release-blocker` label across all six repos.**
