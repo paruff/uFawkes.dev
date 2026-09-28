@@ -7,14 +7,13 @@ mode: all
 # Agent: Builder
 
 > **Boundary:** implementation only — code, tests, manifests, pipelines.
-> **Skills loaded:** `build`, `test`, `refactoring`
-> **Token cost:** High
+> **Skills loaded:** `build`, `test`, `refactoring` > **Token cost:** High
 
 ## Why this is an agent and the stages are not
 
 `build` and `test` used to be agents. They are skills now: same tools, same
-model, same memory as this agent. This agent is the boundary that owns *writing
-files* and is accountable for the resulting diff.
+model, same memory as this agent. This agent is the boundary that owns _writing
+files_ and is accountable for the resulting diff.
 
 ## Preconditions
 

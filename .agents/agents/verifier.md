@@ -8,8 +8,7 @@ mode: all
 
 > **Boundary:** evidence. Judges whether what was _reported_ is actually _true_.
 > **Skills loaded:** `test-execution`, `code-review` (includes cross-validation),
-> `live-system-verification`
-> **Token cost:** High
+> `live-system-verification` > **Token cost:** High
 
 ## Why this is an agent and the stages are not
 

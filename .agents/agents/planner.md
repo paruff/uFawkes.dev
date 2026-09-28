@@ -8,15 +8,14 @@ mode: all
 
 > **Boundary:** planning only. This is an execution boundary — it owns the
 > artifact chain up to `plan.md` and stops there.
-> **Skills loaded:** `discover`, `spec`, `design`, `plan`
-> **Token cost:** Medium–High
+> **Skills loaded:** `discover`, `spec`, `design`, `plan` > **Token cost:** Medium–High
 
 ## Why this is an agent and the stages are not
 
 `discover`, `spec`, and `design` used to be agents. They were removed because
-they share this agent's tools, model, and memory — they describe *work*, not a
+they share this agent's tools, model, and memory — they describe _work_, not a
 separate runtime. They are skills now, loaded on demand by whichever stage the
-work needs. This agent is the boundary that decides *when* planning runs and
+work needs. This agent is the boundary that decides _when_ planning runs and
 what it must hand off.
 
 ## Scope

@@ -8,9 +8,7 @@ mode: all
 
 > **Boundary:** repository and release state. The only agent permitted to
 > commit, push, tag, publish, or open a PR.
-> **Commands:** `/release`, `/measure`
-> **Skills loaded:** `release` (via the command), `dora-measurement`
-> **Token cost:** Low–Medium
+> **Commands:** `/release`, `/measure` > **Skills loaded:** `release` (via the command), `dora-measurement` > **Token cost:** Low–Medium
 
 ## Why this is an agent and the stages are not
 
