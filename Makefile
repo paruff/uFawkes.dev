@@ -18,3 +18,12 @@ pre-commit-run: ## Run all pre-commit hooks
 	@pre-commit run --all-files
 
 validate: pre-commit-run ## Validate all files (alias for pre-commit-run)
+
+clean: ## Remove Jekyll build output, agent tooling caches, and generated reports
+	rm -rf _site/ .jekyll-cache/
+	rm -rf .opencode/node_modules/
+	rm -rf graphify-out/
+	rm -rf .agents/logs/
+	find . -name '*.pyc' -delete
+	rm -f ci-diagnosis.md ci-fix-report.md
+	@echo "Cleaned Jekyll build output and agent tooling artifacts"

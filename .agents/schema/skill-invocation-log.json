@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ufawkes.dev/schemas/skill-invocation-log.json",
+  "title": "Agent Invocation Log Entry",
+  "type": "object",
+  "required": ["agent", "session_id", "timestamp", "triggered_by", "started_at", "duration_ms", "root_cause_category", "findings", "status"],
+  "properties": {
+    "agent": { "type": "string", "description": "Agent name executing the task" },
+    "session_id": { "type": "string", "description": "Unique session identifier" },
+    "timestamp": { "type": "string", "format": "date-time", "description": "Completion time (ISO 8601)" },
+    "triggered_by": { "type": "string", "description": "What triggered this invocation" },
+    "originating_session_id": { "type": "string", "description": "Session ID of the feature-flow that produced the code being repaired, if known" },
+    "started_at": { "type": "string", "format": "date-time", "description": "Start time (ISO 8601)" },
+    "duration_ms": { "type": "integer", "description": "Duration in milliseconds" },
+    "root_cause_category": { "type": "string", "enum": ["Code", "Dependency", "Infrastructure", "Pipeline", "Unclassifiable"] },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["severity", "description"],
+        "properties": {
+          "severity": { "type": "string", "enum": ["blocker", "defect", "note"] },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "decision": { "type": "string", "description": "Summary of decision taken" },
+    "blockers": { "type": "array", "items": { "type": "string" }, "description": "Any blockers encountered" },
+    "status": { "type": "string", "enum": ["FIXED", "BLOCKED"] }
+  }
+}
