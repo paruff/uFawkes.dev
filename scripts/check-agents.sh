@@ -64,22 +64,22 @@ for agent in "${EXPECTED[@]}"; do
   fm="$(sed -n "2,$((fm_end - 1))p" "$file")"
 
   # name must match the filename, or dispatch by @name breaks.
-  if ! grep -q "^name: $agent$" <<<"$fm"; then
+  if ! grep -q "^name: $agent$" <<< "$fm"; then
     bad "$agent: name mismatch (frontmatter 'name' must be '$agent')"
   else
     ok "$agent: name matches filename"
   fi
 
   # description is required for discoverability.
-  if ! grep -q "^description:" <<<"$fm"; then
+  if ! grep -q "^description:" <<< "$fm"; then
     bad "$agent: missing description"
   else
     ok "$agent: has a description"
   fi
 
   # mode must be one of the valid modes; default is 'all'.
-  if grep -q "^mode:" <<<"$fm"; then
-    mode_val=$(grep "^mode:" <<<"$fm" | sed 's/^mode: *//')
+  if grep -q "^mode:" <<< "$fm"; then
+    mode_val=$(grep "^mode:" <<< "$fm" | sed 's/^mode: *//')
     if [[ ! "$mode_val" =~ ^(primary|subagent|all)$ ]]; then
       bad "$agent: invalid mode '$mode_val' (must be primary|subagent|all)"
     else
@@ -90,7 +90,7 @@ for agent in "${EXPECTED[@]}"; do
   fi
 
   # No unknown frontmatter keys.
-  unknown_keys=$(grep -E '^[a-z]+:' <<<"$fm" | grep -vE "^(name|model|variant|description|mode|hidden|color|steps|options|permission|disable|temperature|top_p):" | cut -d: -f1 || true)
+  unknown_keys=$(grep -E '^[a-z]+:' <<< "$fm" | grep -vE "^(name|model|variant|description|mode|hidden|color|steps|options|permission|disable|temperature|top_p):" | cut -d: -f1 || true)
   if [[ -n "$unknown_keys" ]]; then
     bad "$agent: unknown frontmatter keys: $unknown_keys"
   else
@@ -104,7 +104,7 @@ shopt -s nullglob
 for f in .agents/agents/*.md .opencode/agents/*.md; do
   [ -e "$f" ] || continue
   base=$(basename "$f" .md)
-  if [[ ! " ${EXPECTED[*]} " =~ " ${base} " ]]; then
+  if [[ ! " ${EXPECTED[*]} " =~ ${base} ]]; then
     bad "$f: retired stage/flow agent still present (must be one of: ${EXPECTED[*]})"
   fi
 done

@@ -100,16 +100,16 @@ finding in a report does not enforce anything on its own.
 
 ### Permitted with Guardrails
 
-| Use                                                     | Guardrail                                                                 |
+| Use | Guardrail |
 | ------------------------------------------------------- | ------------------------------------------------------------------------- |
-| AI-generated code merged to `main`                       | Human review required; pre-commit and the enforced gates in section 2 must pass |
-| AI-assisted spec and design documents                    | `discovery-brief.md` must exist first                                      |
-| AI-authored agent, skill, or workflow definitions        | `scripts/check-harness-parity.sh` and `scripts/dual-harness-smoke.sh` must pass |
-| AI-authored hook or secret-scanner changes               | `scripts/test-check-secret-detection.sh` and the hook end-to-end tests must pass |
-| Agent sessions modifying infrastructure                   | Evidence gate passed by `@verifier`; human approval before release         |
-| AI-generated release notes and PR bodies                  | Human review before publishing                                             |
-| AI-generated content in Dojo modules                     | Disclose to learners that AI assisted in authoring                         |
-| opencode sessions in this repository                      | Load `AGENTS.md` and the relevant skill at session start                   |
+| AI-generated code merged to `main` | Human review required; pre-commit and the enforced gates in section 2 must pass |
+| AI-assisted spec and design documents | `discovery-brief.md` must exist first |
+| AI-authored agent, skill, or workflow definitions | `scripts/check-harness-parity.sh` and `scripts/dual-harness-smoke.sh` must pass |
+| AI-authored hook or secret-scanner changes | `scripts/test-check-secret-detection.sh` and the hook end-to-end tests must pass |
+| Agent sessions modifying infrastructure | Evidence gate passed by `@verifier`; human approval before release |
+| AI-generated release notes and PR bodies | Human review before publishing |
+| AI-generated content in Dojo modules | Disclose to learners that AI assisted in authoring |
+| opencode sessions in this repository | Load `AGENTS.md` and the relevant skill at session start |
 
 ### Allowed
 
