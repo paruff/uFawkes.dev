@@ -33,7 +33,12 @@
 
 **Current state**: Unit ✅ | Integration ✅ | Smoke ✅ | Acceptance ✅ | Load ❌ | Performance ❌
 
-### uFawkesPipe (Integration & Delivery Plane — Jenkins)
+### uFawkesPipe (Integration & Delivery Plane)
+
+> **Out of date (2026-09-27):** this table still describes the retired Jenkins
+> stack (JCasC, seed jobs, the Jenkins API). uFawkesPipe now runs Woodpecker CI;
+> its test tiers (`tests/unit`, `integration`, `smoke`, `acceptance`) exist, but
+> what each one checks needs re-documenting from the uFawkesPipe repo.
 
 | Tier            | What to test                                                              | Tool                   | Files                                   | Pass criteria                                            |
 | --------------- | ------------------------------------------------------------------------- | ---------------------- | --------------------------------------- | -------------------------------------------------------- |
