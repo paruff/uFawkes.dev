@@ -2,6 +2,7 @@
 description: Execute the plan.md with verification checkpoints
 agent: builder
 ---
+
 Read `docs/ai-sdlc/plan.md` first.
 If missing, stop and instruct the user to run `/plan`.
 Implement one phase at a time.

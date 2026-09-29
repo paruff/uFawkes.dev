@@ -2,6 +2,7 @@
 description: Monthly DORA metrics snapshot from uFawkesObs, with anomaly flags and a post-release tracking issue
 agent: operator
 ---
+
 # Measure
 
 > **Invoke:** Monthly schedule OR after a significant release OR when measure issue filed by release agent.
@@ -24,10 +25,10 @@ what counts as an anomaly, and what to hand off.
 ## Trigger Conditions
 
 | Trigger               | Frequency                 | Source                                                   |
-| --------------------- | ------------------------- | --------------------------------------------------------- |
+| --------------------- | ------------------------- | -------------------------------------------------------- |
 | Monthly cadence       | 1st of each month         | Scheduled (cron or manual)                               |
 | Post-release          | After each GitHub Release | Filed by release agent (issue label: `dora-measurement`) |
-| Anomaly investigation | Ad hoc                    | Filed by the `learn` skill or human observation            |
+| Anomaly investigation | Ad hoc                    | Filed by the `learn` skill or human observation          |
 
 ## Pre-conditions
 
