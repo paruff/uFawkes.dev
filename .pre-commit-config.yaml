@@ -5,7 +5,6 @@
 # Install: pre-commit install --hook-type commit-msg
 # Run: pre-commit run --all-files
 
-
 exclude: |
   ^graphify-out/|^\.opencode/|^\.serena/|^\.agents/logs/|^\.claude/worktrees/
 
@@ -354,5 +353,15 @@ ci:
   autoupdate_branch: ""
   autoupdate_commit_msg: "[pre-commit.ci] pre-commit autoupdate"
   autoupdate_schedule: monthly
-  skip: [terraform_tflint, terraform_tfsec, kustomize-validate, helm-lint, mkdocs-validate, argocd-validate, helm-lint, backstage-catalog-validate]
+  skip:
+    [
+      terraform_tflint,
+      terraform_tfsec,
+      kustomize-validate,
+      helm-lint,
+      mkdocs-validate,
+      argocd-validate,
+      helm-lint,
+      backstage-catalog-validate,
+    ]
   submodules: false

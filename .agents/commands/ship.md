@@ -2,6 +2,7 @@
 description: Run pre-commit, fix issues, commit, push, and open a PR
 agent: builder
 ---
+
 Run pre-commit.
 Fix auto-fixable issues (maximum 3 loops).
 Confirm branch is not `main`.

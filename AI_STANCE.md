@@ -54,27 +54,27 @@ AI use here is backed by repository infrastructure, not convention:
 
 Enforcement that actually exists today, verified against `.github/workflows/`:
 
-| Gate                              | Workflow               | Mechanism                                      |
-| --------------------------------- | ---------------------- | ---------------------------------------------- |
-| Secrets, pre-commit               | local pre-commit hooks | exits non-zero on a finding                    |
-| Secret-detection contract         | `agent-ci.yml`         | exits non-zero if the validator cannot go red  |
-| Repo-wide secret scan            | `secret-scan.yml`      | gitleaks, exits non-zero on a finding          |
-| Dependency review                 | `dependency-review.yml` | gates newly introduced vulnerable or unlicensed deps |
-| Merge to `main`                   | `main-ci-guard.yml`    | blocks until `ci-quality` passes               |
-| Container CVEs                    | `image-build.yml`, `image-release.yml` | Trivy writes to the job summary only — advisory |
-| Static analysis (SAST)            | none                   | no workflow runs Semgrep or CodeQL — advisory   |
+| Gate                      | Workflow                               | Mechanism                                            |
+| ------------------------- | -------------------------------------- | ---------------------------------------------------- |
+| Secrets, pre-commit       | local pre-commit hooks                 | exits non-zero on a finding                          |
+| Secret-detection contract | `agent-ci.yml`                         | exits non-zero if the validator cannot go red        |
+| Repo-wide secret scan     | `secret-scan.yml`                      | gitleaks, exits non-zero on a finding                |
+| Dependency review         | `dependency-review.yml`                | gates newly introduced vulnerable or unlicensed deps |
+| Merge to `main`           | `main-ci-guard.yml`                    | blocks until `ci-quality` passes                     |
+| Container CVEs            | `image-build.yml`, `image-release.yml` | Trivy writes to the job summary only — advisory      |
+| Static analysis (SAST)    | none                                   | no workflow runs Semgrep or CodeQL — advisory        |
 
 Anything not in that table is a reporting target, not a gate. Recording a
 finding in a report does not enforce anything on its own.
 
 ## 3. Permitted Tools
 
-| Tool             | Version / status                                                | Purpose                                     |
-| ---------------- | --------------------------------------------------------------- | ------------------------------------------- |
-| opencode         | 1.18.32 (pinned by the dual-harness smoke test)                  | Primary agentic development tool           |
-| Claude Code      | 2.1.283 (pinned by the dual-harness smoke test)                  | Skill authoring, code review, content      |
-| Claude model     | not pinned in this repository; selected per session             | Reasoning backend                           |
-| GitHub Copilot   | current                                                          | IDE code completion                         |
+| Tool           | Version / status                                    | Purpose                               |
+| -------------- | --------------------------------------------------- | ------------------------------------- |
+| opencode       | 1.18.32 (pinned by the dual-harness smoke test)     | Primary agentic development tool      |
+| Claude Code    | 2.1.283 (pinned by the dual-harness smoke test)     | Skill authoring, code review, content |
+| Claude model   | not pinned in this repository; selected per session | Reasoning backend                     |
+| GitHub Copilot | current                                             | IDE code completion                   |
 
 ---
 
@@ -100,16 +100,16 @@ finding in a report does not enforce anything on its own.
 
 ### Permitted with Guardrails
 
-| Use | Guardrail |
-| ------------------------------------------------------- | ------------------------------------------------------------------------- |
-| AI-generated code merged to `main` | Human review required; pre-commit and the enforced gates in section 2 must pass |
-| AI-assisted spec and design documents | `discovery-brief.md` must exist first |
-| AI-authored agent, skill, or workflow definitions | `scripts/check-harness-parity.sh` and `scripts/dual-harness-smoke.sh` must pass |
-| AI-authored hook or secret-scanner changes | `scripts/test-check-secret-detection.sh` and the hook end-to-end tests must pass |
-| Agent sessions modifying infrastructure | Evidence gate passed by `@verifier`; human approval before release |
-| AI-generated release notes and PR bodies | Human review before publishing |
-| AI-generated content in Dojo modules | Disclose to learners that AI assisted in authoring |
-| opencode sessions in this repository | Load `AGENTS.md` and the relevant skill at session start |
+| Use                                               | Guardrail                                                                        |
+| ------------------------------------------------- | -------------------------------------------------------------------------------- |
+| AI-generated code merged to `main`                | Human review required; pre-commit and the enforced gates in section 2 must pass  |
+| AI-assisted spec and design documents             | `discovery-brief.md` must exist first                                            |
+| AI-authored agent, skill, or workflow definitions | `scripts/check-harness-parity.sh` and `scripts/dual-harness-smoke.sh` must pass  |
+| AI-authored hook or secret-scanner changes        | `scripts/test-check-secret-detection.sh` and the hook end-to-end tests must pass |
+| Agent sessions modifying infrastructure           | Evidence gate passed by `@verifier`; human approval before release               |
+| AI-generated release notes and PR bodies          | Human review before publishing                                                   |
+| AI-generated content in Dojo modules              | Disclose to learners that AI assisted in authoring                               |
+| opencode sessions in this repository              | Load `AGENTS.md` and the relevant skill at session start                         |
 
 ### Allowed
 

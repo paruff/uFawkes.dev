@@ -2,6 +2,7 @@
 description: Run the weekly release checklist (triage, CHANGELOG, semver tag, GitHub Release, dev.to, LinkedIn, ufawkes.dev) and file the post-release DORA issue
 agent: operator
 ---
+
 # Release
 
 > **Invoke when:** Tests passing + review approved on a releasable increment.
@@ -15,7 +16,7 @@ deliberately (`/release`) rather than selected by skill relevance.
 ## Trigger Conditions
 
 | Trigger               | Description                                                      |
-| --------------------- | ------------------------------------------------------------------ |
+| --------------------- | ---------------------------------------------------------------- |
 | Weekly cadence        | Thursday: if increment is shippable, release it                  |
 | Feature complete      | All acceptance criteria from discovery-brief.md met              |
 | Hotfix                | Change failure rate event resolved, patch ready                  |
