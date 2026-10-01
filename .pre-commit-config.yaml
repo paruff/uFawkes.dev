@@ -361,5 +361,7 @@ ci:
       mkdocs-validate,
       argocd-validate,
       backstage-catalog-validate,
+      unit-tests,
+      harness-parity,
     ]
   submodules: false
