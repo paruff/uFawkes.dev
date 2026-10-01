@@ -17,12 +17,12 @@ is inferred.
 
 ## Current releases
 
-| Stack | Current release | Status | Verified with |
-| ----- | --------------- | ------ | ------------- |
-| [uFawkesObs](/obs/) | [v0.4.12-beta.1](https://github.com/paruff/uFawkesObs/releases/tag/v0.4.12-beta.1) | Beta, heading to v1.0.0 | Standalone only |
-| [uFawkesPipe](/pipe/) | [v1.7.4-beta.1](https://github.com/paruff/uFawkesPipe/releases/tag/v1.7.4-beta.1) | Beta, heading to v2.0.0 | Not yet verified against a uFawkesObs release |
-| [uFawkesDevX](/devx/) | None yet | Pre-release, heading to v0.1.0 | Not yet verified |
-| [uFawkesDojo](https://paruff.github.io/uFawkesDojo/) | [0.1.0-alpha.1](https://github.com/paruff/uFawkesDojo/releases/tag/0.1.0-alpha.1) | Alpha | Labs target a released, pinned stack version |
+| Stack                                                | Current release                                                                    | Status                         | Verified with                                 |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------ | --------------------------------------------- |
+| [uFawkesObs](/obs/)                                  | [v0.4.12-beta.1](https://github.com/paruff/uFawkesObs/releases/tag/v0.4.12-beta.1) | Beta, heading to v1.0.0        | Standalone only                               |
+| [uFawkesPipe](/pipe/)                                | [v1.7.4-beta.1](https://github.com/paruff/uFawkesPipe/releases/tag/v1.7.4-beta.1)  | Beta, heading to v2.0.0        | Not yet verified against a uFawkesObs release |
+| [uFawkesDevX](/devx/)                                | None yet                                                                           | Pre-release, heading to v0.1.0 | Not yet verified                              |
+| [uFawkesDojo](https://paruff.github.io/uFawkesDojo/) | [0.1.0-alpha.1](https://github.com/paruff/uFawkesDojo/releases/tag/0.1.0-alpha.1)  | Alpha                          | Labs target a released, pinned stack version  |
 
 ## How this page is kept current
 
