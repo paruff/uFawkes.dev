@@ -1,126 +1,276 @@
 # Spec: uFawkes Suite Release
 
-**Traces to:** [`intent.md`](intent.md) | **Status:** Draft | **Revision:** 1
+**Traces to:** [`intent.md`](intent.md) | **Status:** Draft | **Revision:** 3
 
-This file defines _what "released" means_ for each repo. The order and
-tasks are in [`plan.md`](plan.md), and live status is in the GitHub Project
-(see plan).
+This file defines _what "released" means_ for each of the seven repos. The
+order and phases are in [`plan.md`](plan.md), and live status is in
+[Project #7](https://github.com/users/paruff/projects/7).
 
 ## 1. Documentation requirements per repo
 
-uFawkesAI's convention has two layers:
+uFawkesAI's convention has two layers. A **repo-level `INTENT.md`** says
+what the repo is and isn't. **Per-release docs** live in
+`docs/ai-sdlc/<release>/` as `intent.md` → `spec.md` → `plan.md`, and each
+`spec.md` has a `## Design` section. ADRs and `docs/ARCHITECTURE.md` record
+lasting decisions.
 
-- A **repo-level `INTENT.md`** says what the repo is and isn't. It's the
-  "read this before touching anything" file uFawkesObs already has.
-- **Per-release docs** live in `docs/ai-sdlc/<release>/` as `intent.md` →
-  `spec.md` → `plan.md`.
-
-There is no separate `design.md`. Per uFawkesAI's
-[`docs/ai-sdlc/README.md`](https://github.com/paruff/uFawkesAI/blob/main/docs/ai-sdlc/README.md),
-`spec.md` carries "requirements, design, policy constraints, and concerns",
-so each spec has a `## Design` section. ADRs plus `docs/ARCHITECTURE.md`
-record lasting decisions. Root-level `design.md` / `specification.md` /
-`plan.md` files are pre-convention and get consolidated. (Revision 1 wrongly
-said the design goes in `plan.md`; corrected 2026-09-27.)
-
-| Repo            | Repo `INTENT.md`                                                               | Release docs needed                               | Design lives in                                                          | Doc cleanup                                                                                                                                         |
-| --------------- | ------------------------------------------------------------------------------ | ------------------------------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **uFawkesObs**  | ✅ exists                                                                      | `docs/ai-sdlc/v1.0.0/` (spec = the 1.0 bar below) | ✅ 7 ADRs + `ARCHITECTURE.md`                                            | None blocking                                                                                                                                       |
-| **uFawkesPipe** | ❌ needed                                                                      | `docs/ai-sdlc/<first-stable>/`                    | `docs/ARCHITECTURE.md` + new ADRs                                        | Consolidate 3 spec files (`specification.md`, `docs/specification.md`, `docs/product/spec.md`), 2 design files, `plan-for-the-day.md`               |
-| **uFawkesDevX** | ❌ needed                                                                      | `docs/ai-sdlc/v0.1.0/`                            | `ARCHITECTURE.md` + ADR for the Postgres source that replaces uFawkesRes | Move root `specification.md`/`design.md`/`plan.md` into `docs/ai-sdlc/`; remove uFawkesRes references                                               |
-| **uFawkesDojo** | ⚠️ `intent.md` exists (lowercase); rename to `INTENT.md` for suite consistency | `docs/ai-sdlc/compose-curriculum/`                | n/a (curriculum)                                                         | Move `docs/uFawkes-suite-integration-spec.md` into that folder; retitle the `0.1.0-alpha.1` release ("4 metrics baseline" is stale — DORA has five) |
-| **uFawkes.dev** | ❌ needed                                                                      | `docs/ai-sdlc/suite-release/` (this folder)       | n/a                                                                      | Replace `docs/roadmap.md` with a pointer here; add a compatibility-matrix page                                                                      |
-| **uFawkesAI**   | ✅ (template)                                                                  | None for this plan (already v1.0.0)               | ✅                                                                       | Minor: `plan` skill expects `specification.md`/`design.md`, but agents write `spec.md`/`plan.md`. Align the names                                   |
-| **fawkes**      | Optional (own track)                                                           | None for this plan                                | ✅ ADRs                                                                  | Add an ADR that supersedes `ADR-004 jenkins 4 ci` (Tekton)                                                                                          |
+| Repo            | `INTENT.md` | Release docs                                    | Remaining doc cleanup                                                                                             |
+| --------------- | ----------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **uFawkes.dev** | ✅          | `docs/ai-sdlc/suite-release/` (this folder)     | Add `/ai/` and `/fawkes/` pages to the nav; retire `/dora/` (ufawkesdora archived) and `/sec/` (merged into Pipe) |
+| **uFawkesAI**   | ✅          | `docs/ai-sdlc/v2.0.0/` ❌                       | `plan` skill filenames (#90); close #36 (superseded by this folder)                                               |
+| **uFawkesDojo** | ✅          | `docs/ai-sdlc/compose-curriculum/` ✅; `0.2` ❌ | Rebase `compose-curriculum/plan.md` on the new order: Dojo `0.2` before any stack lab                             |
+| **uFawkesObs**  | ✅          | `docs/ai-sdlc/v1.0.0/` ✅                       | #534 (dead uFawkesRes panels, `TBD` SQL in the tier table)                                                        |
+| **uFawkesPipe** | ✅          | `docs/ai-sdlc/v2.0.0/` ❌                       | Consolidate the 3 spec files, 2 design files and `plan-for-the-day.md`                                            |
+| **uFawkesDevX** | ✅          | `docs/ai-sdlc/v0.1.0/` ❌                       | Move root `specification.md`/`design.md`/`plan.md` in; remove uFawkesRes references                               |
+| **fawkes**      | Optional    | `docs/ai-sdlc/tracer-bullet-alpha/` ❌          | Mark `ADR-004 jenkins 4 ci` superseded by ADR-036                                                                 |
 
 ## 2. Release acceptance criteria
 
-### AC-SUITE-01: No public claim is contradicted by a repo
+Every criterion names its evidence. "Real run" means a transcript or CI log
+from an actual execution, linked from the release notes, never a described
+or simulated one.
 
-- **Scenario:** Before the uFawkesObs v1.0.0 announcement goes out
-- **Expected:** `docs/roadmap.md` (this repo), uFawkesDevX's docs,
-  fawkes's ADR-004 and Dojo's release title no longer contradict the facts
-  in `intent.md` (Woodpecker, Tekton, uFawkesRes deprecated, five DORA
-  metrics)
-- **Verification:** `grep -ri "jenkins\|uFawkesRes"` across the suite's
-  public docs returns only historical or superseded mentions
-- **Priority:** Required. This is the credibility goal; the announcement
-  links readers to these docs.
+### Suite-wide
 
-### AC-OBS-01: uFawkesObs v1.0.0 installs cleanly from its README
+#### AC-SUITE-01: No public claim is contradicted by a repo
 
-- **Scenario:** A clean Linux host and a clean macOS host, each with only
-  Docker 20.10+ and Compose v2
-- **Action:** Follow the README Quick Start verbatim (`make init && make up`,
-  `./scripts/wait-healthy.sh`)
-- **Expected:** All services healthy, and Grafana at `:3000` shows the
-  default dashboards with data
-- **Must not:** Need any step that isn't in the README
-- **Verification:** Transcript of a real run on each host, linked from the
-  release notes
-- **Priority:** Required (adoption goal)
+- **Expected:** No public doc in the seven repos presents Jenkins, uFawkesRes,
+  ufawkesdora, ufawkessec or "four key metrics" as current
+- **Verification:** `grep -rniE "jenkins|ufawkesres|four key metrics"` across
+  the public docs returns only historical, superseded or explicitly labeled
+  mentions
+- **Gate for:** every announcement (it's re-checked before each one)
 
-### AC-OBS-02: No open release blockers
+#### AC-SUITE-02: Every tracked issue is routed
 
-- **Expected:** The `v1.0.0` milestone has zero open issues labeled
-  `release-blocker`. Candidates as of 2026-09-27, to triage:
-  - #381 GitOps deploy broken: SSH host key mismatch (already labeled
-    `release-blocker`)
-  - #469 alertmanager: 42 HIGH/CRITICAL fixable CVEs
-  - #473 alertmanager templates glob matches nothing
-  - #470 CI validates Tempo 2.4.1, but the stack runs 2.10.5
-  - #393 deploy (compose restart) failed
-  - #182 live rollback drill (labeled `late-beta`)
-- **Verification:** Milestone view in the GitHub Project
-- **Priority:** Required
+- **Expected:** Every open issue on Project #7 carries exactly one routing
+  label: `goal` (Claude Code), `model:nemotron-3-ultra` or
+  `model:mimo-v2.6-flash` (OpenCode). The rubric is in `plan.md`
+- **Verification:** A Project view filtered to items with none of the three
+  labels is empty
+- **Gate for:** Phase 0
 
-### AC-OBS-03: The 1.0 public contract is written down
+#### AC-SITE-01: The site lists all seven repos and the matrix is current
 
-- **Expected:** `docs/ai-sdlc/v1.0.0/spec.md` in uFawkesObs states the
-  contract decided in `intent.md`. Semver covers compose service names,
-  published ports, and `.env.example` variables. It explicitly excludes
-  datasource UIDs, dashboard UIDs and DORA metric names. The doc also
-  includes an upgrade note from 0.4.x.
-- **Verification:** The doc exists and is linked from the release notes
-- **Priority:** Required. "Stable" means nothing without a stated contract.
+- **Expected:** ufawkes.dev has a page for each stack, uFawkesAI and fawkes,
+  plus the Dojo link. `/compatibility/` lists every released version and
+  what it was verified with ("standalone" is valid). It includes the
+  devcontainer image version each stack was tested in
+- **Verification:** Page live; updated in the same release that changes it
 
-### AC-OBS-04: Announced everywhere, consistently
+### Release 1 — uFawkesAI `v2.0.0`
 
-- **Expected:** GitHub Release `v1.0.0`, the ufawkes.dev Obs page, a dev.to
-  post and a LinkedIn post are all live. All link to the same release
-  notes and show the same version. They're produced by uFawkesAI's
-  `release` agent.
+#### AC-AI-01: The devcontainer image can be pinned
+
+- **Expected:** A `v2.0.0` tag publishes `ghcr.io/paruff/ufawkesai-devcontainer:2.0.0`
+  and `:2.0`, signed. Its digest is in the GitHub Release
+- **Verification:** `docker manifest inspect` succeeds from an
+  unauthenticated machine, and `cosign verify` passes using the documented
+  steps (#111)
+
+#### AC-AI-02: The template works from "Use this template"
+
+- **Scenario:** A new repo created from the template, opened in the `2.0.0`
+  devcontainer
+- **Expected:** Each of the four documented agent harnesses starts. The
+  `intent → spec → plan` flow produces files the `plan` skill accepts (#90).
+  The placeholder audit finds nothing unfilled (#28), and `make validate`
+  passes
+- **Verification:** Real run transcript
+
+#### AC-AI-03: The 2.0 contract and upgrade path are written down
+
+- **Expected:** `docs/ai-sdlc/v2.0.0/spec.md` states the contract (see
+  `intent.md`, Still open #1) and an upgrade note from 1.x that covers the
+  npm package rename and the removed gitops variant
+- **Verification:** Linked from the release notes
+
+#### AC-AI-04: Capability claims match what ships
+
+- **Expected:** The README has two maps. The first is the harness anatomy:
+  each of the six components (instructions, tools/MCP, sandbox,
+  orchestration and model routing, hooks, observability) names the file or
+  tool in the template or image that provides it, or says "not provided".
+  The second maps each feature to the DORA AI capability it supports.
+  A third map lists the playbook's six stages, each marked provided,
+  partial or not provided, with the file that provides it. None of the
+  three maps claims anything that isn't in the image or template. The
+  README and `docs/ai-sdlc/README.md` cite the playbook and the paper as
+  upstream references
+- **Verification:** Every claimed tool appears in the image's tool list or
+  the template's tree
+
+#### AC-AI-05: Every suite repo pins the image
+
+- **Expected:** All seven repos' `.devcontainer/devcontainer.json` use
+  `:2.0.0` or a digest, not `:latest`
+- **Verification:** `grep -r ufawkesai-devcontainer` across the suite shows
+  no `:latest`
+- **Lands:** within one week after the release; it doesn't block the tag
+
+#### AC-AI-07: Tests and evals both gate merges
+
+- **Expected:** The unit tests and the agent evals
+  (`.agents/evals/`, `scripts/run-evals.sh`) are required checks on
+  `main`. The evals also run on a schedule and on every change to rule
+  files, skills or hooks, as the playbook prescribes. Each eval task has an
+  explicit rubric that scores task success,
+  tool use and trajectory compliance against `baseline.json`. A template
+  repo inherits both. Per the paper, without both, the practice is still
+  vibe coding
+- **Verification:** Branch protection lists the eval job; a deliberately
+  broken rule file fails it in a test PR
+
+#### AC-AI-06: Delivery events reach uFawkesObs, or the claim goes
+
+- **Expected:** The `dora-events` emitter works from a checkout as well as
+  in CI, and a real event is queryable in uFawkesObs's Loki with the LogQL
+  documented ([`dora-events-portability`](https://github.com/paruff/uFawkesAI/blob/main/docs/ai-sdlc/dora-events-portability/intent.md),
+  GAP-01..03). If that isn't verified by the tag, the README and
+  `docs/UFAWKES_INTEGRATION.md` stop claiming uFawkesAI feeds uFawkesObs
+- **Verification:** Real run, recorded as a uFawkesAI ↔ uFawkesObs row in
+  the compatibility matrix
+
+#### AC-AI-08: The CDE's developer experience is measured, not asserted
+
+Derived from the DevEx evidence in `docs/research-foundation.md` (DevEx
+2023/2024, SPACE, Google's build-latency and onboarding studies, METR and
+Google's AI RCTs).
+
+- **Feedback loops:** CI measures cold start (image pull to ready) and warm
+  start (container restart to ready) for the image on every release. The
+  release notes publish both. A regression of more than 10% fails the
+  release; Google found every latency improvement helps, so there's no
+  fixed target
+- **Cognitive load:** one entry point ("Reopen in Container", or one `make`
+  target), one config source for all four harnesses (harness parity check
+  passes), and a static rule file of one page or less, per the playbook
+- **Flow:** `postCreateCommand` never prompts. Every failure prints the fix
+- **Outcomes, not just speed:** the Dojo "Start here" lab records time from
+  "Use this template" to first merged PR, plus a three-question survey
+  (ease, confidence, would-recommend). That covers three SPACE dimensions:
+  efficiency, satisfaction and performance
+- **No unmeasured productivity claims.** The README states no speedup
+  percentage. Perceived and measured time can diverge by about 40 points
+  (METR)
+- **Verification:** the benchmark job's output in the release notes, plus
+  the first cohort's lab results in `dojo-feedback.md`
+
+### Release 2 — uFawkesDojo `0.2`
+
+#### AC-DOJO-01: The curriculum is accurate
+
+- **Expected:** Five DORA metrics everywhere (#19). Every module that still
+  teaches Jenkins says so at the top and names the replacement module's
+  release. Every lab, video or community link that doesn't exist is either
+  removed or labeled "not built yet"
+- **Verification:** `grep` for "four key", unlabeled "Jenkins" and
+  `[VIDEO PLACEHOLDER]` returns nothing unlabeled
+
+#### AC-DOJO-02: The "Start here" lab is real
+
+- **Expected:** A first lab clones a template-generated repo pinned to
+  uFawkesAI `v2.0.0`, opens the devcontainer, and walks through one
+  `intent → spec → plan` cycle. A `validate.sh` checks the result
+- **Verification:** Real run transcript in the lab's PR, and
+  `content-integrity.yml` passes
+
+#### AC-DOJO-03: Authors have a pedagogy checklist
+
+- **Expected:** `docs/module-authoring-guide.md` holds #11's checklist:
+  worked example before practice, no theory block over 10 minutes, at least
+  one open-response retrieval question, and no lab that hasn't been run for
+  real. The PR template links it
+- **Verification:** The file exists and the PR template references it
+
+#### AC-DOJO-04: Each later release ships its lab, built from its plan
+
+- **Expected:** Dojo `0.3`–`0.6` each add the lab for the stack released
+  alongside it, pinned to that tag (`git clone --branch vX.Y.Z`). The
+  stack's announcement links to it. Each lab follows uFawkesAI's
+  [`dojo-handoff.md`](https://github.com/paruff/uFawkesAI/blob/main/docs/ai-sdlc/dojo-handoff.md) mapping: one exercise step per
+  row of the release plan's Verification Strategy, one `record_test` per
+  spec AC in `validate.sh`, and a provenance header naming the source
+  `docs/ai-sdlc/<release>/` and commit
+- **Verification:** Same-week Dojo release; the announcement contains the
+  lab link; `validate.sh` check names match the release spec's AC ids
+
+### Release 3 — uFawkesObs `v1.0.0`
+
+#### AC-OBS-01: Installs cleanly from its README
+
+- **Scenario:** A clean Linux host and a clean macOS host, with only Docker
+  20.10+ and Compose v2
+- **Expected:** The README Quick Start alone brings every service to
+  healthy, and every default dashboard panel shows data. No "datasource not
+  found" errors (#534)
+- **Verification:** Real run transcripts on both hosts
+
+#### AC-OBS-02: No open release blockers
+
+- **Expected:** The `v1.0.0` milestone has zero open `release-blocker`
+  issues. #534 joins it
+- **Verification:** The Project's Blockers view
+
+#### AC-OBS-03: The contract is written down
+
+- **Status:** ✅ `docs/ai-sdlc/v1.0.0/` exists. Verify it states the
+  contract in `intent.md` and the 0.4.x upgrade note before the tag
+
+#### AC-OBS-04: Announced everywhere, consistently
+
+- **Expected:** The GitHub Release, the ufawkes.dev Obs page, a dev.to post
+  and a LinkedIn post all show the same version and link to the same notes
+  and the Dojo `0.3` lab. uFawkesAI's `release` agent produces them
 - **Verification:** All four URLs recorded on the release's Project item
-- **Priority:** Required (credibility goal)
 
-### AC-PIPE-01: First stable uFawkesPipe release claims only what works
+### Release 4 — uFawkesPipe `v2.0.0`
 
-- **Expected:** The `build-image` step is either implemented (CNB build
-  producing an image) or removed from the README's feature claims. It
-  ships as `v2.0.0`, and the release notes explain the jump from the 1.x
-  beta line.
-- **Verification:** A real pipeline run on a sample repo, with output
-  linked
-- **Priority:** Required before any "stable" label
+#### AC-PIPE-01: Claims only what works
 
-### AC-DEVX-01: uFawkesDevX v0.1.0 runs without uFawkesRes
+- **Expected:** `build-image` is either a real CNB build that produces an
+  image or removed from the README's features. The release notes explain
+  the jump from 1.x beta to `v2.0.0`
+- **Verification:** A real pipeline run on a sample repo. The `notify-obs`
+  step is verified against a released Obs version, recorded in the matrix
 
-- **Expected:** `make up` brings up Coder and Backstage against a Postgres
-  source defined inside the documented setup, not the deprecated
-  uFawkesRes
-- **Verification:** A clean-host run transcript
-- **Priority:** Required for first release
+### Release 5 — uFawkesDevX `v0.1.0`
 
-### AC-SITE-01: Compatibility matrix exists
+#### AC-DEVX-01: Runs without uFawkesRes
 
-- **Expected:** A ufawkes.dev page lists each stack's current release and
-  which other stack versions it has been verified with. "Standalone only"
-  is a valid entry.
-- **Verification:** Page live; updated by the release agent on each release
-- **Priority:** Required by uFawkesObs v1.0.0 (even if it lists only Obs)
+- **Expected:** An ADR records the #57 decision. `make up` brings up Coder
+  and Backstage against storage defined inside the documented setup
+- **Verification:** Clean-host run transcript
+
+### Release 6 — fawkes Tracer Bullet Alpha
+
+#### AC-FAWKES-01: Commit to staging works in one clean run
+
+- **Expected:** #1804's scope passes end to end in one continuous run: push
+  → build → scan → GitOps PR → ArgoCD sync to staging (#1858)
+- **Verification:** One CI run plus ArgoCD sync history, linked
+
+#### AC-FAWKES-02: Two DORA metrics are queryable
+
+- **Expected:** Deployment frequency and lead time for changes, both for the
+  tracer-bullet service, show in Grafana from native PromQL (#1572, #1919).
+  Grafana can query its own Prometheus (#2130)
+- **Verification:** Screenshot plus the PromQL behind each panel
+
+#### AC-FAWKES-03: No known P0 security issues
+
+- **Expected:** #2004 (extract-zip) and #1797 (`CHANGE_ME_*` credentials)
+  are closed
+- **Verification:** Both issues closed with linked PRs
+
+#### AC-FAWKES-04: Public claims are scoped to Alpha
+
+- **Expected:** fawkes's README says what Alpha proves and lists Beta and
+  Production as not yet built. ADR-004 is marked superseded
+- **Verification:** AC-SUITE-01 grep, plus a README review
 
 ## 3. Out of scope
 
-fawkes releases, new stack features, and Dojo curriculum rewrites beyond
-what `plan.md` sequences. The Dojo's own `compose-curriculum` spec governs
-those.
+New stack features, fawkes Beta/Production, and Dojo modules for stacks that
+haven't released yet. The Dojo's `compose-curriculum` spec governs module
+content within this ordering.
