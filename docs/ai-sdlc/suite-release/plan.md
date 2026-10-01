@@ -128,7 +128,7 @@ Accuracy work (steps 1–2) can start now. Step 3 needs uFawkesAI `v2.0.0`.
 
 1. The accuracy pass: five metrics (#19), Jenkins labeling, and removing or
    labeling unbuilt labs, videos and links.
-2. Write the module-authoring guide from #11.
+2. Extend the existing module-authoring guide (AC-DOJO-03).
 3. Build the "Start here" uFawkesAI lab and run it for real.
 4. Update `docs/ai-sdlc/compose-curriculum/plan.md` to this order, and align
    ufawkes.dev's learn guides (uFawkes.dev #67).

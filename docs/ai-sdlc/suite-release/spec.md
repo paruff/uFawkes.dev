@@ -175,13 +175,31 @@ Google's AI RCTs).
 - **Verification:** Real run transcript in the lab's PR, and
   `content-integrity.yml` passes
 
-#### AC-DOJO-03: Authors have a pedagogy checklist
+#### AC-DOJO-03: The authoring guide covers the evidence for self-paced learning
 
-- **Expected:** `docs/module-authoring-guide.md` holds #11's checklist:
-  worked example before practice, no theory block over 10 minutes, at least
-  one open-response retrieval question, and no lab that hasn't been run for
-  real. The PR template links it
-- **Verification:** The file exists and the PR template references it
+`docs/module-authoring-guide.md` already exists and already covers the
+"run it for real" rule, worked examples, short theory blocks, retrieval
+questions, spacing boundaries, immediate feedback and badges. Dojo `0.2`
+extends it, without rewriting it, to close the gaps against _Make It Stick_
+(Brown, Roediger & McDaniel, 2014) and the research on self-paced online
+learning:
+
+- **Expected:**
+  - **Cumulative, spaced retrieval:** each module opens with recall
+    questions from earlier modules, not only its own
+  - **Interleaving:** later belts mix problem types rather than practising
+    one tool at a time
+  - **Fading:** worked examples fade into open practice as belts advance
+    (the expertise-reversal effect)
+  - **Calibration:** learners predict before a lab and compare afterwards,
+    to counter illusions of competence
+  - **Self-regulation supports:** time estimates, a plan-your-sessions
+    prompt and visible progress. Self-paced online courses lose most
+    learners without these
+  - **Citations corrected:** Crissman (2006) is a dissertation reporting
+    d ≈ 0.57. The PR template links the guide
+- **Verification:** each new item cites its source in the guide; Dojo
+  `0.2`'s "Start here" lab passes the extended checklist
 
 #### AC-DOJO-04: Each later release ships its lab, built from its plan
 
