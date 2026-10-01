@@ -11,17 +11,21 @@ Once these exist on Project #7, delete this file.
 
 ## Phase 0 — Suite hygiene
 
-| Repo        | Issue | Title                                                                                       | Route | Notes                                                              |
-| ----------- | ----- | ------------------------------------------------------------------------------------------- | ----- | ------------------------------------------------------------------ |
-| uFawkes.dev | NEW   | chore(suite): routing labels + Project #7 release options for revision 2                    | G     | Claude Code does this when the issues are created                  |
-| uFawkes.dev | NEW   | feat(nav): add `/ai/` and `/fawkes/` pages; replace `/dora/` and `/sec/` with pointer pages | U     | No plugins (jekyll-feed only): pointer pages link to the successor |
-| uFawkes.dev | #68   | chore: archive ufawkessec (merged into uFawkesPipe)                                         | G     | Retitle to include uFawkesRes. Archiving is owner-only             |
-| fawkes      | NEW   | docs(adr): mark ADR-004 (Jenkins) superseded by ADR-036 (Tekton)                            | F     | One file, a status line and a link                                 |
-| uFawkesDevX | NEW   | docs: remove uFawkesRes references from README, VISION, docs/quickstart, CONTRACTS          | F     | grep-and-replace; `make validate`                                  |
-| uFawkesPipe | #9    | GITOPS-001                                                                                  | close | Duplicate; GitOps is done suite-wide (PR 7)                        |
-| uFawkesDevX | #13   | GITOPS-001                                                                                  | close | Same                                                               |
-| uFawkesPipe | #8    | DY-007 Sponsors                                                                             | close | Duplicate of uFawkes.dev #63                                       |
-| uFawkesAI   | #36   | AI-015 UFAWKES_FAMILY_ROADMAP                                                               | close | Superseded by this folder; link it from the README                 |
+| Repo                                                                   | Issue  | Title                                                                                       | Route | Notes                                                                           |
+| ---------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------- | ----- | ------------------------------------------------------------------------------- |
+| uFawkes.dev                                                            | NEW    | chore(suite): routing labels + Project #7 release options for revision 2                    | G     | Claude Code does this when the issues are created                               |
+| uFawkes.dev                                                            | NEW    | feat(nav): add `/ai/` and `/fawkes/` pages; replace `/dora/` and `/sec/` with pointer pages | U     | No plugins (jekyll-feed only): pointer pages link to the successor              |
+| uFawkes.dev                                                            | #68    | chore: archive ufawkessec (merged into uFawkesPipe)                                         | G     | Retitle to include uFawkesRes. Archiving is owner-only                          |
+| fawkes                                                                 | NEW    | docs(adr): mark ADR-004 (Jenkins) superseded by ADR-036 (Tekton)                            | F     | One file, a status line and a link                                              |
+| uFawkesDevX                                                            | NEW    | docs: remove uFawkesRes references from README, VISION, docs/quickstart, CONTRACTS          | F     | grep-and-replace; `make validate`                                               |
+| uFawkesPipe                                                            | #9     | GITOPS-001                                                                                  | close | Duplicate; GitOps is done suite-wide (PR 7)                                     |
+| uFawkesDevX                                                            | #13    | GITOPS-001                                                                                  | close | Same                                                                            |
+| uFawkesPipe                                                            | #8     | DY-007 Sponsors                                                                             | close | Duplicate of uFawkes.dev #63                                                    |
+| uFawkesAI                                                              | #36    | AI-015 UFAWKES_FAMILY_ROADMAP                                                               | close | Superseded by this folder; link it from the README                              |
+| uFawkesAI                                                              | NEW    | docs: add a root `INTENT.md` for the template itself (AC-SUITE-03)                          | G     | Saying what the product is and isn't takes judgment                             |
+| fawkes                                                                 | NEW    | docs: add a root `INTENT.md`, Alpha scope and graduation role (AC-SUITE-03)                 | G     | Same; pairs with the Phase 6 README scoping                                     |
+| uFawkesAI                                                              | NEW    | ci(artifact-chain): make the code paths configurable per repo (default `src/`)              | G     | Design of the setting; every repo's rollout depends on it                       |
+| uFawkes.dev, uFawkesObs, uFawkesPipe, uFawkesDevX, uFawkesDojo, fawkes | NEW ×6 | ci: add the artifact-chain check with this repo's code paths                                | U     | One issue per repo, after the setting exists; each issue lists the repo's paths |
 
 ## Phase 1 — uFawkesAI `v2.0.0`
 
@@ -143,7 +147,7 @@ All other fawkes issues stay on fawkes's own milestones and off Project #7.
 
 ## Totals
 
-About 65 new issues (7 of them one-line devcontainer pins), about 25
+About 74 new issues (7 of them one-line devcontainer pins), about 25
 relabels or retitles, and 5 closures. The `goal` share is high because each
 release needs real runs that only a live, supervised session can verify.
 OpenCode carries the content and mechanical volume underneath.
