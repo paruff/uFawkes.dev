@@ -30,6 +30,8 @@ main:
         url: "/pipe/"
       - title: "🧭 DevX — Developer Experience"
         url: "/devx/"
+  - title: "Compatibility"
+    url: "/compatibility/"
   - title: "Learn"
     url: "/learn/"
   - title: "Blog"
