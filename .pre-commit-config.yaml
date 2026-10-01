@@ -356,12 +356,10 @@ ci:
   skip:
     [
       terraform_tflint,
-      terraform_tfsec,
       kustomize-validate,
       helm-lint,
       mkdocs-validate,
       argocd-validate,
-      helm-lint,
       backstage-catalog-validate,
     ]
   submodules: false
