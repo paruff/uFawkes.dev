@@ -12,6 +12,7 @@ the suite release's Phase 1, and it's most useful if it lands early.
 | --- | ------------------------------------------------------------------------------------------------------------------ | ----- | ----------------------------------------------- |
 | 1   | `acceptance.yml` for every suite-release AC, plus the drift check against `spec.md` (AC-STATUS-01)                 | G     | Deciding which ACs can be automated is judgment |
 | 2   | `scripts/suite-status.sh` + `make status`: AC checks, Project #7 query, JSON, terminal summary (AC-STATUS-02, -03) | U     | Bounded; the spec gives the contract            |
+| 2b  | Wireframe review: one product owner and one developer answer their question from it (AC-STATUS-07)                 | G     | Needs real readers; it gates PR 3               |
 | 3   | `/status/` page: Liquid + CSS cards, bars, AC table, SVG burn-up, staleness banner (AC-STATUS-05, -06)             | U     | Bounded; follows site conventions               |
 | 4   | `deploy.yml`: daily schedule, `SUITE_STATUS_TOKEN`, JSON into the Pages artifact (AC-STATUS-04)                    | G     | Secrets and the deploy path                     |
 | 5   | Nav link, `AGENTS.md` pointer to the JSON (R6), link from `suite-release/plan.md`                                  | F     | Mechanical                                      |
