@@ -63,7 +63,7 @@ jobs:
           bundle exec htmlproofer ./_site \
             --checks "Links" \
             --ignore-empty-mailto \
-            --ignore-urls "/https:\/\/www\.linkedin\.com\/.*/,/https:\/\/github\.com\/paruff\/ufawkes(obs|pipe|dora|sec|devx)/" \
+            --ignore-urls "/https:\/\/ufawkes\.dev\/.*/,/https:\/\/www\.linkedin\.com\/.*/,/https:\/\/github\.com\/paruff\/ufawkes(obs|pipe|dora|sec|devx)/" \
             --typhoeus '{"timeout":20,"followlocation":true}'
 
       - name: Spell check
