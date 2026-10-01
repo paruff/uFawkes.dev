@@ -379,7 +379,9 @@ jobs:
           node-version: "20"
 
       - name: Run Prettier check
-        run: npx --yes prettier --check .
+        # Pinned: an unpinned npx prettier floats to the latest release, so CI
+        # and contributors formatted with different versions (PR #76).
+        run: npx --yes prettier@3.9.9 --check .
 
       - name: DORA job finish
         if: always()
