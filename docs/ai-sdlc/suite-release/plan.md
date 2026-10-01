@@ -104,23 +104,27 @@ Mostly done in revision 1. What's left:
 - [ ] uFawkes.dev: retire `/dora/` and `/sec/`, add `/ai/` and `/fawkes/`
       stubs to the nav
 
-## Phase 1 — uFawkesAI `v2.0.0` (gate: AC-AI-01..04, AC-AI-06..08, AC-SITE-01)
+## Phase 1 — uFawkesAI `v2.0.0` (gate: AC-AI-01..04, AC-AI-06..09, AC-SITE-01)
 
 1. Write `uFawkesAI/docs/ai-sdlc/v2.0.0/{intent,spec,plan}.md`. Settle the
    contract (`intent.md`, Still open #1).
 2. Fix the image publish path (#111). Retire the `image-v*` and
    `*-devcontainer` tags.
-3. Align the `plan` skill filenames (#90). Add the placeholder audit (#28).
+3. Add the placeholder audit (#28). (#90, the `plan` skill filenames, closed
+   2026-10-01: the file it targeted was removed.)
    Move the root-level v1 `intent/spec/plan.md` into its own feature folder.
    Finish `dora-events-portability` and verify an event in uFawkesObs's
    Loki, or drop the claim (AC-AI-06).
 4. Add the cold/warm start benchmark (AC-AI-08) and record its first
    baseline on `v2.0.0-rc.1`. Ground `docs/ai-sdlc/devsecops-image/` (the
    CDE's own spec) in the DevEx section of the research library.
-5. Run the "Use this template" test (AC-AI-02) on `v2.0.0-rc.1`.
-6. Tag `v2.0.0`, then run the `release` agent: GitHub Release with the image
+5. Retire pre-commit.ci (AC-AI-09): pre-bake the hook environments into
+   the image, make Pre-flight required, add the autoupdate workflow, and
+   sync the change to every repo.
+6. Run the "Use this template" test (AC-AI-02) on `v2.0.0-rc.1`.
+7. Tag `v2.0.0`, then run the `release` agent: GitHub Release with the image
    digest, the ufawkes.dev `/ai/` page, and dev.to and LinkedIn drafts.
-7. Within a week, pin every suite repo to `:2.0.0` (AC-AI-05).
+8. Within a week, pin every suite repo to `:2.0.0` (AC-AI-05).
 
 ## Phase 2 — uFawkesDojo `0.2` (gate: AC-DOJO-01..03)
 

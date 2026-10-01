@@ -17,7 +17,7 @@ lasting decisions.
 | Repo            | `INTENT.md` | Release docs                                    | Remaining doc cleanup                                                                                             |
 | --------------- | ----------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | **uFawkes.dev** | ✅          | `docs/ai-sdlc/suite-release/` (this folder)     | Add `/ai/` and `/fawkes/` pages to the nav; retire `/dora/` (ufawkesdora archived) and `/sec/` (merged into Pipe) |
-| **uFawkesAI**   | ✅          | `docs/ai-sdlc/v2.0.0/` ❌                       | `plan` skill filenames (#90); close #36 (superseded by this folder)                                               |
+| **uFawkesAI**   | ✅          | `docs/ai-sdlc/v2.0.0/` ❌                       | Close #36 (superseded by this folder)                                                                             |
 | **uFawkesDojo** | ✅          | `docs/ai-sdlc/compose-curriculum/` ✅; `0.2` ❌ | Rebase `compose-curriculum/plan.md` on the new order: Dojo `0.2` before any stack lab                             |
 | **uFawkesObs**  | ✅          | `docs/ai-sdlc/v1.0.0/` ✅                       | #534 (dead uFawkesRes panels, `TBD` SQL in the tier table)                                                        |
 | **uFawkesPipe** | ✅          | `docs/ai-sdlc/v2.0.0/` ❌                       | Consolidate the 3 spec files, 2 design files and `plan-for-the-day.md`                                            |
@@ -73,7 +73,7 @@ or simulated one.
 - **Scenario:** A new repo created from the template, opened in the `2.0.0`
   devcontainer
 - **Expected:** Each of the four documented agent harnesses starts. The
-  `intent → spec → plan` flow produces files the `plan` skill accepts (#90).
+  `intent → spec → plan` flow produces files the plan command accepts.
   The placeholder audit finds nothing unfilled (#28), and `make validate`
   passes
 - **Verification:** Real run transcript
@@ -120,6 +120,18 @@ or simulated one.
   vibe coding
 - **Verification:** Branch protection lists the eval job; a deliberately
   broken rule file fails it in a test PR
+
+#### AC-AI-09: One hook gate, run the same way everywhere
+
+- **Expected:** `.pre-commit-config.yaml` is the only hook definition. It
+  runs locally (hooks pre-installed in the devcontainer image) and in the
+  Pre-flight workflow, which is a required check in every suite repo.
+  pre-commit.ci is retired: it duplicated Pre-flight, its skip list drifted
+  on template syncs, and it couldn't run the suite's own `jq`-based hooks.
+  A monthly workflow opens a `pre-commit autoupdate` PR
+- **Verification:** no `ci:` block in any suite repo's config; branch
+  protection lists Pre-flight; the devcontainer runs
+  `pre-commit run --all-files` offline on first open
 
 #### AC-AI-06: Delivery events reach uFawkesObs, or the claim goes
 
