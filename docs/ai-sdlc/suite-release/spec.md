@@ -58,8 +58,10 @@ or simulated one.
   uFawkesPipe#116 and fawkes#2185. The other 5 were already labelled
   ("not Jenkins", "stale", a deprecation footnote, or a criterion's own name).
   ufawkes.dev itself had none left after #81. All three merged and `main` was re-scanned on 2026-10-02: no real violation
-  remains. If the gate means "public entry points", it is met.
-- **Recheck 2026-10-02: not met.** Counting lines that name a retired term
+  remains. **Owner decision, 2026-10-02: this gate means public entry points, so
+  AC-SUITE-01 is met for Phase 0.** The wider count below is handled in each
+  repo's own phase and re-checked before each announcement.
+- **Full count 2026-10-02, beyond this gate's scope:** Counting lines that name a retired term
   with no qualifier (deprecated, historical, merged, formerly and similar)
   on each repo's `main`, excluding the suite plan folders and ADRs. Each
   repo's debt belongs to its own phase:

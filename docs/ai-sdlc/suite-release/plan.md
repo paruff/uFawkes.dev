@@ -91,7 +91,7 @@ basic checks.
 
 ## Phase 0 — Suite hygiene (gate: AC-SUITE-01 recheck, AC-SUITE-02, AC-SUITE-03)
 
-Status on 2026-10-02, verified against each repo's `main`:
+Phase 0 is complete. Status on 2026-10-02, verified against each repo's `main`:
 
 - **AC-SUITE-02: met.** All 96 open issues on Project #7 carry exactly one
   routing label.
@@ -100,12 +100,12 @@ Status on 2026-10-02, verified against each repo's `main`:
   `scripts/`, `images/`, `templates/`), skipping Dependabot's bumps. It is not
   yet a required check (#99), and a Release Please run fails in two repos for
   a reason not yet found (#100).
-- **AC-SUITE-01: met if the gate means public entry points** (each repo's
-  README and INTENT, and the site pages): the scoped recheck found 7 real
-  false claims, all fixed and merged, and the 5 lines still matching are
-  labelled in context. It is **not** met if the gate means every public doc
-  down to zero (about 1,380 lines, owned by Phases 2 to 6). Which reading the
-  gate takes is the owner's call.
+- **AC-SUITE-01: met.** The owner decided on 2026-10-02 that this gate covers
+  **public entry points** (each repo's README and INTENT, and the site pages).
+  The scoped recheck found 7 real false claims, all fixed and merged, and the 5
+  lines still matching are labelled in context. The wider count (about 1,380
+  lines across docs, tests and planning files) belongs to Phases 2 to 6 and is
+  re-checked before each announcement.
 
 The checklist:
 
