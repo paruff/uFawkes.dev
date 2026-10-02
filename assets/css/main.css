@@ -1519,3 +1519,247 @@ a:focus-visible {
     overflow-x: auto;
   }
 }
+
+/* Brand tokens (DESIGN.md, design/tokens.json): Indigo for actions, Flame for
+   identity, green only for status. Appended so earlier rules stay in place. */
+a {
+  color: #4f46e5;
+}
+
+a:visited {
+  color: #4338ca;
+}
+
+a:hover {
+  color: #4338ca;
+}
+
+.site-header__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.site-header__mark {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.cta-button {
+  background: #4f46e5;
+  color: #ffffff;
+}
+
+.cta-button:hover,
+.cta-button:focus-visible {
+  background: #4338ca;
+  color: #ffffff;
+}
+
+.cta-button--secondary {
+  background: transparent;
+  color: #4f46e5;
+  border-color: #4f46e5;
+}
+
+.cta-button--secondary:hover,
+.cta-button--secondary:focus-visible {
+  background: #eef2ff;
+  color: #4338ca;
+  border-color: #4338ca;
+}
+
+.nav-toggle:focus-visible,
+a:focus-visible,
+.cta-button:focus-visible {
+  outline: 2px solid #4f46e5;
+}
+
+.main-nav__link--accent,
+.main-nav__link[aria-current="page"] {
+  background: #eef2ff;
+  color: #4338ca;
+}
+
+.main-nav__link--accent:hover,
+.main-nav__link--accent:focus-visible {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+
+.breadcrumbs__item a:hover,
+.guide-meta__back:hover {
+  color: #4338ca;
+}
+
+.error-page__links a:hover {
+  border-color: #4f46e5;
+  background: #eef2ff;
+  color: #4338ca;
+}
+
+.capability-card:hover,
+.capability-map__row:hover {
+  border-color: #4f46e5;
+}
+
+.try-now,
+.dojo-callout {
+  background: #eef2ff;
+}
+
+.badge--live {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.pre,
+pre {
+  border-left-color: #f06300;
+}
+
+.research-section li::before {
+  color: #f06300;
+}
+
+.stack-hero--green {
+  border-left-color: #f06300;
+}
+
+.status-timeline__item--next,
+.status-card--next {
+  border-color: #4f46e5;
+}
+
+.status-card__tag {
+  background: #eef2ff;
+  color: #4338ca;
+}
+
+.status-bar__track::-webkit-progress-value {
+  background: #4f46e5;
+}
+
+.status-bar__track::-moz-progress-bar {
+  background: #4f46e5;
+}
+
+.status-burnup__done {
+  stroke: #4f46e5;
+}
+
+@media (prefers-color-scheme: dark) {
+  a {
+    color: #a5b4fc;
+  }
+
+  a:visited,
+  a:hover {
+    color: #c7d2fe;
+  }
+
+  .cta-button {
+    background: #818cf8;
+    color: #061723;
+  }
+
+  .cta-button:hover,
+  .cta-button:focus-visible {
+    background: #a5b4fc;
+    color: #061723;
+  }
+
+  .cta-button--secondary {
+    background: transparent;
+    color: #a5b4fc;
+    border-color: #a5b4fc;
+  }
+
+  .cta-button--secondary:hover,
+  .cta-button--secondary:focus-visible {
+    background: #1f2937;
+    color: #c7d2fe;
+    border-color: #c7d2fe;
+  }
+
+  .nav-toggle:focus-visible,
+  a:focus-visible,
+  .cta-button:focus-visible {
+    outline-color: #a5b4fc;
+  }
+
+  .main-nav__link--accent,
+  .main-nav__link[aria-current="page"] {
+    background: #1f2937;
+    color: #c7d2fe;
+  }
+
+  .try-now,
+  .dojo-callout {
+    background: #1f2937;
+  }
+
+  .status-card__tag {
+    background: #1f2937;
+    color: #c7d2fe;
+  }
+
+  .status-card--next,
+  .status-timeline__item--next {
+    border-color: #a5b4fc;
+  }
+
+  .status-bar__track::-webkit-progress-value {
+    background: #a5b4fc;
+  }
+
+  .status-bar__track::-moz-progress-bar {
+    background: #a5b4fc;
+  }
+
+  .status-burnup__done {
+    stroke: #a5b4fc;
+  }
+}
+
+/* Legibility fixes found by scanning every page in both colour schemes
+   (text below 4.5:1). The base theme's greys and light table stripes were
+   never themed for dark mode. */
+.site-footer,
+.site-footer p,
+.site-footer li {
+  color: #4b5563;
+}
+
+@media (prefers-color-scheme: dark) {
+  .site-footer,
+  .site-footer p,
+  .site-footer li {
+    color: #9ca3af;
+  }
+
+  .problem-statement {
+    color: #d1d5db;
+  }
+
+  code {
+    background: #1f2937;
+    border-color: #374151;
+    color: #e5e7eb;
+  }
+
+  table th,
+  table td {
+    color: #e5e7eb;
+    border-color: #374151;
+  }
+
+  table th {
+    background: #1f2937;
+  }
+
+  table tr:nth-child(even) {
+    background: #111827;
+  }
+}
