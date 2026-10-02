@@ -57,8 +57,8 @@ or simulated one.
   uFawkesAI, uFawkesPipe and fawkes. They are fixed in uFawkesAI#143,
   uFawkesPipe#116 and fawkes#2185. The other 5 were already labelled
   ("not Jenkins", "stale", a deprecation footnote, or a criterion's own name).
-  ufawkes.dev itself had none left after #81. If the gate means "public entry
-  points", it is met once those three PRs merge.
+  ufawkes.dev itself had none left after #81. All three merged and `main` was re-scanned on 2026-10-02: no real violation
+  remains. If the gate means "public entry points", it is met.
 - **Recheck 2026-10-02: not met.** Counting lines that name a retired term
   with no qualifier (deprecated, historical, merged, formerly and similar)
   on each repo's `main`, excluding the suite plan folders and ADRs. Each
