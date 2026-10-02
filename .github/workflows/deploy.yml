@@ -3,6 +3,8 @@ name: Deploy
 on:
   push:
     branches: ["main"]
+  schedule:
+    - cron: "0 6 * * *"
   workflow_dispatch:
 
 permissions:
@@ -40,8 +42,21 @@ jobs:
           ruby-version: "3.3"
           bundler-cache: true
 
+      # Suite status (docs/ai-sdlc/suite-status/): the JSON lives only in this
+      # build's Pages artifact; nothing is committed to main. A broken script
+      # (bad YAML, API or auth error) fails the run; a failing AC does not.
+      - name: Suite status
+        env:
+          SUITE_STATUS_TOKEN: ${{ secrets.SUITE_STATUS_TOKEN }}
+        run: bash scripts/suite-status.sh
+
       - name: Build with Jekyll
         run: bundle exec jekyll build
+
+      - name: Publish status JSON
+        run: |
+          mkdir -p _site/status
+          cp _data/suite_status.json _site/status/suite_status.json
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5

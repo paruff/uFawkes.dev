@@ -1,6 +1,6 @@
 # Spec: Suite status dashboard
 
-**Traces to:** [`intent.md`](intent.md) | **Status:** Draft | **Revision:** 1
+**Traces to:** [`intent.md`](intent.md) | **Status:** Draft | **Revision:** 2
 
 ## Requirements
 
@@ -46,11 +46,14 @@ failing AC is a result, not a script error.
       "order": 1,
       "acs": { "pass": 3, "fail": 4, "manual_pending": 2, "total": 9 },
       "issues": { "done": 5, "in_progress": 2, "todo": 11, "total": 18 },
-      "blockers": [{ "repo": "uFawkesAI", "number": 111, "title": "..." }],
+      "blockers": [{ "repo": "uFawkesAI", "number": 111, "title": "...", "url": "..." }],
       "routing": { "goal": 6, "nemotron": 7, "flash": 5 },
       "pace": { "closed_last_28d": 8, "weeks_to_done_estimate": 3.5 },
       "ac_results": [
-        { "id": "AC-AI-01", "status": "fail", "detail": "manifest unknown" }
+        { "id": "AC-AI-01", "title": "...", "status": "fail", "detail": "manifest unknown" }
+      ],
+      "ready": [
+        { "route": "goal", "repo": "uFawkesAI", "number": 111, "title": "...", "url": "..." }
       ]
     }
   ],
@@ -58,6 +61,10 @@ failing AC is a result, not a script error.
 }
 ```
 
+- **`ready`** (next release only): open issues with no assignee, with their
+  routing (`goal`, `nemotron`, `flash`, or `unrouted`). It feeds the
+  wireframe's "Ready to pick up" list. Added in revision 2 because the
+  wireframe needed it and R3 didn't carry it.
 - **Next release:** the first release, in the plan's order, whose ACs
   aren't all passing.
 - **Burn-up:** recomputed every run from issue `createdAt` and `closedAt`,

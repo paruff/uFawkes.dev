@@ -36,6 +36,8 @@ main:
         url: "/fawkes/"
   - title: "Compatibility"
     url: "/compatibility/"
+  - title: "Status"
+    url: "/status/"
   - title: "Learn"
     url: "/learn/"
   - title: "Blog"

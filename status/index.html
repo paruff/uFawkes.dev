@@ -1,0 +1,135 @@
+---
+layout: default
+title: Suite status
+description: "Live release status for the uFawkes suite: acceptance checks, open work and blockers, re-checked daily."
+permalink: /status/
+---
+{% assign d = site.data.suite_status %}
+<div class="status-page">
+  <header class="status-page__header">
+    <h1>Suite status</h1>
+    <p class="status-page__lede">Is the uFawkes suite ready to ship its next release?</p>
+    {% if d %}
+    <p class="status-page__checked">
+      Checked <time datetime="{{ d.generated_at }}" id="status-generated" data-generated="{{ d.generated_at }}">{{ d.generated_at | date: "%H:%M UTC, %-d %b %Y" }}</time>{% if d.run_url != "" %} · <a href="{{ d.run_url }}" rel="noopener noreferrer" target="_blank">run log</a>{% endif %}
+    </p>
+    {% endif %}
+  </header>
+
+  {% if d %}
+  <p class="status-banner" id="status-stale" role="status" hidden>This data is more than 36 hours old. The daily check may have failed; see the run log.</p>
+
+  {% for r in d.releases %}{% if r.name == d.next_release %}{% assign next = r %}{% endif %}{% endfor %}
+
+  <section class="status-headline" aria-labelledby="status-next">
+    {% if next %}
+    <h2 id="status-next">Next milestone: {{ next.name }}</h2>
+    <p class="status-headline__facts">
+      {{ next.acs.pass }} of {{ next.acs.total }} acceptance checks pass ·
+      {{ next.issues.done }} of {{ next.issues.total }} issues done ·
+      {{ next.blockers.size }} open blocker{% if next.blockers.size != 1 %}s{% endif %}
+    </p>
+    <p class="status-headline__pace">
+      {% if next.pace.weeks_to_done_estimate %}About {{ next.pace.weeks_to_done_estimate }} weeks at the current pace (estimate).{% else %}Not enough completed work yet to estimate.{% endif %}
+    </p>
+    {% else %}
+    <h2 id="status-next">Every acceptance check passes</h2>
+    <p class="status-headline__facts">No release is waiting on a failing or pending check.</p>
+    {% endif %}
+  </section>
+
+  <section aria-labelledby="status-timeline">
+    <h2 id="status-timeline">Releases in order</h2>
+    <ol class="status-timeline">
+      {% for r in d.releases %}
+      <li class="status-timeline__item{% if r.name == d.next_release %} status-timeline__item--next{% endif %}">
+        <span class="status-timeline__name">{{ r.name }}</span>
+        <span class="status-timeline__state">{% if r.acs.pass == r.acs.total %}done{% elsif r.name == d.next_release %}next{% else %}waiting{% endif %}</span>
+      </li>
+      {% endfor %}
+    </ol>
+  </section>
+
+  <section aria-labelledby="status-cards">
+    <h2 id="status-cards">Progress by release</h2>
+    {% for r in d.releases %}
+    {% if r.acs.pass == r.acs.total %}
+    <p class="status-done-line">✓ DONE · {{ r.name }}: {{ r.acs.pass }} of {{ r.acs.total }} acceptance checks pass</p>
+    {% else %}
+    <article class="status-card{% if r.name == d.next_release %} status-card--next{% endif %}">
+      <h3 class="status-card__title">{{ r.name }}{% if r.name == d.next_release %} <span class="status-card__tag">NEXT</span>{% endif %}</h3>
+      <div class="status-bar">
+        <span class="status-bar__label" id="acs-{{ r.order }}">Acceptance</span>
+        <progress class="status-bar__track" max="{{ r.acs.total }}" value="{{ r.acs.pass }}" aria-labelledby="acs-{{ r.order }}">{{ r.acs.pass }} / {{ r.acs.total }}</progress>
+        <span class="status-bar__value">{{ r.acs.pass }} / {{ r.acs.total }}</span>
+      </div>
+      <div class="status-bar">
+        <span class="status-bar__label" id="iss-{{ r.order }}">Issues</span>
+        <progress class="status-bar__track" max="{{ r.issues.total }}" value="{{ r.issues.done }}" aria-labelledby="iss-{{ r.order }}">{{ r.issues.done }} / {{ r.issues.total }}</progress>
+        <span class="status-bar__value">{{ r.issues.done }} / {{ r.issues.total }}</span>
+      </div>
+      {% for b in r.blockers %}
+      <p class="status-card__blocker">Blocker: <a href="{{ b.url }}" rel="noopener noreferrer" target="_blank">{{ b.repo }}#{{ b.number }} {{ b.title }}</a></p>
+      {% endfor %}
+      <p class="status-card__work">Work: {{ r.routing.goal }} goal · {{ r.routing.nemotron }} Nemotron · {{ r.routing.flash }} Flash</p>
+    </article>
+    {% endif %}
+    {% endfor %}
+  </section>
+
+  {% if next %}
+  <section aria-labelledby="status-acs">
+    <h2 id="status-acs">Acceptance checks: {{ next.name }}</h2>
+    <table class="status-table">
+      <thead>
+        <tr><th scope="col">Status</th><th scope="col">Check</th><th scope="col">What it proves</th><th scope="col">Detail</th></tr>
+      </thead>
+      <tbody>
+        {% for ac in next.ac_results %}
+        <tr class="status-table__row">
+          <td><span class="status-badge status-badge--{{ ac.status }}">{% if ac.status == "pass" %}✓ PASS{% elsif ac.status == "fail" %}✗ FAIL{% else %}… MANUAL{% endif %}</span></td>
+          <td>{{ ac.id }}</td>
+          <td>{{ ac.title }}</td>
+          <td class="status-table__detail">{{ ac.detail }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% endif %}
+
+  {% assign n = d.burnup.size %}
+  {% if n > 1 %}
+  <section aria-labelledby="status-burnup">
+    <h2 id="status-burnup">Progress over time</h2>
+    {% assign last = d.burnup | last %}
+    {% assign max = last.total %}
+    {% assign span = n | minus: 1 %}
+    {% capture total_points %}{% for p in d.burnup %}{% assign x = forloop.index0 | times: 600 | divided_by: span | plus: 20 %}{% assign h = p.total | times: 160 | divided_by: max %}{% assign y = 180 | minus: h %}{{ x }},{{ y }} {% endfor %}{% endcapture %}
+    {% capture done_points %}{% for p in d.burnup %}{% assign x = forloop.index0 | times: 600 | divided_by: span | plus: 20 %}{% assign h = p.done | times: 160 | divided_by: max %}{% assign y = 180 | minus: h %}{{ x }},{{ y }} {% endfor %}{% endcapture %}
+    <svg class="status-burnup" viewBox="0 0 640 200" role="img" aria-labelledby="burnup-summary">
+      <line class="status-burnup__axis" x1="20" y1="180" x2="620" y2="180"/>
+      <polyline class="status-burnup__total" points="{{ total_points }}" fill="none"/>
+      <polyline class="status-burnup__done" points="{{ done_points }}" fill="none"/>
+    </svg>
+    <p id="burnup-summary" class="status-burnup__summary">{{ last.done }} of {{ last.total }} tracked issues are done as of {{ last.date }}. The dashed line is all issues; the solid line is the ones closed.</p>
+  </section>
+  {% endif %}
+
+  {% if next.ready.size > 0 %}
+  <section aria-labelledby="status-ready">
+    <h2 id="status-ready">Ready to pick up: {{ next.name }}</h2>
+    <ul class="status-ready">
+      {% for t in next.ready %}
+      <li><span class="status-ready__route">{{ t.route }}</span> <a href="{{ t.url }}" rel="noopener noreferrer" target="_blank">{{ t.repo }}#{{ t.number }}</a> {{ t.title }}</li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
+  <p class="status-page__board"><a href="https://github.com/users/paruff/projects/7" rel="noopener noreferrer" target="_blank">Full board: Project #7</a> · <a href="{{ '/status/suite_status.json' | relative_url }}">Data as JSON</a></p>
+  <script src="{{ '/assets/js/status.js' | relative_url }}" defer></script>
+  {% else %}
+  <p class="status-banner">No status data was built into this page. Run <code>make status</code> locally, or wait for the next scheduled deploy.</p>
+  {% endif %}
+</div>

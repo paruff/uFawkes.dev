@@ -1,0 +1,230 @@
+# MIT License
+#
+# Copyright (c) 2026 Phil Ruff
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+# Machine-readable acceptance criteria for the suite release.
+#
+# spec.md stays the human source. `make status-check-drift` fails when an
+# `#### AC-` heading in spec.md has no entry here, or the other way round.
+# `make status` runs every `check: command` entry and writes the results to
+# _data/suite_status.json (see docs/ai-sdlc/suite-status/spec.md, R1-R3).
+#
+# check: command  -> `run` is executed (60s timeout); exit 0 = pass
+# check: manual   -> passes only when `evidence` is a URL (a transcript, run or PR)
+# Evidence for AC-SUITE-01..03 is the PR that recorded the Phase 0 verification
+# in suite-release/plan.md (#101 issues routed and gate status, #102 owner decision).
+# Release order on the status page is the order of first appearance below.
+
+# --- Suite hygiene ---------------------------------------------------------
+- id: AC-SUITE-01
+  release: Suite hygiene
+  title: No public claim is contradicted by a repo
+  check: manual
+  run: ""
+  evidence: "https://github.com/paruff/uFawkes.dev/pull/102"
+
+- id: AC-SUITE-02
+  release: Suite hygiene
+  title: Every tracked issue is routed
+  check: manual
+  run: ""
+  evidence: "https://github.com/paruff/uFawkes.dev/pull/101"
+
+- id: AC-SUITE-03
+  release: Suite hygiene
+  title: Every repo follows, and enforces, the document levels
+  check: manual
+  run: ""
+  evidence: "https://github.com/paruff/uFawkes.dev/pull/101"
+
+- id: AC-SITE-01
+  release: Suite hygiene
+  title: The site lists all seven repos and the matrix is current
+  check: command
+  run: test -f ai/index.md && test -f fawkes/index.md && test -f compatibility/index.md && test -f obs/index.md && test -f pipe/index.md && test -f devx/index.md
+  evidence: ""
+
+# --- AI 2.0 ----------------------------------------------------------------
+- id: AC-AI-01
+  release: AI 2.0
+  title: The devcontainer image can be pinned
+  check: command
+  run: docker manifest inspect ghcr.io/paruff/ufawkesai-devcontainer:2.0.0
+  evidence: ""
+
+- id: AC-AI-02
+  release: AI 2.0
+  title: The template works from "Use this template"
+  check: manual
+  run: ""
+  evidence: ""
+
+- id: AC-AI-03
+  release: AI 2.0
+  title: The 2.0 contract and upgrade path are written down
+  check: command
+  run: curl -fsSL -o /dev/null https://raw.githubusercontent.com/paruff/uFawkesAI/main/docs/ai-sdlc/v2.0.0/spec.md
+  evidence: ""
+
+- id: AC-AI-04
+  release: AI 2.0
+  title: Capability claims match what ships
+  check: manual
+  run: ""
+  evidence: ""
+
+- id: AC-AI-05
+  release: AI 2.0
+  title: Every suite repo pins the image
+  check: command
+  run: bash scripts/checks/ac-ai-05.sh
+  evidence: ""
+
+- id: AC-AI-07
+  release: AI 2.0
+  title: Tests and evals both gate merges
+  check: manual
+  run: ""
+  evidence: ""
+
+- id: AC-AI-09
+  release: AI 2.0
+  title: One hook gate, run the same way everywhere
+  check: manual
+  run: ""
+  evidence: ""
+
+- id: AC-AI-06
+  release: AI 2.0
+  title: Delivery events reach uFawkesObs, or the claim goes
+  check: manual
+  run: ""
+  evidence: ""
+
+- id: AC-AI-08
+  release: AI 2.0
+  title: The CDE's developer experience is measured, not asserted
+  check: manual
+  run: ""
+  evidence: ""
+
+# --- Dojo 0.2 --------------------------------------------------------------
+- id: AC-DOJO-01
+  release: Dojo 0.2
+  title: The curriculum is accurate
+  check: manual
+  run: ""
+  evidence: ""
+
+- id: AC-DOJO-02
+  release: Dojo 0.2
+  title: The "Start here" lab is real
+  check: manual
+  run: ""
+  evidence: ""
+
+- id: AC-DOJO-03
+  release: Dojo 0.2
+  title: The authoring guide covers the evidence for self-paced learning
+  check: manual
+  run: ""
+  evidence: ""
+
+- id: AC-DOJO-04
+  release: Dojo 0.2
+  title: Each later release ships its lab, built from its plan
+  check: manual
+  run: ""
+  evidence: ""
+
+# --- Obs 1.0 ---------------------------------------------------------------
+- id: AC-OBS-01
+  release: Obs 1.0
+  title: Installs cleanly from its README
+  check: manual
+  run: ""
+  evidence: ""
+
+- id: AC-OBS-02
+  release: Obs 1.0
+  title: No open release blockers
+  check: manual
+  run: ""
+  evidence: ""
+
+- id: AC-OBS-03
+  release: Obs 1.0
+  title: The contract is written down
+  check: command
+  run: curl -fsSL -o /dev/null https://raw.githubusercontent.com/paruff/uFawkesObs/main/docs/ai-sdlc/v1.0.0/intent.md
+  evidence: ""
+
+- id: AC-OBS-04
+  release: Obs 1.0
+  title: Announced everywhere, consistently
+  check: manual
+  run: ""
+  evidence: ""
+
+# --- Pipe 2.0 --------------------------------------------------------------
+- id: AC-PIPE-01
+  release: Pipe 2.0
+  title: Claims only what works
+  check: manual
+  run: ""
+  evidence: ""
+
+# --- DevX 0.1 --------------------------------------------------------------
+- id: AC-DEVX-01
+  release: DevX 0.1
+  title: Runs without uFawkesRes
+  check: manual
+  run: ""
+  evidence: ""
+
+# --- fawkes Alpha ----------------------------------------------------------
+- id: AC-FAWKES-01
+  release: fawkes Alpha
+  title: Commit to staging works in one clean run
+  check: manual
+  run: ""
+  evidence: ""
+
+- id: AC-FAWKES-02
+  release: fawkes Alpha
+  title: Two DORA metrics are queryable
+  check: manual
+  run: ""
+  evidence: ""
+
+- id: AC-FAWKES-03
+  release: fawkes Alpha
+  title: No known P0 security issues
+  check: command
+  run: bash scripts/checks/ac-fawkes-03.sh
+  evidence: ""
+
+- id: AC-FAWKES-04
+  release: fawkes Alpha
+  title: Public claims are scoped to Alpha
+  check: manual
+  run: ""
+  evidence: ""

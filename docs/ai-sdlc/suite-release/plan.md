@@ -15,6 +15,7 @@ it.
 | ---------------------------------------- | --------------------------------------------------------------------------------- |
 | Goals, decisions, release bars, sequence | This folder                                                                       |
 | Live task status across all seven repos  | [Project #7, "uFawkes Suite Release"](https://github.com/users/paruff/projects/7) |
+| Live release status page                 | [ufawkes.dev/status](https://ufawkes.dev/status/), built daily from `acceptance.yml` and Project #7 |
 | Per-release scope within a repo          | A milestone per release (e.g. uFawkesAI `v2.0.0`)                                 |
 | One parent issue per release             | A `goal` issue in the releasing repo; its tasks are sub-issues                    |
 | Suite-wide work                          | Issues in uFawkes.dev                                                             |
