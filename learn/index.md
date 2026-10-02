@@ -1,8 +1,8 @@
 ---
 layout: page
-title: Learn | uFawkes Guides
+title: "Learn: uFawkes guides"
 description: Education hub for DORA primers, AI capability guidance, and observability fundamentals for delivery teams.
-og_title: Learn | uFawkes Guides
+og_title: "Learn: uFawkes guides"
 og_description: Read practical primers on DORA, AI capabilities, and observability for modern platform teams.
 og_type: website
 ---

@@ -6,3 +6,4 @@ _site/
 .opencode-skills-consolidated/
 consolidate-agents.sh
 _data/suite_status.json
+status/suite_status.json

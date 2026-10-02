@@ -1,8 +1,8 @@
 ---
 layout: page
-title: Compatibility | uFawkes Stack Versions
+title: "Compatibility: stack versions"
 description: Which release of each uFawkes stack is current, and which versions of the other stacks it has been verified with.
-og_title: Compatibility | uFawkes Stack Versions
+og_title: "Compatibility: stack versions"
 og_description: Current release of each uFawkes stack and what it has been verified with.
 og_type: website
 ---
