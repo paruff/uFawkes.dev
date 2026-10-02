@@ -46,6 +46,11 @@ jobs:
       # build's Pages artifact; nothing is committed to main. A broken script
       # (bad YAML, API or auth error) fails the run; a failing AC does not.
       - name: Suite status
+        id: suite_status
+        # A push must still deploy the site when the status check breaks, but
+        # the failure stays visible (red step plus the warning below). Scheduled
+        # and manual runs fail hard.
+        continue-on-error: ${{ github.event_name == 'push' }}
         env:
           SUITE_STATUS_TOKEN: ${{ secrets.SUITE_STATUS_TOKEN }}
         run: bash scripts/suite-status.sh
@@ -53,10 +58,9 @@ jobs:
       - name: Build with Jekyll
         run: bundle exec jekyll build
 
-      - name: Publish status JSON
-        run: |
-          mkdir -p _site/status
-          cp _data/suite_status.json _site/status/suite_status.json
+      - name: Warn if suite status failed
+        if: steps.suite_status.outcome == 'failure'
+        run: echo "::warning title=Suite status::scripts/suite-status.sh failed; /status/ shows no data until it passes. See the Suite status step."
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5

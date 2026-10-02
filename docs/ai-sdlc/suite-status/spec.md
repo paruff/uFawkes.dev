@@ -46,14 +46,27 @@ failing AC is a result, not a script error.
       "order": 1,
       "acs": { "pass": 3, "fail": 4, "manual_pending": 2, "total": 9 },
       "issues": { "done": 5, "in_progress": 2, "todo": 11, "total": 18 },
-      "blockers": [{ "repo": "uFawkesAI", "number": 111, "title": "...", "url": "..." }],
+      "blockers": [
+        { "repo": "uFawkesAI", "number": 111, "title": "...", "url": "..." }
+      ],
       "routing": { "goal": 6, "nemotron": 7, "flash": 5 },
       "pace": { "closed_last_28d": 8, "weeks_to_done_estimate": 3.5 },
       "ac_results": [
-        { "id": "AC-AI-01", "title": "...", "status": "fail", "detail": "manifest unknown" }
+        {
+          "id": "AC-AI-01",
+          "title": "...",
+          "status": "fail",
+          "detail": "manifest unknown"
+        }
       ],
       "ready": [
-        { "route": "goal", "repo": "uFawkesAI", "number": 111, "title": "...", "url": "..." }
+        {
+          "route": "goal",
+          "repo": "uFawkesAI",
+          "number": 111,
+          "title": "...",
+          "url": "..."
+        }
       ]
     }
   ],
