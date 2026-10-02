@@ -87,8 +87,9 @@ or simulated one.
 - **Verification:** the root-file check passes in every repo, the
   artifact-chain job runs on each repo's PRs, and the release gate's
   checklist links the release folder
-- **Today (2026-10-01):** uFawkesAI and fawkes have no root `INTENT.md`;
-  only uFawkesAI runs the check
+- **Met 2026-10-02:** all seven repos have a root `INTENT.md` and run the
+  check on their PRs with their own paths (verified on each repo's `main`).
+  Not yet a required check
 - **Gate for:** each repo's next release tag
 
 #### AC-SITE-01: The site lists all seven repos and the matrix is current

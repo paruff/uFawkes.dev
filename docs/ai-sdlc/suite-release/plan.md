@@ -92,26 +92,31 @@ basic checks.
 
 ## Phase 0 — Suite hygiene (gate: AC-SUITE-01 recheck, AC-SUITE-02, AC-SUITE-03)
 
-Mostly done in revision 1. What's left:
+Two of three gates are met. **AC-SUITE-01 is not**: the recheck is recorded in
+the spec, and what it must show for this gate is an open owner decision.
+What's left:
 
 - [x] Labels and Project field options above (done 2026-10-02: the routing
       labels exist in all seven repos; `Release` has AI 2.0, Dojo 0.2, fawkes
       Alpha, and "Dojo labs")
 - [ ] Create the issues in [`issues-draft.md`](issues-draft.md), add them to
-      Project #7, and relabel existing issues per the rubric
+      Project #7, and relabel existing issues per the rubric. Done for
+      Phase 0 (AC-SUITE-02 met: all 16 open issues on Project #7 have one
+      routing label; the duplicates are closed). **Not done:** the Phase 1
+      to 6 rows (about 70 issues), which wait for the draft's approval
 - [x] fawkes: mark ADR-004 superseded by ADR-036 (done on `main` since
       2026-09-16)
-- [ ] uFawkesDevX: remove uFawkesRes references from public docs (live docs:
-      uFawkesDevX#69; the Backstage catalog entity and its tests remain)
-- [ ] Document levels (AC-SUITE-03): root `INTENT.md` in uFawkesAI and
-      fawkes (uFawkesAI#136, fawkes#2173); give the template's
-      artifact-chain check a per-repo code-path setting (uFawkesAI#137),
-      then roll it out to the other six repos
-- [ ] Archive ufawkessec (uFawkes.dev #68) and uFawkesRes; their READMEs
-      point to the successor first
-- [ ] uFawkes.dev: retire `/dora/` and `/sec/`, add `/ai/` and `/fawkes/`
-      stubs to the nav (the two old pages were already pointer pages outside
-      the nav; the new pages are in #80)
+- [x] uFawkesDevX: remove uFawkesRes references from public docs (uFawkesDevX#69
+      merged; the Backstage catalog entity and its tests remain, a follow-up)
+- [x] Document levels (AC-SUITE-03), met 2026-10-02: root `INTENT.md` in all
+      seven repos; the template's artifact-chain check has a per-repo
+      code-path setting (uFawkesAI#137); every repo runs it on its PRs with its
+      own `.artifact-chain-paths`. Not yet a required check
+- [x] Archive ufawkessec (uFawkes.dev #68) and uFawkesRes (done 2026-10-02;
+      their READMEs name the successor first, fawkes as a partial one for Res)
+- [x] uFawkes.dev: retire `/dora/` and `/sec/`, add `/ai/` and `/fawkes/`
+      stubs to the nav (#80 merged; the two old pages were already pointer
+      pages outside the nav)
 
 ## Phase 1 — uFawkesAI `v2.0.0` (gate: AC-AI-01..04, AC-AI-06..09, AC-SITE-01)
 
