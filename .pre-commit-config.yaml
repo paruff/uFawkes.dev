@@ -208,7 +208,7 @@ repos:
         entry: scripts/run-unit-tests.sh
         language: script
         stages: [pre-commit]
-        files: ^(scripts/(test-.*|emit-dora-event|check-secret-detection|check-ai-stance|check-dora-vocabulary|run-unit-tests|suite-status|check-status-drift).*|templates/.*\.py)$
+        files: ^(scripts/(test-.*|emit-dora-event|check-secret-detection|check-ai-stance|check-dora-vocabulary|run-unit-tests|suite-status|check-status-drift|check-design-tokens).*|design/tokens\.json|templates/.*\.py)$
         pass_filenames: false
 
       # Suite status: spec.md and acceptance.yml must list the same ACs

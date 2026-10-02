@@ -21,6 +21,7 @@ SUITES=(
   scripts/test-artifact-chain.sh
   scripts/test-dojo-feedback-intent.sh
   scripts/test-suite-status.sh
+  scripts/test-check-design-tokens.sh
 )
 
 failed=0
