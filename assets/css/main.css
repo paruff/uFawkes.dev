@@ -1100,3 +1100,8 @@ a:focus-visible {
     color: #93c5fd;
   }
 }
+
+.stack-hero--green {
+  border-left: 4px solid #16a34a;
+  padding-left: 1rem;
+}
