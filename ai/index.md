@@ -18,7 +18,7 @@ features:
 quick_start:
   - gh repo create my-project --template paruff/uFawkesAI --private --clone
   - cd my-project
-  - claude   # or open it in Copilot, Cursor or Codex; AGENTS.md loads automatically
+  - claude # or open it in Copilot, Cursor or Codex; AGENTS.md loads automatically
 compose_with:
   - name: uFawkesPipe
     url: /pipe/
