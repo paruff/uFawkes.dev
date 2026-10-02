@@ -10,3 +10,12 @@ updates:
     schedule:
       interval: "weekly"
     labels: ["dependencies", "chore"]
+  - package-ecosystem: "pre-commit"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "ci"
+    groups:
+      pre-commit-hooks:
+        patterns: ["*"]
