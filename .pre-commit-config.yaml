@@ -75,8 +75,12 @@ repos:
     hooks:
       - id: prettier
         name: Format with Prettier (same version as CI)
-        entry: npx --yes prettier@3.9.9 --write --ignore-unknown
-        language: system
+        # pre-commit installs Prettier once into its own cached environment.
+        # An `npx` entry raced on its download cache when pre-commit ran
+        # batches of files in parallel in CI ("Unexpected end of input").
+        entry: prettier --write --ignore-unknown
+        language: node
+        additional_dependencies: ["prettier@3.9.9"]
         types_or: [markdown, yaml, json, javascript, css, html]
 
   # ============================================================================
