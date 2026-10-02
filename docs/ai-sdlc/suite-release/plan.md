@@ -90,7 +90,7 @@ basic checks.
   the acceptance check, and what not to touch. If you can't write that
   down, it's a `goal`.
 
-## Phase 0 — Suite hygiene (gate: AC-SUITE-01 recheck, AC-SUITE-02)
+## Phase 0 — Suite hygiene (gate: AC-SUITE-01 recheck, AC-SUITE-02, AC-SUITE-03)
 
 Mostly done in revision 1. What's left:
 
@@ -99,6 +99,9 @@ Mostly done in revision 1. What's left:
       Project #7, and relabel existing issues per the rubric
 - [ ] fawkes: mark ADR-004 superseded by ADR-036
 - [ ] uFawkesDevX: remove uFawkesRes references from public docs
+- [ ] Document levels (AC-SUITE-03): root `INTENT.md` in uFawkesAI and
+      fawkes; give the template's artifact-chain check a per-repo
+      code-path setting, then roll it out to the other six repos
 - [ ] Archive ufawkessec (uFawkes.dev #68) and uFawkesRes; their READMEs
       point to the successor first
 - [ ] uFawkes.dev: retire `/dora/` and `/sec/`, add `/ai/` and `/fawkes/`

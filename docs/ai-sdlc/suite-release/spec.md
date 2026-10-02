@@ -1,6 +1,6 @@
 # Spec: uFawkes Suite Release
 
-**Traces to:** [`intent.md`](intent.md) | **Status:** Draft | **Revision:** 3
+**Traces to:** [`intent.md`](intent.md) | **Status:** Draft | **Revision:** 4
 
 This file defines _what "released" means_ for each of the seven repos. The
 order and phases are in [`plan.md`](plan.md), and live status is in
@@ -8,21 +8,30 @@ order and phases are in [`plan.md`](plan.md), and live status is in
 
 ## 1. Documentation requirements per repo
 
-uFawkesAI's convention has two layers. A **repo-level `INTENT.md`** says
-what the repo is and isn't. **Per-release docs** live in
-`docs/ai-sdlc/<release>/` as `intent.md` → `spec.md` → `plan.md`, and each
-`spec.md` has a `## Design` section. ADRs and `docs/ARCHITECTURE.md` record
-lasting decisions.
+Every repo follows uFawkesAI's `intent → spec → plan` convention, scaled
+to the size of the work:
 
-| Repo            | `INTENT.md` | Release docs                                    | Remaining doc cleanup                                                                                             |
-| --------------- | ----------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| **uFawkes.dev** | ✅          | `docs/ai-sdlc/suite-release/` (this folder)     | Add `/ai/` and `/fawkes/` pages to the nav; retire `/dora/` (ufawkesdora archived) and `/sec/` (merged into Pipe) |
-| **uFawkesAI**   | ✅          | `docs/ai-sdlc/v2.0.0/` ❌                       | Close #36 (superseded by this folder)                                                                             |
-| **uFawkesDojo** | ✅          | `docs/ai-sdlc/compose-curriculum/` ✅; `0.2` ❌ | Rebase `compose-curriculum/plan.md` on the new order: Dojo `0.2` before any stack lab                             |
-| **uFawkesObs**  | ✅          | `docs/ai-sdlc/v1.0.0/` ✅                       | #534 (dead uFawkesRes panels, `TBD` SQL in the tier table)                                                        |
-| **uFawkesPipe** | ✅          | `docs/ai-sdlc/v2.0.0/` ❌                       | Consolidate the 3 spec files, 2 design files and `plan-for-the-day.md`                                            |
-| **uFawkesDevX** | ✅          | `docs/ai-sdlc/v0.1.0/` ❌                       | Move root `specification.md`/`design.md`/`plan.md` in; remove uFawkesRes references                               |
-| **fawkes**      | Optional    | `docs/ai-sdlc/tracer-bullet-alpha/` ❌          | Mark `ADR-004 jenkins 4 ci` superseded by ADR-036                                                                 |
+| Level                | Documents                                                                                                 | Where                     |
+| -------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------- |
+| **Suite**            | intent, spec, plan                                                                                        | this folder               |
+| **Product (repo)**   | `INTENT.md`: what it is and isn't, users, direction. Lasting design is in `docs/ARCHITECTURE.md` and ADRs | repo root                 |
+| **Release**          | intent, spec (with the semver contract), plan. Required before the version tag                            | `docs/ai-sdlc/vX.Y.Z/`    |
+| **Feature or unit**  | `intent.md` always; `spec.md` when it has acceptance criteria; `plan.md` when it changes code             | `docs/ai-sdlc/<feature>/` |
+| **Bug fix or chore** | The issue is the intent and the regression test is the spec. No folder                                    | the issue and PR          |
+
+Each level links to the one above it: a feature's intent names its
+release, and a release's intent names this plan. Each `spec.md` has a
+`## Design` section. AC-SUITE-03 makes this enforceable.
+
+| Repo            | `INTENT.md`                                                     | Release docs                                    | Remaining doc cleanup                                                                                             |
+| --------------- | --------------------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **uFawkes.dev** | ✅                                                              | `docs/ai-sdlc/suite-release/` (this folder)     | Add `/ai/` and `/fawkes/` pages to the nav; retire `/dora/` (ufawkesdora archived) and `/sec/` (merged into Pipe) |
+| **uFawkesAI**   | ❌ (corrected 2026-10-01: only `docs/ai-sdlc/intent.md` exists) | `docs/ai-sdlc/v2.0.0/` ❌                       | Close #36 (superseded by this folder)                                                                             |
+| **uFawkesDojo** | ✅                                                              | `docs/ai-sdlc/compose-curriculum/` ✅; `0.2` ❌ | Rebase `compose-curriculum/plan.md` on the new order: Dojo `0.2` before any stack lab                             |
+| **uFawkesObs**  | ✅                                                              | `docs/ai-sdlc/v1.0.0/` ✅                       | #534 (dead uFawkesRes panels, `TBD` SQL in the tier table)                                                        |
+| **uFawkesPipe** | ✅                                                              | `docs/ai-sdlc/v2.0.0/` ❌                       | Consolidate the 3 spec files, 2 design files and `plan-for-the-day.md`                                            |
+| **uFawkesDevX** | ✅                                                              | `docs/ai-sdlc/v0.1.0/` ❌                       | Move root `specification.md`/`design.md`/`plan.md` in; remove uFawkesRes references                               |
+| **fawkes**      | ❌                                                              | `docs/ai-sdlc/tracer-bullet-alpha/` ❌          | Mark `ADR-004 jenkins 4 ci` superseded by ADR-036                                                                 |
 
 ## 2. Release acceptance criteria
 
@@ -49,6 +58,20 @@ or simulated one.
 - **Verification:** A Project view filtered to items with none of the three
   labels is empty
 - **Gate for:** Phase 0
+
+#### AC-SUITE-03: Every repo follows, and enforces, the document levels
+
+- **Expected:** All seven repos have a root `INTENT.md`. Each runs
+  uFawkesAI's artifact-chain check in CI, configured with its own code
+  paths (the template assumes `src/`, but these repos keep code in Jekyll
+  files, Compose stacks, scripts and Kubernetes manifests). Each has a
+  `docs/ai-sdlc/vX.Y.Z/` folder before it tags `vX.Y.Z`
+- **Verification:** the root-file check passes in every repo, the
+  artifact-chain job runs on each repo's PRs, and the release gate's
+  checklist links the release folder
+- **Today (2026-10-01):** uFawkesAI and fawkes have no root `INTENT.md`;
+  only uFawkesAI runs the check
+- **Gate for:** each repo's next release tag
 
 #### AC-SITE-01: The site lists all seven repos and the matrix is current
 
