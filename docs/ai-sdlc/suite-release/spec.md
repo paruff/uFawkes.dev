@@ -49,6 +49,24 @@ or simulated one.
   the public docs returns only historical, superseded or explicitly labeled
   mentions
 - **Gate for:** every announcement (it's re-checked before each one)
+- **Recheck 2026-10-02: not met.** Counting lines that name a retired term
+  with no qualifier (deprecated, historical, merged, formerly and similar)
+  on each repo's `main`, excluding the suite plan folders and ADRs. Each
+  repo's debt belongs to its own phase:
+
+  | Repo        | Lines | Mostly                                     | Fixed in                                      |
+  | ----------- | ----- | ------------------------------------------ | --------------------------------------------- |
+  | uFawkes.dev | 35    | Internal planning docs; one live claim     | Phase 0 (live claim fixed in #81)             |
+  | uFawkesAI   | 43    | uFawkesDORA and uFawkesSec mentions        | Phase 1                                       |
+  | uFawkesObs  | 147   | Jenkins (61), uFawkesDORA (66), uFawkesRes | Phase 3 (#534 covers the dead Res panels)     |
+  | uFawkesPipe | 79    | uFawkesSec (41), uFawkesRes (24), Jenkins  | Phase 4                                       |
+  | uFawkesDevX | 58    | uFawkesRes in design, plan and spec files  | Phase 0 (live docs in DevX #69); Phase 5 rest |
+  | uFawkesDojo | 162   | Jenkins (147), "four key metrics" (13)     | Phase 2 (#19, Jenkins labeling)               |
+  | fawkes      | 859   | Jenkins (824), "four key metrics" (19)     | Phase 6                                       |
+
+  The count is a ceiling, not a verdict: each line still needs reading to
+  decide whether it is a live claim. The only live false claim found on
+  ufawkes.dev itself was Obs's "Jenkins integration" (fixed in #81).
 
 #### AC-SUITE-02: Every tracked issue is routed
 
