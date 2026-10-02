@@ -18,7 +18,7 @@ FILE="${1:-design/tokens.json}"
   exit 1
 }
 
-python3 - "$FILE" <<'PY'
+python3 - "$FILE" << 'PY'
 import json, re, sys
 
 path = sys.argv[1]
