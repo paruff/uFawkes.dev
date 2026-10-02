@@ -60,14 +60,23 @@ Target: **WCAG 2.1 AA** minimum. AAA where achievable without design compromise.
 
 ### Contrast reference (brand palette)
 
-| Foreground                 | Background | Ratio  | Pass/Fail |
-| -------------------------- | ---------- | ------ | --------- |
-| `#111827` (text primary)   | `#ffffff`  | 16.1:1 | ✅ AAA    |
-| `#374151` (text secondary) | `#ffffff`  | 9.7:1  | ✅ AAA    |
-| `#6b7280` (text muted)     | `#ffffff`  | 5.9:1  | ✅ AA     |
-| `#16a34a` (brand green)    | `#ffffff`  | 4.7:1  | ✅ AA     |
-| `#ffffff`                  | `#16a34a`  | 4.7:1  | ✅ AA     |
-| `#111827`                  | `#f9fafb`  | 15.3:1 | ✅ AAA    |
+| Foreground                     | Background | Ratio   | Pass/Fail                              |
+| ------------------------------ | ---------- | ------- | -------------------------------------- |
+| `#111827` (text primary)       | `#ffffff`  | 17.74:1 | ✅ AAA                                 |
+| `#374151` (text secondary)     | `#ffffff`  | 10.31:1 | ✅ AAA                                 |
+| `#6b7280` (text muted)         | `#ffffff`  | 4.83:1  | ✅ AA                                  |
+| `#4f46e5` (Indigo, action)     | `#ffffff`  | 6.29:1  | ✅ AA                                  |
+| `#ffffff`                      | `#4f46e5`  | 6.29:1  | ✅ AA                                  |
+| `#c2410c` (Ember, orange text) | `#ffffff`  | 5.18:1  | ✅ AA                                  |
+| `#f06300` (Flame, brand)       | `#ffffff`  | 3.24:1  | ❌ text, ✅ graphics (3:1)             |
+| `#16a34a` (old green)          | `#ffffff`  | 3.30:1  | ❌ text. Don't use for text or buttons |
+| `#15803d` (green, pass)        | `#ffffff`  | 5.02:1  | ✅ AA                                  |
+| `#111827`                      | `#f9fafb`  | 16.98:1 | ✅ AAA                                 |
+
+Ratios computed from the hex values (WCAG relative luminance); an earlier
+version of this table listed `#16a34a` at 4.7:1, which is wrong. The palette
+and its checked pairs live in `DESIGN.md` and `design/tokens.json`; run
+`make design-check` after changing a colour there.
 
 ⚠️ Always verify contrast with a tool when adding new color combinations.
 
@@ -80,7 +89,7 @@ Add to `assets/css/main.css` (append only):
 ```css
 /* Global focus ring — append to end of main.css */
 :focus-visible {
-  outline: 2px solid #16a34a;
+  outline: 2px solid #4f46e5;
   outline-offset: 2px;
 }
 
@@ -134,7 +143,7 @@ Add CSS:
   left: -9999px;
   z-index: 999;
   padding: 8px 16px;
-  background: #16a34a;
+  background: #4f46e5;
   color: #ffffff;
   font-weight: 600;
 }

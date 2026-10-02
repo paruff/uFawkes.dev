@@ -69,7 +69,7 @@ Colours sampled from a 128 px downscale, so treat them as approximate:
 | Phoenix, body      | `#f06300` |
 | Phoenix, highlight | `#fc8200` |
 
-I could not identify the typeface in the image (see D3).
+The lettering in the image is image-generated, not a named font (see D3).
 
 ## 3. Colour: two tiers
 
@@ -301,12 +301,22 @@ which keeps it distinctive.
 
 ### D3: The logo typeface
 
-**Recommendation: don't depend on it, and ask whoever made the image.**
+**Resolved by the owner (2026-10-02): the phoenix image was created with
+ChatGPT, about a year ago.** That changes the question.
 
-- Use the system font stack for the site and the design system (already the
-  case). The logo typeface is then only needed inside the SVG wordmark.
-- I could not identify it. Ask the creator of the image for the name and
-  licence before reusing it anywhere as live text.
+- The lettering in an AI-generated image is drawn by the image model, not set
+  in a font. There is probably no named, licensed typeface to find, so there is
+  nothing to license. It also means the "FAWKES" lettering cannot be reused as
+  live text, and the wordmark should be redrawn properly.
+- **Recommendation:** have the final wordmark drawn from scratch in vector
+  (with the phoenix and flame, see D2) and keep using the system font stack for
+  the site and the design system.
+- **Ownership is a separate question I cannot settle.** Whether the owner holds
+  the rights to a generated image depends on the generator's terms of use and on
+  copyright law, which differs by country and was still developing when I last
+  looked. Please check the current terms of the service used and, if the mark
+  matters commercially, take legal advice. A mark redrawn by a designer avoids
+  the question.
 
 ### D4: Where does it live?
 
@@ -319,14 +329,22 @@ which keeps it distinctive.
 - Other repos link here from their README and `AGENTS.md` and do not copy the
   file (see the name collision in section 1).
 
-### Open points that are still the owner's
+### Decisions recorded (2026-10-02)
 
-| #   | Decision                                                                  | Recommendation                                    |
-| --- | ------------------------------------------------------------------------- | ------------------------------------------------- |
-| D5  | Does the Fawkes docs site adopt these tokens?                             | Yes, so the products read as one family           |
-| D6  | Link colour                                                               | Indigo 600 (resolved by D1)                       |
-| D7  | May I open small pointer PRs in the six other repos?                      | Yes, one PR per repo, README and `AGENTS.md` only |
-| D8  | Is the interim flame acceptable until a designer delivers the final mark? | Yes, flagged as interim                           |
+| #   | Decision                                                                  | Outcome                                                            |
+| --- | ------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| D3  | The logo typeface                                                         | Phoenix made with ChatGPT. Redraw the wordmark; see D3 above       |
+| D5  | Does the Fawkes docs site adopt these tokens?                             | **Yes** (owner). The Fawkes docs and design system will follow     |
+| D6  | Link colour                                                               | Indigo 600 (resolved by D1)                                        |
+| D7  | May I open small pointer PRs in the six other repos?                      | **Approved** (owner): one PR per repo, README and `AGENTS.md` only |
+| D8  | Is the interim flame acceptable until a designer delivers the final mark? | **Yes** (owner), flagged as interim                                |
+
+### Still open
+
+- **The primary button colour.** The owner found the Indigo button "not what I
+  expected". Six alternatives with computed contrast were compared on
+  2026-10-02 (Indigo, Flame with a dark label, Ember, Night, green, teal). No
+  choice has been made yet.
 
 ## 12. Implementing this
 
@@ -338,7 +356,7 @@ migration). Order, one small PR each:
 2. **ufawkes.dev:** buttons, links, focus and nav to Indigo, the flame as
    favicon and header mark, green only for pass/live. `main.css` contains 24
    occurrences of the old green.
-3. **Pointer PRs** in the other six repos (needs D7).
+3. **Pointer PRs** in the other six repos (D7 approved).
 4. **Repos with their own CSS:** Dojo and the DevX API page move from the
    violet gradient to the tokens; the Fawkes design system adopts the
    corrected primary and generates its tokens from `tokens.json`.
@@ -349,8 +367,9 @@ migration). Order, one small PR each:
 - Inventory: shallow clones of the default branch of each repo, 2026-10-02.
   File and colour counts come from searching those clones, so they cover
   tracked files only and may miss colours produced at runtime.
-- Phoenix image: `paruff/fawkes`, `docs/assets/images/fawkes-idp.png`. I did
-  not establish when it was created or last changed.
+- Phoenix image: `paruff/fawkes`, `docs/assets/images/fawkes-idp.png`. Created
+  with ChatGPT about a year before 2026-10-02, per the owner. I did not
+  establish the exact date or which version of the generator.
 - Indigo, neutral and status scales: the Fawkes design system,
   `design-system/src/tokens/colors.ts` (indigo `50` to `900`), and this
   site's existing `main.css`.
