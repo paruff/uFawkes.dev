@@ -3,7 +3,7 @@ layout: stack
 title: uFawkesObs
 stack_name: uFawkesObs
 stack_color: blue
-description: "Deploy Prometheus + Grafana observability in 60 seconds. DORA dashboards, AI metrics, and Jenkins integration for AI-enabled delivery teams."
+description: "Deploy Prometheus + Grafana observability in 60 seconds. DORA dashboards, AI metrics, and deployment-event collectors for GitHub Actions and Woodpecker CI."
 hero: Prometheus + Grafana + AI observability. 60 seconds to running.
 summary: Operational telemetry, unified DORA dashboards, and AI delivery visibility in one starter stack.
 repo_url: https://github.com/paruff/ufawkesobs
@@ -13,7 +13,7 @@ features:
   - Value stream mapping that connects delivery changes to team outcomes
   - AI metrics for copilots, agents, and assisted workflows
   - Alerting defaults for platform health and release flow
-  - Jenkins integration for CI telemetry and deployment traces
+  - Deployment-event collectors for GitHub Actions, Woodpecker CI, and manual incident reports
   - Education layer that explains what the signals mean
 quick_start:
   - git clone https://github.com/paruff/ufawkesobs.git
