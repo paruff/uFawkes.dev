@@ -47,21 +47,21 @@ layout: default
   {% unless page.coming_soon %}
     <section class="stack-grid stack-section">
       <article class="stack-card">
-        <h2>What you get</h2>
-        <ul class="stack-feature-list">
-          {% for feature in page.features %}
-            <li>{{ feature }}</li>
-          {% endfor %}
-        </ul>
-      </article>
-
-      <article class="stack-card">
         <h2>Quick start</h2>
         <ol class="stack-command-list">
           {% for command in page.quick_start %}
             <li><code>{{ command }}</code></li>
           {% endfor %}
         </ol>
+      </article>
+
+      <article class="stack-card">
+        <h2>What you get</h2>
+        <ul class="stack-feature-list">
+          {% for feature in page.features %}
+            <li>{{ feature }}</li>
+          {% endfor %}
+        </ul>
       </article>
     </section>
 

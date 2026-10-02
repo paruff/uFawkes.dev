@@ -1433,3 +1433,89 @@ a:focus-visible {
     color: #d1d5db;
   }
 }
+
+/* UX audit fixes: desktop navigation, overflow, contrast */
+.main-nav__link--accent,
+.main-nav__link[aria-current="page"] {
+  color: #15803d;
+}
+
+.hero-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.hero-copy {
+  max-width: 44rem;
+}
+
+.stack-command-list code {
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 768px) {
+  .nav-toggle {
+    display: none;
+  }
+
+  .main-nav {
+    display: block;
+    position: static;
+    width: auto;
+    margin-left: auto;
+    padding: 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .main-nav__list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.25rem;
+  }
+
+  .main-nav__item + .main-nav__item {
+    margin-top: 0;
+  }
+
+  .main-nav__item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .main-nav__group-title {
+    padding: 0.45rem 0.25rem 0.45rem 0.75rem;
+  }
+
+  .main-nav__group-list {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .main-nav__link,
+  .main-nav__link--child {
+    padding: 0.55rem 0.75rem;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-layout,
+  .stack-grid,
+  .capability-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .page-content table {
+    display: block;
+    overflow-x: auto;
+  }
+}

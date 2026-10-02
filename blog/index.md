@@ -1,6 +1,7 @@
 ---
 layout: page
 title: Build in public blog
+description: "Notes from building the uFawkes platform engineering stacks in the open: decisions, results and what went wrong."
 permalink: /blog/
 ---
 

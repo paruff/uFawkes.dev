@@ -1,3 +1,6 @@
 # Jekyll Liquid templates — not valid HTML, Prettier's parser can't handle Liquid tags
 _layouts/
 _includes/
+
+# Liquid page (renders the suite status data); not valid HTML for Prettier
+status/index.html

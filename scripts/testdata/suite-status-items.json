@@ -1,8 +1,80 @@
 [
-  {"release":"AI 2.0","status":"Done","number":1,"title":"Done one","state":"CLOSED","url":"https://github.com/paruff/uFawkesAI/issues/1","repo":"uFawkesAI","createdAt":"2026-09-01T00:00:00Z","closedAt":"2026-09-20T00:00:00Z","assigned":false,"labels":["goal"]},
-  {"release":"AI 2.0","status":"Done","number":2,"title":"Done two","state":"CLOSED","url":"https://github.com/paruff/uFawkesAI/issues/2","repo":"uFawkesAI","createdAt":"2026-09-01T00:00:00Z","closedAt":"2026-09-25T00:00:00Z","assigned":false,"labels":["model:mimo-v2.6-flash"]},
-  {"release":"AI 2.0","status":"Done","number":3,"title":"Done three","state":"CLOSED","url":"https://github.com/paruff/uFawkesAI/issues/3","repo":"uFawkesAI","createdAt":"2026-09-02T00:00:00Z","closedAt":"2026-09-28T00:00:00Z","assigned":false,"labels":["model:nemotron-3-ultra"]},
-  {"release":"AI 2.0","status":"In Progress","number":111,"title":"Publish the image with SemVer tags","state":"OPEN","url":"https://github.com/paruff/uFawkesAI/issues/111","repo":"uFawkesAI","createdAt":"2026-09-10T00:00:00Z","closedAt":null,"assigned":true,"labels":["goal","release-blocker"]},
-  {"release":"AI 2.0","status":"Todo","number":28,"title":"Placeholder audit CI check","state":"OPEN","url":"https://github.com/paruff/uFawkesAI/issues/28","repo":"uFawkesAI","createdAt":"2026-09-10T00:00:00Z","closedAt":null,"assigned":false,"labels":["model:nemotron-3-ultra"]},
-  {"release":"Dojo 0.2","status":"Todo","number":19,"title":"Five DORA metrics","state":"OPEN","url":"https://github.com/paruff/uFawkesDojo/issues/19","repo":"uFawkesDojo","createdAt":"2026-09-12T00:00:00Z","closedAt":null,"assigned":false,"labels":["model:mimo-v2.6-flash"]}
+  {
+    "release": "AI 2.0",
+    "status": "Done",
+    "number": 1,
+    "title": "Done one",
+    "state": "CLOSED",
+    "url": "https://github.com/paruff/uFawkesAI/issues/1",
+    "repo": "uFawkesAI",
+    "createdAt": "2026-09-01T00:00:00Z",
+    "closedAt": "2026-09-20T00:00:00Z",
+    "assigned": false,
+    "labels": ["goal"]
+  },
+  {
+    "release": "AI 2.0",
+    "status": "Done",
+    "number": 2,
+    "title": "Done two",
+    "state": "CLOSED",
+    "url": "https://github.com/paruff/uFawkesAI/issues/2",
+    "repo": "uFawkesAI",
+    "createdAt": "2026-09-01T00:00:00Z",
+    "closedAt": "2026-09-25T00:00:00Z",
+    "assigned": false,
+    "labels": ["model:mimo-v2.6-flash"]
+  },
+  {
+    "release": "AI 2.0",
+    "status": "Done",
+    "number": 3,
+    "title": "Done three",
+    "state": "CLOSED",
+    "url": "https://github.com/paruff/uFawkesAI/issues/3",
+    "repo": "uFawkesAI",
+    "createdAt": "2026-09-02T00:00:00Z",
+    "closedAt": "2026-09-28T00:00:00Z",
+    "assigned": false,
+    "labels": ["model:nemotron-3-ultra"]
+  },
+  {
+    "release": "AI 2.0",
+    "status": "In Progress",
+    "number": 111,
+    "title": "Publish the image with SemVer tags",
+    "state": "OPEN",
+    "url": "https://github.com/paruff/uFawkesAI/issues/111",
+    "repo": "uFawkesAI",
+    "createdAt": "2026-09-10T00:00:00Z",
+    "closedAt": null,
+    "assigned": true,
+    "labels": ["goal", "release-blocker"]
+  },
+  {
+    "release": "AI 2.0",
+    "status": "Todo",
+    "number": 28,
+    "title": "Placeholder audit CI check",
+    "state": "OPEN",
+    "url": "https://github.com/paruff/uFawkesAI/issues/28",
+    "repo": "uFawkesAI",
+    "createdAt": "2026-09-10T00:00:00Z",
+    "closedAt": null,
+    "assigned": false,
+    "labels": ["model:nemotron-3-ultra"]
+  },
+  {
+    "release": "Dojo 0.2",
+    "status": "Todo",
+    "number": 19,
+    "title": "Five DORA metrics",
+    "state": "OPEN",
+    "url": "https://github.com/paruff/uFawkesDojo/issues/19",
+    "repo": "uFawkesDojo",
+    "createdAt": "2026-09-12T00:00:00Z",
+    "closedAt": null,
+    "assigned": false,
+    "labels": ["model:mimo-v2.6-flash"]
+  }
 ]

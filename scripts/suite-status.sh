@@ -194,6 +194,10 @@ jq -n --slurpfile acs "$WORK/results.jsonl" --slurpfile items "$WORK/items.json"
   ' > "$WORK/out.json" || die "could not assemble the status document"
 
 mv "$WORK/out.json" "$OUT"
+# Also served as /status/suite_status.json (static file; no front matter, so Jekyll copies it as-is).
+if [[ "$OUT" == "_data/suite_status.json" ]]; then
+  cp "$OUT" status/suite_status.json
+fi
 
 # --- 4. terminal summary ----------------------------------------------------
 echo "Suite status as of $NOW  ->  $OUT"
