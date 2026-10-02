@@ -135,6 +135,9 @@ What's left:
 5. Retire pre-commit.ci (AC-AI-09): pre-bake the hook environments into
    the image, make Pre-flight required, add the autoupdate workflow, and
    sync the change to every repo.
+   The follow-on, running every feasible check earlier and alerting when
+   one isn't installed or doesn't run, is planned in
+   [`docs/ai-sdlc/shift-left/`](../shift-left/plan.md).
 6. Run the "Use this template" test (AC-AI-02) on `v2.0.0-rc.1`.
 7. Tag `v2.0.0`, then run the `release` agent: GitHub Release with the image
    digest, the ufawkes.dev `/ai/` page, and dev.to and LinkedIn drafts.
