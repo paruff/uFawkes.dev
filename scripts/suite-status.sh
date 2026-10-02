@@ -28,16 +28,19 @@ OWNER="paruff"
 PROJECT=7
 TIMEOUT=60
 
-die() { echo "suite-status: $*" >&2; exit 1; }
+die() {
+  echo "suite-status: $*" >&2
+  exit 1
+}
 
-command -v jq >/dev/null || die "jq is required"
-command -v python3 >/dev/null || die "python3 is required"
+command -v jq > /dev/null || die "jq is required"
+command -v python3 > /dev/null || die "python3 is required"
 
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 
 # --- 1. acceptance criteria -------------------------------------------------
-python3 - "$ACS" >"$WORK/acs.json" <<'PY' || die "cannot parse $ACS"
+python3 - "$ACS" > "$WORK/acs.json" << 'PY' || die "cannot parse $ACS"
 import json, sys, yaml
 data = yaml.safe_load(open(sys.argv[1]))
 if not isinstance(data, list):
@@ -51,16 +54,16 @@ for ac in data:
 json.dump(data, sys.stdout)
 PY
 
-: >"$WORK/results.jsonl"
+: > "$WORK/results.jsonl"
 n="$(jq length "$WORK/acs.json")"
 for ((i = 0; i < n; i++)); do
   ac="$(jq -c ".[$i]" "$WORK/acs.json")"
-  id="$(jq -r .id <<<"$ac")"
-  check="$(jq -r .check <<<"$ac")"
+  id="$(jq -r .id <<< "$ac")"
+  check="$(jq -r .check <<< "$ac")"
   status="pass"
   detail=""
   if [[ "$check" == "manual" ]]; then
-    ev="$(jq -r '.evidence // ""' <<<"$ac")"
+    ev="$(jq -r '.evidence // ""' <<< "$ac")"
     if [[ "$ev" =~ ^https?:// ]]; then
       status="pass"
       detail="$ev"
@@ -72,7 +75,7 @@ for ((i = 0; i < n; i++)); do
     status="fail"
     detail="skipped"
   else
-    run="$(jq -r '.run // ""' <<<"$ac")"
+    run="$(jq -r '.run // ""' <<< "$ac")"
     [[ -n "$run" ]] || die "$id: check is command but run is empty"
     set +e
     out="$(timeout "$TIMEOUT" bash -c "$run" 2>&1)"
@@ -88,14 +91,14 @@ for ((i = 0; i < n; i++)); do
     fi
   fi
   jq -c --arg status "$status" --arg detail "$detail" \
-    '{id, release, title, status: $status, detail: $detail}' <<<"$ac" >>"$WORK/results.jsonl"
+    '{id, release, title, status: $status, detail: $detail}' <<< "$ac" >> "$WORK/results.jsonl"
 done
 
 # --- 2. project items -------------------------------------------------------
 if [[ -n "${STATUS_ITEMS_FILE:-}" ]]; then
   cp "$STATUS_ITEMS_FILE" "$WORK/items.json"
 else
-  command -v gh >/dev/null || die "gh is required"
+  command -v gh > /dev/null || die "gh is required"
   export GH_TOKEN="${SUITE_STATUS_TOKEN:-${GH_TOKEN:-}}"
   [[ -n "$GH_TOKEN" ]] || die "no token: set SUITE_STATUS_TOKEN (fine-grained PAT, read:project)"
   # shellcheck disable=SC2016
@@ -117,7 +120,7 @@ else
     } }
   }'
   gh api graphql --paginate --slurp -f query="$QUERY" -F owner="$OWNER" -F number="$PROJECT" \
-    >"$WORK/raw.json" || die "Project #$PROJECT query failed"
+    > "$WORK/raw.json" || die "Project #$PROJECT query failed"
   jq '[ .[].data.user.projectV2.items.nodes[]
         | select(.content.number != null)
         | { release: (.release.name // ""), status: (.status.name // ""),
@@ -125,7 +128,7 @@ else
             url: .content.url, repo: .content.repository.name,
             createdAt: .content.createdAt, closedAt: .content.closedAt,
             assigned: (.content.assignees.totalCount > 0),
-            labels: [.content.labels.nodes[].name] } ]' "$WORK/raw.json" >"$WORK/items.json" \
+            labels: [.content.labels.nodes[].name] } ]' "$WORK/raw.json" > "$WORK/items.json" \
     || die "cannot parse the Project #$PROJECT response"
 fi
 
@@ -188,7 +191,7 @@ jq -n --slurpfile acs "$WORK/results.jsonl" --slurpfile items "$WORK/items.json"
                 | map(. as $d | { date: ($d | day),
                     done: ($all | map(select(.closedAt != null and ((.closedAt | epoch) <= $d))) | length),
                     total: ($all | map(select((.createdAt | epoch) <= $d)) | length) }) ) }
-  ' >"$WORK/out.json" || die "could not assemble the status document"
+  ' > "$WORK/out.json" || die "could not assemble the status document"
 
 mv "$WORK/out.json" "$OUT"
 

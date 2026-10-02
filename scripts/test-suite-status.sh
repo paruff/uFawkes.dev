@@ -9,10 +9,13 @@ TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 fails=0
 check() { # check <description> <jq -e filter> <file>
-  if jq -e "$2" "$3" >/dev/null; then echo "  ok   $1"; else echo "  FAIL $1"; fails=$((fails + 1)); fi
+  if jq -e "$2" "$3" > /dev/null; then echo "  ok   $1"; else
+    echo "  FAIL $1"
+    fails=$((fails + 1))
+  fi
 }
 
-cat >"$TMP/acs.yml" <<'YML'
+cat > "$TMP/acs.yml" << 'YML'
 - id: AC-T-01
   release: Alpha
   title: Passing command
@@ -41,7 +44,7 @@ YML
 
 # AC-STATUS-02: output matches the R3 shape. Fixture releases are "Alpha" and "AI 2.0".
 STATUS_ACS="$TMP/acs.yml" STATUS_ITEMS_FILE=scripts/testdata/suite-status-items.json \
-  STATUS_OUT="$TMP/out.json" STATUS_NOW=2026-10-02T06:00:00Z bash scripts/suite-status.sh >/dev/null
+  STATUS_OUT="$TMP/out.json" STATUS_NOW=2026-10-02T06:00:00Z bash scripts/suite-status.sh > /dev/null
 echo "R3 shape:"
 check "top-level keys" 'keys == ["burnup","generated_at","next_release","releases","run_url"]' "$TMP/out.json"
 check "release keys" '.releases | all(has("name","order","acs","issues","blockers","routing","pace","ac_results"))' "$TMP/out.json"
@@ -54,7 +57,7 @@ check "manual without evidence is pending" '.releases[1].ac_results[0].status=="
 check "next release is the first not fully passing" '.next_release=="Alpha"' "$TMP/out.json"
 
 # Project data: use the fixture with matching release names.
-cat >"$TMP/acs2.yml" <<'YML'
+cat > "$TMP/acs2.yml" << 'YML'
 - id: AC-T-10
   release: AI 2.0
   title: Command
@@ -69,7 +72,7 @@ cat >"$TMP/acs2.yml" <<'YML'
   evidence: ""
 YML
 STATUS_ACS="$TMP/acs2.yml" STATUS_ITEMS_FILE=scripts/testdata/suite-status-items.json \
-  STATUS_OUT="$TMP/out2.json" STATUS_NOW=2026-10-02T06:00:00Z bash scripts/suite-status.sh >/dev/null
+  STATUS_OUT="$TMP/out2.json" STATUS_NOW=2026-10-02T06:00:00Z bash scripts/suite-status.sh > /dev/null
 echo "Project data:"
 check "issue counts" '.releases[0].issues == {"done":3,"in_progress":1,"todo":1,"total":5}' "$TMP/out2.json"
 check "blocker listed" '.releases[0].blockers | length == 1 and .[0].number == 111' "$TMP/out2.json"
@@ -81,24 +84,29 @@ check "burn-up ends at now with totals" '.burnup[-1] == {"date":"2026-10-02","do
 
 # AC-STATUS-03: a broken script (bad YAML) exits non-zero.
 echo "Script errors:"
-printf 'not: [a list' >"$TMP/bad.yml"
+printf 'not: [a list' > "$TMP/bad.yml"
 if STATUS_ACS="$TMP/bad.yml" STATUS_ITEMS_FILE=scripts/testdata/suite-status-items.json \
-  STATUS_OUT="$TMP/bad.json" bash scripts/suite-status.sh >/dev/null 2>&1; then
-  echo "  FAIL bad YAML should exit non-zero"; fails=$((fails + 1))
+  STATUS_OUT="$TMP/bad.json" bash scripts/suite-status.sh > /dev/null 2>&1; then
+  echo "  FAIL bad YAML should exit non-zero"
+  fails=$((fails + 1))
 else
   echo "  ok   bad YAML exits non-zero"
 fi
 
 # AC-STATUS-01: drift check fails on a spec AC with no entry.
 echo "Drift check:"
-printf '#### AC-X-01: a\n#### AC-X-02: b\n' >"$TMP/spec.md"
-printf -- '- id: AC-X-01\n' >"$TMP/drift.yml"
-if SPEC="$TMP/spec.md" ACS="$TMP/drift.yml" bash scripts/check-status-drift.sh >/dev/null 2>&1; then
-  echo "  FAIL drift should be detected"; fails=$((fails + 1))
+printf '#### AC-X-01: a\n#### AC-X-02: b\n' > "$TMP/spec.md"
+printf -- '- id: AC-X-01\n' > "$TMP/drift.yml"
+if SPEC="$TMP/spec.md" ACS="$TMP/drift.yml" bash scripts/check-status-drift.sh > /dev/null 2>&1; then
+  echo "  FAIL drift should be detected"
+  fails=$((fails + 1))
 else
   echo "  ok   spec AC without entry fails"
 fi
-bash scripts/check-status-drift.sh >/dev/null && echo "  ok   real spec and acceptance.yml are in sync"
+bash scripts/check-status-drift.sh > /dev/null && echo "  ok   real spec and acceptance.yml are in sync"
 
-if [[ "$fails" -ne 0 ]]; then echo "test-suite-status: $fails FAILED"; exit 1; fi
+if [[ "$fails" -ne 0 ]]; then
+  echo "test-suite-status: $fails FAILED"
+  exit 1
+fi
 echo "test-suite-status: all checks passed ✅"

@@ -27,6 +27,6 @@ if [[ -n "$extra" ]]; then
   fail=1
 fi
 if [[ "$fail" -eq 0 ]]; then
-  echo "check-status-drift: $(wc -l <<<"$spec_ids" | tr -d ' ') ACs in sync."
+  echo "check-status-drift: $(wc -l <<< "$spec_ids" | tr -d ' ') ACs in sync."
 fi
 exit "$fail"

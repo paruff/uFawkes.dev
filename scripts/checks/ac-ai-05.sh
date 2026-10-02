@@ -11,10 +11,10 @@ for repo in "${REPOS[@]}"; do
     bad=1
     continue
   fi
-  if grep -q 'ufawkesai-devcontainer:latest' <<<"$body"; then
+  if grep -q 'ufawkesai-devcontainer:latest' <<< "$body"; then
     echo "$repo: still uses :latest"
     bad=1
-  elif ! grep -qE 'ufawkesai-devcontainer(:2\.0\.0|@sha256:)' <<<"$body"; then
+  elif ! grep -qE 'ufawkesai-devcontainer(:2\.0\.0|@sha256:)' <<< "$body"; then
     echo "$repo: does not pin ufawkesai-devcontainer to 2.0.0 or a digest"
     bad=1
   fi
