@@ -27,3 +27,10 @@ clean: ## Remove Jekyll build output, agent tooling caches, and generated report
 	find . -name '*.pyc' -delete
 	rm -f ci-diagnosis.md ci-fix-report.md
 	@echo "Cleaned Jekyll build output and agent tooling artifacts"
+
+# Suite status dashboard (docs/ai-sdlc/suite-status/)
+status: ## Run the suite acceptance checks and write _data/suite_status.json
+	@bash scripts/suite-status.sh
+
+status-check-drift: ## Fail if suite-release/spec.md and acceptance.yml disagree
+	@bash scripts/check-status-drift.sh

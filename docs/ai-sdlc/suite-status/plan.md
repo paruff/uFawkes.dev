@@ -1,7 +1,7 @@
 # Plan: Suite status dashboard
 
 **Traces to:** [`spec.md`](spec.md) → [`intent.md`](intent.md) |
-**Status:** Draft | **Revision:** 1
+**Status:** Implemented in code, awaiting owner steps | **Revision:** 2
 
 Five small PRs, each independently mergeable. It can run in parallel with
 the suite release's Phase 1, and it's most useful if it lands early.
@@ -50,3 +50,19 @@ repository secret. That's an account action I can't take for you.
 | Slow or flaky AC checks (registry, network) make it noisy | A 60s timeout per check; a timeout shows as "fail: timed out", not a crash    |
 | `acceptance.yml` drifts from `spec.md`                    | The drift check gates PRs (AC-STATUS-01)                                      |
 | The pace estimate is read as a promise                    | Labeled "estimate"; hidden when there's too little data                       |
+
+## Implementation status
+
+PRs 1, 2, 3, 4 and 5 are implemented together on one branch. What is
+verified and what is not:
+
+- **Verified offline:** the drift check, the R3 JSON shape, the pace and
+  burn-up arithmetic, and the failing-AC / broken-script behavior
+  (`scripts/test-suite-status.sh`, part of `make` unit tests). The page
+  builds and renders without horizontal scroll at 1100, 767 and 640px.
+- **Not verified:** the live Project #7 GraphQL query (no token in the
+  build environment), the scheduled runs (AC-STATUS-04), the
+  `Accessibility Testing` check (AC-STATUS-06) and AC-STATUS-03's two
+  throwaway PRs.
+- **Open for the owner:** create the `SUITE_STATUS_TOKEN` secret; PR 2b, the
+  wireframe review with real readers (AC-STATUS-07), was not done.

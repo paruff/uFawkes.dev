@@ -5,3 +5,4 @@ _site/
 # OpenCode agent/skill infrastructure (lives at ~/.config/opencode/)
 .opencode-skills-consolidated/
 consolidate-agents.sh
+_data/suite_status.json

@@ -503,6 +503,7 @@ gemini
 [ ] Blockers: none
 [ ] Next task: GitOps agent (Phase 4) — create opencode GitOps agent
 [ ] PR 4 plan: .opencode/plans/pr4-plan.md
+[ ] Current suite status (machine-readable, refreshed daily): https://ufawkes.dev/status/suite_status.json — read it instead of re-querying Project #7
 [ ] Suite release plan: docs/ai-sdlc/suite-release/ (docs/roadmap.md is retired)
 [ ] GitOps plan: .opencode/plans/gitops-migration.md
 ```
