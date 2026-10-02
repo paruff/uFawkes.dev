@@ -187,6 +187,28 @@ fawkes work runs in parallel with Phases 1–5. Only the release waits.
    Tekton references.
 6. Release, announce, and add fawkes to the matrix as the graduation path.
 
+### After Alpha: becoming uFawkesRes's successor (tracked, not promised)
+
+These are not part of the Alpha gate, and no date is promised. uFawkesRes is
+deprecated and its README names fawkes as a _partial_ successor. fawkes
+already covers two of uFawkesRes's four roles: shared PostgreSQL (CloudNativePG,
+`platform/apps/postgresql`) and ingress (`ingress-nginx`). Closing the
+gap means three upgrades:
+
+1. **Valkey caching.** A shared cache service on the cluster. Nothing ships
+   today outside the deferred apps.
+2. **Broad SSO.** One sign-in across the platform's apps, filling the role
+   Authelia had. Nothing ships today outside the deferred apps. This is
+   security-sensitive, so a decision (ADR) comes first.
+3. **Upgrade from pre-alpha Kubernetes.** Today local k3d evaluation works
+   and cloud production doesn't (`v0.3.95`). The path from there to a
+   cloud-capable Beta needs defining before anything depends on it.
+
+Until these land, the Docker Compose stacks don't gain a successor from
+fawkes: uFawkesDevX's database question stays on uFawkesDevX#57. When an
+item lands, update the table in uFawkesRes's README, which then names fawkes
+without the "partial".
+
 ## Verification Strategy
 
 | Criterion        | Evidence                                          | Collected in              |

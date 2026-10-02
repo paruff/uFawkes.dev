@@ -111,18 +111,21 @@ Once these exist on Project #7, delete this file.
 
 ## Phase 6 — fawkes Tracer Bullet Alpha + Dojo `0.6`
 
-| Repo        | Issue        | Title                                                                 | Route | Notes                                             |
-| ----------- | ------------ | --------------------------------------------------------------------- | ----- | ------------------------------------------------- |
-| fawkes      | #1804        | Retitle: **goal: fawkes Tracer Bullet Alpha release**                 | G     | Parent. AC-FAWKES-01..04. #1808 becomes its child |
-| fawkes      | #2004, #1797 | P0 security: extract-zip; CHANGE_ME credentials                       | G     | Never OpenCode                                    |
-| fawkes      | #2130        | Grafana can't query its Prometheus (root cause unknown)               | G     | Debugging                                         |
-| fawkes      | #1572, #1919 | DORA DF/LT queryable                                                  | G     | Live k8s verification                             |
-| fawkes      | #1856, #1858 | tunnel; one continuous gitops-promote run                             | G     | Live infra                                        |
-| fawkes      | #1857        | Alertmanager crash-loop → chat                                        | U     | Known target; no secret in the issue              |
-| fawkes      | #1948        | docs: CFR methodology in METRICS.md                                   | U     |                                                   |
-| fawkes      | NEW          | docs: scope README to Alpha; `docs/ai-sdlc/tracer-bullet-alpha/`      | G     | Public-claims decision                            |
-| uFawkesDojo | NEW          | content: Green Belt "why Kubernetes now" + Tekton refs (Modules 9–12) | U     | Can run any time                                  |
-| uFawkes.dev | NEW          | feat(fawkes): `/fawkes/` graduation page + matrix row                 | U     | After release                                     |
+| Repo        | Issue        | Title                                                                              | Route | Notes                                                                                |
+| ----------- | ------------ | ---------------------------------------------------------------------------------- | ----- | ------------------------------------------------------------------------------------ |
+| fawkes      | #1804        | Retitle: **goal: fawkes Tracer Bullet Alpha release**                              | G     | Parent. AC-FAWKES-01..04. #1808 becomes its child                                    |
+| fawkes      | #2004, #1797 | P0 security: extract-zip; CHANGE_ME credentials                                    | G     | Never OpenCode                                                                       |
+| fawkes      | #2130        | Grafana can't query its Prometheus (root cause unknown)                            | G     | Debugging                                                                            |
+| fawkes      | #1572, #1919 | DORA DF/LT queryable                                                               | G     | Live k8s verification                                                                |
+| fawkes      | #1856, #1858 | tunnel; one continuous gitops-promote run                                          | G     | Live infra                                                                           |
+| fawkes      | #1857        | Alertmanager crash-loop → chat                                                     | U     | Known target; no secret in the issue                                                 |
+| fawkes      | #1948        | docs: CFR methodology in METRICS.md                                                | U     |                                                                                      |
+| fawkes      | NEW          | docs: scope README to Alpha; `docs/ai-sdlc/tracer-bullet-alpha/`                   | G     | Public-claims decision                                                               |
+| uFawkesDojo | NEW          | content: Green Belt "why Kubernetes now" + Tekton refs (Modules 9–12)              | U     | Can run any time                                                                     |
+| uFawkes.dev | NEW          | feat(fawkes): `/fawkes/` graduation page + matrix row                              | U     | After release                                                                        |
+| fawkes      | NEW          | feat(platform): shared Valkey cache app (uFawkesRes successor gap)                 | G     | After Alpha, not gated. Choose operator vs chart in an ADR; none ships today         |
+| fawkes      | NEW          | feat(platform): SSO across the platform's apps (uFawkesRes successor gap)          | G     | After Alpha, not gated. ADR first; security-sensitive. Fills Authelia's role         |
+| fawkes      | NEW          | chore: define the path from pre-alpha k3d to cloud Beta (uFawkesRes successor gap) | G     | After Alpha, not gated. Names what Beta must prove before anything depends on fawkes |
 
 All other fawkes issues stay on fawkes's own milestones and off Project #7.
 
@@ -147,7 +150,7 @@ All other fawkes issues stay on fawkes's own milestones and off Project #7.
 
 ## Totals
 
-About 74 new issues (7 of them one-line devcontainer pins), about 25
+About 77 new issues (7 of them one-line devcontainer pins), about 25
 relabels or retitles, and 5 closures. The `goal` share is high because each
 release needs real runs that only a live, supervised session can verify.
 OpenCode carries the content and mechanical volume underneath.

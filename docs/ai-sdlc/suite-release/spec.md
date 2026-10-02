@@ -324,6 +324,8 @@ learning:
 
 ## 3. Out of scope
 
-New stack features, fawkes Beta/Production, and Dojo modules for stacks that
+New stack features, fawkes Beta/Production (the Valkey, SSO and
+cloud-readiness gaps that would make fawkes uFawkesRes's full successor are
+tracked in `plan.md` Phase 6, not gated), and Dojo modules for stacks that
 haven't released yet. The Dojo's `compose-curriculum` spec governs module
 content within this ordering.
