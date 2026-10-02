@@ -22,6 +22,16 @@
 | The flame renders legibly at 16px on light and dark          | Screenshot of the SVG at 16, 32 and 220px on white and Night          | live-system | Playwright against a local build           |
 | `DESIGN.md` is formatted and lints                           | Prettier 3.9.9 and markdownlint                                       | unit        | Lint / Format Check, Markdown Lint         |
 
+### Verification for step 3 (apply the tokens to ufawkes.dev)
+
+| Criterion                                                                   | How it's proven                                                                       | Test type   | Command / CI job                 |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ----------- | -------------------------------- |
+| No text on 10 pages is below its contrast floor, in light and dark mode     | Playwright walks every text node, computes the ratio against its effective background | live-system | Playwright against a local build |
+| Buttons, links and focus rings use Indigo, and live badges use the AA green | Screenshots at 1280px in light and dark; `.badge--live` is `#15803d`, not `#16a34a`   | live-system | Playwright against a local build |
+| The flame is the favicon and the header mark                                | `_site/design/marks/flame.svg` exists and the home page links it twice                | integration | `jekyll build`, Build Site       |
+| No page scrolls sideways at 1280, 800 and 390px; each has one `<h1>`        | `scrollWidth <= innerWidth` and an `h1` count on six pages                            | live-system | Playwright against a local build |
+| CSS stays append-only                                                       | The diff to `assets/css/main.css` only adds lines                                     | unit        | `git diff --stat` (no deletions) |
+
 ## Risks
 
 | Risk                                                             | Mitigation                                                                                          |
