@@ -94,18 +94,24 @@ basic checks.
 
 Mostly done in revision 1. What's left:
 
-- [ ] Labels and Project field options above
+- [x] Labels and Project field options above (done 2026-10-02: the routing
+      labels exist in all seven repos; `Release` has AI 2.0, Dojo 0.2, fawkes
+      Alpha, and "Dojo labs")
 - [ ] Create the issues in [`issues-draft.md`](issues-draft.md), add them to
       Project #7, and relabel existing issues per the rubric
-- [ ] fawkes: mark ADR-004 superseded by ADR-036
-- [ ] uFawkesDevX: remove uFawkesRes references from public docs
+- [x] fawkes: mark ADR-004 superseded by ADR-036 (done on `main` since
+      2026-09-16)
+- [ ] uFawkesDevX: remove uFawkesRes references from public docs (live docs:
+      uFawkesDevX#69; the Backstage catalog entity and its tests remain)
 - [ ] Document levels (AC-SUITE-03): root `INTENT.md` in uFawkesAI and
-      fawkes; give the template's artifact-chain check a per-repo
-      code-path setting, then roll it out to the other six repos
+      fawkes (uFawkesAI#136, fawkes#2173); give the template's
+      artifact-chain check a per-repo code-path setting (uFawkesAI#137),
+      then roll it out to the other six repos
 - [ ] Archive ufawkessec (uFawkes.dev #68) and uFawkesRes; their READMEs
       point to the successor first
 - [ ] uFawkes.dev: retire `/dora/` and `/sec/`, add `/ai/` and `/fawkes/`
-      stubs to the nav
+      stubs to the nav (the two old pages were already pointer pages outside
+      the nav; the new pages are in #80)
 
 ## Phase 1 — uFawkesAI `v2.0.0` (gate: AC-AI-01..04, AC-AI-06..09, AC-SITE-01)
 
