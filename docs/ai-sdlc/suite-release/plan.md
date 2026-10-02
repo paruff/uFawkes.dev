@@ -21,9 +21,8 @@ it.
 
 **Sync rules:**
 
-- **This doc lists no individual tasks.** Two task lists drift.
-  [`issues-draft.md`](issues-draft.md) holds the proposed issues until
-  they're created, then it's deleted.
+- **This doc lists no individual tasks.** Two task lists drift. The tasks
+  are issues on Project #7 (the proposed issues were created on 2026-10-02).
 - **Project `Release` field options:** Suite hygiene, AI 2.0, Dojo 0.2,
   Obs 1.0, Pipe 2.0, DevX 0.1, fawkes Alpha, Dojo labs. Add the three new
   ones (AI 2.0, Dojo 0.2, fawkes Alpha) and rename "Dojo compose" to "Dojo
@@ -92,18 +91,36 @@ basic checks.
 
 ## Phase 0 — Suite hygiene (gate: AC-SUITE-01 recheck, AC-SUITE-02, AC-SUITE-03)
 
-Two of three gates are met. **AC-SUITE-01 is not**: the recheck is recorded in
-the spec, and what it must show for this gate is an open owner decision.
-What's left:
+Status on 2026-10-02, verified against each repo's `main`:
+
+- **AC-SUITE-02: met.** All 96 open issues on Project #7 carry exactly one
+  routing label.
+- **AC-SUITE-03: met.** All seven repos have a root `INTENT.md` and run the
+  artifact-chain check on their PRs with their own code paths (uFawkesAI:
+  `scripts/`, `images/`, `templates/`), skipping Dependabot's bumps. It is not
+  yet a required check (#99), and a Release Please run fails in two repos for
+  a reason not yet found (#100).
+- **AC-SUITE-01: met if the gate means public entry points** (each repo's
+  README and INTENT, and the site pages): the scoped recheck found 7 real
+  false claims, all fixed and merged, and the 5 lines still matching are
+  labelled in context. It is **not** met if the gate means every public doc
+  down to zero (about 1,380 lines, owned by Phases 2 to 6). Which reading the
+  gate takes is the owner's call.
+
+The checklist:
 
 - [x] Labels and Project field options above (done 2026-10-02: the routing
       labels exist in all seven repos; `Release` has AI 2.0, Dojo 0.2, fawkes
       Alpha, and "Dojo labs")
-- [ ] Create the issues in [`issues-draft.md`](issues-draft.md), add them to
-      Project #7, and relabel existing issues per the rubric. Done for
-      Phase 0 (AC-SUITE-02 met: all 16 open issues on Project #7 have one
-      routing label; the duplicates are closed). **Not done:** the Phase 1
-      to 6 rows (about 70 issues), which wait for the draft's approval
+- [x] Create the issues from the draft, add them to Project #7, and relabel
+      existing issues per the rubric (done 2026-10-02, after the owner approved
+      the draft: 62 issues created plus 2 follow-ups, 29 existing issues
+      routed or placed, the duplicates closed; AC-SUITE-02 met with all 96
+      open issues on Project #7 carrying exactly one routing label). The
+      draft is deleted. Left for the owner: uFawkesAI#31 (close after
+      checking `.mcp.json` covers it) and uFawkes.dev#65 (kept on `goal`: it
+      touches every stack README, and the rubric sends multi-repo work to
+      `goal`, though the draft said Nemotron)
 - [x] fawkes: mark ADR-004 superseded by ADR-036 (done on `main` since
       2026-09-16)
 - [x] uFawkesDevX: remove uFawkesRes references from public docs (uFawkesDevX#69
@@ -246,4 +263,4 @@ without the "partial".
 | A secret or credential ends up in a free-tier prompt                    | Security and credential issues are always `goal`                                                                      |
 | fawkes's 43 issues swamp the suite Project                              | Only Alpha-epic children and P0 security issues join it                                                               |
 | One maintainer across seven repos                                       | One `goal` in flight at a time in Claude Code; OpenCode tasks run in parallel underneath it                           |
-| The plan and the Project drift apart                                    | This doc holds no task list; `issues-draft.md` is deleted once the issues exist                                       |
+| The plan and the Project drift apart                                    | This doc holds no task list; the tasks are issues on Project #7                                                       |
