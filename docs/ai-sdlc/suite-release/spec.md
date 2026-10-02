@@ -49,6 +49,16 @@ or simulated one.
   the public docs returns only historical, superseded or explicitly labeled
   mentions
 - **Gate for:** every announcement (it's re-checked before each one)
+- **Scoped recheck 2026-10-02, public entry points only** (each repo's README
+  and INTENT, and the ufawkes.dev pages): 12 lines matched with no qualifier
+  on the line. Reading each in context, **7 were real false claims** (uFawkesDORA
+  and uFawkesSec listed as live or planned repos, Jenkins listed as a fawkes
+  component, and fawkes's "four key metrics automated from day one") in
+  uFawkesAI, uFawkesPipe and fawkes. They are fixed in uFawkesAI#143,
+  uFawkesPipe#116 and fawkes#2185. The other 5 were already labelled
+  ("not Jenkins", "stale", a deprecation footnote, or a criterion's own name).
+  ufawkes.dev itself had none left after #81. If the gate means "public entry
+  points", it is met once those three PRs merge.
 - **Recheck 2026-10-02: not met.** Counting lines that name a retired term
   with no qualifier (deprecated, historical, merged, formerly and similar)
   on each repo's `main`, excluding the suite plan folders and ADRs. Each
@@ -87,8 +97,9 @@ or simulated one.
 - **Verification:** the root-file check passes in every repo, the
   artifact-chain job runs on each repo's PRs, and the release gate's
   checklist links the release folder
-- **Today (2026-10-01):** uFawkesAI and fawkes have no root `INTENT.md`;
-  only uFawkesAI runs the check
+- **Met 2026-10-02:** all seven repos have a root `INTENT.md` and run the
+  check on their PRs with their own paths (verified on each repo's `main`).
+  Not yet a required check
 - **Gate for:** each repo's next release tag
 
 #### AC-SITE-01: The site lists all seven repos and the matrix is current
