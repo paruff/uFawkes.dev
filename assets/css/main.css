@@ -1918,6 +1918,8 @@ pre {
   .error-page__links a:hover,
   .error-page__links a:focus-visible,
   .error-page__links a:visited:hover {
+    background: #1f2937;
+    border-color: #a5b4fc;
     color: #c7d2fe;
   }
 }
