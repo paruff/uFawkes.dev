@@ -5,7 +5,7 @@
 Small PRs, each mergeable alone. Measure first, because the stage budgets in
 the spec are guesses until we've timed the real hooks.
 
-**Progress:** A1–A3 done (full unit run 33 s → 14 s); A1's first run is [`baseline.md`](baseline.md).
+**Progress:** A1–A3 done (full unit run 33 s → 14 s); A4 is spec revision 2; A1's first run is [`baseline.md`](baseline.md).
 `unit-tests` is 60–80% of pre-commit in every repo, so before phase B:
 A2 runs only the test suites a commit affects (all of them in CI and at pre-push),
 A3 runs the suites in parallel, and A4 revises the spec from the baseline.
@@ -23,6 +23,8 @@ A3 runs the suites in parallel, and A4 revises the spec from the baseline.
 | B3    | New hooks in the template: actionlint, check-jsonschema, semgrep (pinned), unit tests at pre-push, Trivy with a table (R2, R8, AC-SHIFT-04, -05, -08) | U     | Bounded, after the semgrep offline decision         |
 | B4    | CI parity job and `.shift-left.yml` (R3, AC-SHIFT-03)                                                                                                 | G     | Design of the config format and the parity rules    |
 | B5    | Devcontainer: `postCreateCommand` runs install then doctor; bake the tools into the image (R6, extends AC-AI-09)                                      | G     | Touches the image and its publish path              |
+| B6    | Agent-loop gate: a `Stop` hook runs the commit-stage hooks on the agent's changed files and blocks on failure (R9, AC-SHIFT-10)                       | G     | Harness config, shared by every contributor         |
+| B7    | `shift-left-fix` skill: sort a failure log into mechanical or needs-judgment, fix the first, rerun the hook (R10, AC-SHIFT-11)                        | G     | The limits on what it may change need care          |
 | C1-6  | Adopt B in each of the six repos: copy, write its `.shift-left.yml`, record its type-check decision                                                   | U ×6  | One repo each, with a written spec                  |
 | D1    | The daily fleet audit workflow, `_data/shift_left.json`, and the `/status/` matrix panel (R6, AC-SHIFT-06)                                            | G     | Secrets, the deploy path, and issue creation        |
 | D2    | Issue-on-regression: open or update one `shift-left-drift` issue per repo, close on recovery                                                          | G     | Quiet-by-default logic needs care                   |
@@ -34,8 +36,8 @@ A3 runs the suites in parallel, and A4 revises the spec from the baseline.
 1. **Semgrep and the network.** Vendor the ruleset file so the hook works
    offline, or run semgrep online-only at pre-push. The spec leans towards
    vendoring, so a commit on a train still works.
-2. **Stage budgets.** Phase A1 produces the timings. Confirm or adjust 10
-   seconds and 3 minutes from real numbers.
+2. ~~**Stage budgets.**~~ Settled by A4 (spec revision 2): 10 seconds at
+   pre-commit, 60 seconds at pre-push, each stage run once.
 3. **Where the `SessionStart` doctor lives.** In each repo's committed
    `.claude/settings.json` (so every contributor and agent gets it), or in your
    user settings (just you). The repo is the better default.
@@ -54,6 +56,9 @@ A3 runs the suites in parallel, and A4 revises the spec from the baseline.
 | AC-SHIFT-06 | Two scheduled audit runs; a seeded regression opens exactly one issue, and fixing it closes it                        | live-system | `gh run list -w shift-left-audit.yml`, `gh issue list` |
 | AC-SHIFT-07 | The full fault-injection suite: uninstalled stage, deleted script, missing tool, removed CI job, hook missing from CI | unit        | `bash scripts/test-doctor.sh`, run in CI               |
 | AC-SHIFT-08 | A seeded vulnerable dependency: the log table names it                                                                | integration | A throwaway PR in a repo with a scanner                |
+| AC-SHIFT-09 | Per-stage timings within 10 s and 60 s in every repo                                                                  | integration | `make shift-left-audit ARGS=--time`, per phase         |
+| AC-SHIFT-10 | An agent edit that breaks a lint: the `Stop` hook blocks and shows the failure                                        | integration | A scripted session in a throwaway repo                 |
+| AC-SHIFT-11 | Seeded lint, format and failing-test failures: the first two are fixed and rerun green, the test is handed off        | integration | The skill run against a seeded log                     |
 
 ## Risks
 
