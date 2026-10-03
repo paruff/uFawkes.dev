@@ -76,7 +76,7 @@ KNOWN = {
     "terraform_tflint", "terraform_docs", "insert-license", "agent-report-contracts", "dora-vocabulary",
     "ai-stance", "status-drift", "agent-dispatch", "harness-parity", "kustomize-validate",
     "backstage-catalog-validate", "argocd-validate", "helm-lint", "check-k8s-secrets", "mkdocs-validate",
-    "requirements-pin-check", "pre-push-validation", "shift-left-stamp", "shift-left-stamp-pre-push",
+    "requirements-pin-check", "pre-push-validation", "shift-left-stamp", "shift-left-stamp-pre-push", "shift-left-parity",
 }
 cols = [c for c, _, _ in CATALOG] + ["system"]
 rows, notes, unmapped = [], [], []

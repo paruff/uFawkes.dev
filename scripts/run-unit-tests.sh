@@ -39,7 +39,8 @@ SUITES=(
   "test-run-unit-tests ^scripts/test-run-unit-tests\.sh$"
   "test-require-tool ^scripts/(test-)?require-tool\.sh$"
   "test-semgrep-scan ^scripts/(test-)?semgrep-scan\.sh$"
-  "test-doctor ^scripts/(test-)?(doctor|shift-left-stamp|require-tool)\.sh$"
+  "test-doctor ^scripts/(test-)?(doctor|shift-left-stamp|require-tool|check-shift-left-parity)\.sh$"
+  "test-shift-left-parity ^scripts/(test-shift-left-parity|check-shift-left-parity)\.sh$"
 )
 
 selected=()

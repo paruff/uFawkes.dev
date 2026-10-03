@@ -11,6 +11,8 @@ unset GIT_INDEX_FILE GIT_DIR GIT_WORK_TREE GIT_PREFIX GIT_COMMON_DIR
 # Likewise a real push exports PRE_COMMIT_TO_REF (and friends) to its hooks;
 # leaked into a throwaway push, the stamp records the outer repo's ref.
 while read -r v; do unset "$v"; done < <(compgen -e | grep '^PRE_COMMIT')
+# And CI's SKIP list (shift-left-stamp, ...) would skip the throwaway repos' stamps.
+unset SKIP
 
 cd "$(dirname "$0")/.."
 HERE="$PWD"
