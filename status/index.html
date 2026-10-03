@@ -21,64 +21,84 @@ permalink: /status/
 
   {% for r in d.releases %}{% if r.name == d.next_release %}{% assign next = r %}{% endif %}{% endfor %}
 
-  <section class="status-headline" aria-labelledby="status-next">
+  <section class="status-verdict{% if next %}{% if next.acs.fail > 0 or next.blockers.size > 0 %} status-verdict--fail{% elsif next.acs.stale > 0 or next.acs.manual_pending > 0 %} status-verdict--wait{% else %} status-verdict--pass{% endif %}{% else %} status-verdict--pass{% endif %}" aria-labelledby="status-next">
     {% if next %}
-    <h2 id="status-next">Next milestone: {{ next.name }}</h2>
-    <p class="status-headline__facts">
-      {{ next.acs.pass }} of {{ next.acs.total }} acceptance checks pass{% if next.acs.stale > 0 %}, {{ next.acs.stale }} stale{% endif %}{% if next.acs.manual_pending > 0 %}, {{ next.acs.manual_pending }} awaiting evidence{% endif %} ·
-      {{ next.issues.done }} of {{ next.issues.total }} issues done ·
-      {{ next.blockers.size }} open blocker{% if next.blockers.size != 1 %}s{% endif %}
-    </p>
-    <p class="status-headline__pace">
-      {% if next.pace.weeks_to_done_estimate %}About {{ next.pace.weeks_to_done_estimate }} weeks at the current pace (estimate).{% else %}Not enough completed work yet to estimate.{% endif %}
-    </p>
+    {% assign total = next.acs.total %}
+    {% if total > 0 %}
+    {% assign p_pass = next.acs.pass | times: 100 | divided_by: total %}
+    {% assign p_fail = next.acs.fail | times: 100 | divided_by: total %}
+    {% assign p_stale = next.acs.stale | times: 100 | divided_by: total %}
+    {% assign p_rest = 100 | minus: p_pass | minus: p_fail | minus: p_stale %}
+    {% assign o_fail = 0 | minus: p_pass %}
+    {% assign o_stale = o_fail | minus: p_fail %}
+    {% assign o_rest = o_stale | minus: p_stale %}
+    {% endif %}
+    <svg class="status-ring" viewBox="0 0 36 36" role="img" aria-label="{{ next.name }}: {{ next.acs.pass }} of {{ next.acs.total }} acceptance checks pass, {{ next.acs.fail }} fail, {{ next.acs.stale }} stale, {{ next.acs.manual_pending }} awaiting evidence">
+      <circle class="status-ring__track" cx="18" cy="18" r="15.9155" fill="none" stroke-width="4"/>
+      {% if total > 0 %}
+      <g class="status-ring__segments" transform="rotate(-90 18 18)">
+        {% if next.acs.pass > 0 %}<circle class="status-ring__pass" cx="18" cy="18" r="15.9155" fill="none" stroke-width="4" stroke-dasharray="{{ p_pass }} {{ 100 | minus: p_pass }}" stroke-dashoffset="0"/>{% endif %}
+        {% if next.acs.fail > 0 %}<circle class="status-ring__fail" cx="18" cy="18" r="15.9155" fill="none" stroke-width="4" stroke-dasharray="{{ p_fail }} {{ 100 | minus: p_fail }}" stroke-dashoffset="{{ o_fail }}"/>{% endif %}
+        {% if next.acs.stale > 0 %}<circle class="status-ring__stale" cx="18" cy="18" r="15.9155" fill="none" stroke-width="4" stroke-dasharray="{{ p_stale }} {{ 100 | minus: p_stale }}" stroke-dashoffset="{{ o_stale }}"/>{% endif %}
+        {% if next.acs.manual_pending > 0 %}<circle class="status-ring__manual" cx="18" cy="18" r="15.9155" fill="none" stroke-width="4" stroke-dasharray="{{ p_rest }} {{ 100 | minus: p_rest }}" stroke-dashoffset="{{ o_rest }}"/>{% endif %}
+      </g>
+      {% endif %}
+    </svg>
+    <div class="status-verdict__body">
+      <p class="status-verdict__label">Next milestone: {{ next.name }}</p>
+      <h2 class="status-verdict__title" id="status-next">{% if next.acs.fail > 0 or next.blockers.size > 0 %}✗ Not ready to ship{% elsif next.acs.stale > 0 or next.acs.manual_pending > 0 %}⏱ Waiting on evidence{% else %}✓ Ready to ship{% endif %}</h2>
+      <p class="status-verdict__why">
+        {{ next.acs.pass }} of {{ next.acs.total }} acceptance checks pass{% if next.acs.fail > 0 %}, {{ next.acs.fail }} failing{% endif %}{% if next.acs.stale > 0 %}, {{ next.acs.stale }} stale{% endif %}{% if next.acs.manual_pending > 0 %}, {{ next.acs.manual_pending }} awaiting evidence{% endif %}.
+      </p>
+      <ul class="status-stats">
+        <li class="status-stats__item"><span class="status-stats__number">{{ next.acs.fail }}</span> failing</li>
+        <li class="status-stats__item"><span class="status-stats__number">{{ next.blockers.size }}</span> open blocker{% if next.blockers.size != 1 %}s{% endif %}</li>
+        <li class="status-stats__item">{% if next.issues.total > 0 %}<span class="status-stats__number">{{ next.issues.done }}/{{ next.issues.total }}</span> issues done{% else %}no issues tracked yet{% endif %}</li>
+      </ul>
+      <p class="status-verdict__pace">
+        {% if next.pace.weeks_to_done_estimate %}About {{ next.pace.weeks_to_done_estimate }} weeks at the current pace (estimate).{% else %}Not enough completed work yet to estimate.{% endif %}
+      </p>
+    </div>
     {% else %}
-    <h2 id="status-next">Every acceptance check passes</h2>
-    <p class="status-headline__facts">No release is waiting on a failing or pending check.</p>
+    <div class="status-verdict__body">
+      <h2 class="status-verdict__title" id="status-next">✓ Every acceptance check passes</h2>
+      <p class="status-verdict__why">No release is waiting on a failing or pending check.</p>
+    </div>
     {% endif %}
   </section>
 
-  <section aria-labelledby="status-timeline">
-    <h2 id="status-timeline">Releases in order</h2>
-    <ol class="status-timeline">
+  <section aria-labelledby="status-releases">
+    <h2 id="status-releases">Releases in order</h2>
+    <ol class="status-releases">
       {% for r in d.releases %}
-      <li class="status-timeline__item{% if r.name == d.next_release %} status-timeline__item--next{% endif %}">
-        <span class="status-timeline__name">{{ r.name }}</span>
-        <span class="status-timeline__state">{% if r.acs.pass == r.acs.total %}done{% elsif r.name == d.next_release %}next{% else %}waiting{% endif %}</span>
+      <li class="status-release{% if r.name == d.next_release %} status-release--next{% endif %}{% if r.acs.pass == r.acs.total %} status-release--done{% endif %}">
+        <div class="status-release__head">
+          <h3 class="status-release__name">{{ r.name }}</h3>
+          <span class="status-pill status-pill--{% if r.acs.pass == r.acs.total %}done{% elsif r.name == d.next_release %}next{% else %}waiting{% endif %}">{% if r.acs.pass == r.acs.total %}✓ Done{% elsif r.name == d.next_release %}Next{% else %}Waiting{% endif %}</span>
+          {% if r.blockers.size > 0 %}<span class="status-pill status-pill--blocked">{{ r.blockers.size }} blocker{% if r.blockers.size != 1 %}s{% endif %}</span>{% endif %}
+        </div>
+        <div class="status-seg" role="img" aria-label="{{ r.name }}: {{ r.acs.pass }} of {{ r.acs.total }} acceptance checks pass, {{ r.acs.fail }} fail, {{ r.acs.stale }} stale, {{ r.acs.manual_pending }} awaiting evidence">
+          {% if r.acs.pass > 0 %}<span class="status-seg__part status-seg__part--pass" style="flex-grow: {{ r.acs.pass }}"></span>{% endif %}
+          {% if r.acs.fail > 0 %}<span class="status-seg__part status-seg__part--fail" style="flex-grow: {{ r.acs.fail }}"></span>{% endif %}
+          {% if r.acs.stale > 0 %}<span class="status-seg__part status-seg__part--stale" style="flex-grow: {{ r.acs.stale }}"></span>{% endif %}
+          {% if r.acs.manual_pending > 0 %}<span class="status-seg__part status-seg__part--manual" style="flex-grow: {{ r.acs.manual_pending }}"></span>{% endif %}
+        </div>
+        <p class="status-release__nums">{{ r.acs.pass }} of {{ r.acs.total }} check{% if r.acs.total != 1 %}s{% endif %} pass{% if r.acs.fail > 0 %} · {{ r.acs.fail }} failing{% endif %}{% if r.acs.stale > 0 %} · {{ r.acs.stale }} stale{% endif %}{% if r.acs.manual_pending > 0 %} · {{ r.acs.manual_pending }} awaiting evidence{% endif %}</p>
+        {% if r.issues.total > 0 %}
+        <div class="status-bar">
+          <span class="status-bar__label" id="iss-{{ r.order }}">Issues</span>
+          <progress class="status-bar__track" max="{{ r.issues.total }}" value="{{ r.issues.done }}" aria-labelledby="iss-{{ r.order }}">{{ r.issues.done }} / {{ r.issues.total }}</progress>
+          <span class="status-bar__value">{{ r.issues.done }} / {{ r.issues.total }}</span>
+        </div>
+        {% else %}
+        <p class="status-bar status-bar--empty">Issues: none tracked yet</p>
+        {% endif %}
+        {% for b in r.blockers %}
+        <p class="status-card__blocker">Blocker: <a href="{{ b.url }}" rel="noopener noreferrer" target="_blank">{{ b.repo }}#{{ b.number }} {{ b.title }}</a></p>
+        {% endfor %}
       </li>
       {% endfor %}
     </ol>
-  </section>
-
-  <section aria-labelledby="status-cards">
-    <h2 id="status-cards">Progress by release</h2>
-    {% for r in d.releases %}
-    {% if r.acs.pass == r.acs.total %}
-    <p class="status-done-line">✓ DONE · {{ r.name }}: {{ r.acs.pass }} of {{ r.acs.total }} acceptance checks pass</p>
-    {% else %}
-    <article class="status-card{% if r.name == d.next_release %} status-card--next{% endif %}">
-      <h3 class="status-card__title">{{ r.name }}{% if r.name == d.next_release %} <span class="status-card__tag">NEXT</span>{% endif %}</h3>
-      <div class="status-bar">
-        <span class="status-bar__label" id="acs-{{ r.order }}">Acceptance</span>
-        <progress class="status-bar__track" max="{{ r.acs.total }}" value="{{ r.acs.pass }}" aria-labelledby="acs-{{ r.order }}">{{ r.acs.pass }} / {{ r.acs.total }}</progress>
-        <span class="status-bar__value">{{ r.acs.pass }} / {{ r.acs.total }}</span>
-      </div>
-      {% if r.issues.total > 0 %}
-      <div class="status-bar">
-        <span class="status-bar__label" id="iss-{{ r.order }}">Issues</span>
-        <progress class="status-bar__track" max="{{ r.issues.total }}" value="{{ r.issues.done }}" aria-labelledby="iss-{{ r.order }}">{{ r.issues.done }} / {{ r.issues.total }}</progress>
-        <span class="status-bar__value">{{ r.issues.done }} / {{ r.issues.total }}</span>
-      </div>
-      {% else %}
-      <p class="status-bar status-bar--empty">Issues: none tracked yet</p>
-      {% endif %}
-      {% for b in r.blockers %}
-      <p class="status-card__blocker">Blocker: <a href="{{ b.url }}" rel="noopener noreferrer" target="_blank">{{ b.repo }}#{{ b.number }} {{ b.title }}</a></p>
-      {% endfor %}
-      <p class="status-card__work">Work: {{ r.routing.goal }} goal · {{ r.routing.nemotron }} Nemotron · {{ r.routing.flash }} Flash</p>
-    </article>
-    {% endif %}
-    {% endfor %}
   </section>
 
   {% if next %}
@@ -90,7 +110,7 @@ permalink: /status/
       </thead>
       <tbody>
         {% for ac in next.ac_results %}
-        <tr class="status-table__row">
+        <tr class="status-table__row status-table__row--{{ ac.status }}">
           <td><span class="status-badge status-badge--{{ ac.status }}">{% if ac.status == "pass" %}✓ PASS{% elsif ac.status == "fail" %}✗ FAIL{% elsif ac.status == "stale" %}⏱ STALE{% else %}… MANUAL{% endif %}</span></td>
           <td class="status-table__id">{{ ac.id }}</td>
           <td>{{ ac.title }}</td>
@@ -102,24 +122,6 @@ permalink: /status/
   </section>
   {% endif %}
 
-  {% assign n = d.burnup.size %}
-  {% if n > 1 %}
-  <section aria-labelledby="status-burnup">
-    <h2 id="status-burnup">Progress over time</h2>
-    {% assign last = d.burnup | last %}
-    {% assign max = last.total %}
-    {% assign span = n | minus: 1 %}
-    {% capture total_points %}{% for p in d.burnup %}{% assign x = forloop.index0 | times: 600 | divided_by: span | plus: 20 %}{% assign h = p.total | times: 160 | divided_by: max %}{% assign y = 180 | minus: h %}{{ x }},{{ y }} {% endfor %}{% endcapture %}
-    {% capture done_points %}{% for p in d.burnup %}{% assign x = forloop.index0 | times: 600 | divided_by: span | plus: 20 %}{% assign h = p.done | times: 160 | divided_by: max %}{% assign y = 180 | minus: h %}{{ x }},{{ y }} {% endfor %}{% endcapture %}
-    <svg class="status-burnup" viewBox="0 0 640 200" role="img" aria-labelledby="burnup-summary">
-      <line class="status-burnup__axis" x1="20" y1="180" x2="620" y2="180"/>
-      <polyline class="status-burnup__total" points="{{ total_points }}" fill="none"/>
-      <polyline class="status-burnup__done" points="{{ done_points }}" fill="none"/>
-    </svg>
-    <p id="burnup-summary" class="status-burnup__summary">{{ last.done }} of {{ last.total }} tracked issues are done as of {{ last.date }}. The dashed line is all issues; the solid line is the ones closed.</p>
-  </section>
-  {% endif %}
-
   {% if next.ready.size > 0 %}
   <section aria-labelledby="status-ready">
     <h2 id="status-ready">Ready to pick up: {{ next.name }}</h2>
@@ -128,6 +130,41 @@ permalink: /status/
       <li><span class="status-ready__route">{{ t.route }}</span> <a href="{{ t.url }}" rel="noopener noreferrer" target="_blank">{{ t.repo }}#{{ t.number }}</a> {{ t.title }}</li>
       {% endfor %}
     </ul>
+  </section>
+  {% endif %}
+
+  {% assign n = d.burnup.size %}
+  {% if n > 1 %}
+  <section aria-labelledby="status-burnup">
+    <h2 id="status-burnup">Progress over time</h2>
+    {% assign first = d.burnup | first %}
+    {% assign last = d.burnup | last %}
+    {% assign max = last.total %}
+    {% assign span = n | minus: 1 %}
+    {% assign done_h = last.done | times: 160 | divided_by: max %}
+    {% assign done_y = 180 | minus: done_h %}
+    {% capture total_points %}{% for p in d.burnup %}{% assign x = forloop.index0 | times: 600 | divided_by: span | plus: 20 %}{% assign h = p.total | times: 160 | divided_by: max %}{% assign y = 180 | minus: h %}{{ x }},{{ y }} {% endfor %}{% endcapture %}
+    {% capture done_points %}{% for p in d.burnup %}{% assign x = forloop.index0 | times: 600 | divided_by: span | plus: 20 %}{% assign h = p.done | times: 160 | divided_by: max %}{% assign y = 180 | minus: h %}{{ x }},{{ y }} {% endfor %}{% endcapture %}
+    <div class="status-chart">
+      <svg class="status-burnup" viewBox="0 0 640 200" role="img" aria-labelledby="burnup-summary">
+        <line class="status-burnup__grid" x1="20" y1="20" x2="620" y2="20"/>
+        <line class="status-burnup__grid" x1="20" y1="60" x2="620" y2="60"/>
+        <line class="status-burnup__grid" x1="20" y1="100" x2="620" y2="100"/>
+        <line class="status-burnup__grid" x1="20" y1="140" x2="620" y2="140"/>
+        <line class="status-burnup__axis" x1="20" y1="180" x2="620" y2="180"/>
+        <polygon class="status-burnup__area" points="20,180 {{ done_points }}620,180"/>
+        <polyline class="status-burnup__total" points="{{ total_points }}" fill="none"/>
+        <polyline class="status-burnup__done" points="{{ done_points }}" fill="none"/>
+        <circle class="status-burnup__dot status-burnup__dot--total" cx="620" cy="20" r="5"/>
+        <circle class="status-burnup__dot status-burnup__dot--done" cx="620" cy="{{ done_y }}" r="5"/>
+      </svg>
+      <p class="status-chart__dates"><span>{{ first.date }}</span><span>{{ last.date }}</span></p>
+      <ul class="status-legend">
+        <li class="status-legend__item status-legend__item--done">Closed: {{ last.done }}</li>
+        <li class="status-legend__item status-legend__item--total">All tracked issues: {{ last.total }}</li>
+      </ul>
+    </div>
+    <p id="burnup-summary" class="status-burnup__summary">{{ last.done }} of {{ last.total }} tracked issues are done as of {{ last.date }}. The dashed line is all issues; the solid line is the ones closed.</p>
   </section>
   {% endif %}
 
