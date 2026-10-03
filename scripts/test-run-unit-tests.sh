@@ -40,6 +40,33 @@ for t in scripts/test-*.sh; do
   fi
 done
 
+echo "Parallel run:"
+# Fake suites under registered names (UNIT_TESTS_DIR): two sleep 2s, one fails.
+FAKE="$(mktemp -d)"
+trap 'rm -rf "$FAKE"' EXIT
+printf '#!/usr/bin/env bash\nsleep 2; echo "slow one: all checks passed"\n' > "$FAKE/test-check-secret-detection.sh"
+printf '#!/usr/bin/env bash\nsleep 2; echo "slow two: all checks passed"\n' > "$FAKE/test-emit-dora-event.sh"
+printf '#!/usr/bin/env bash\necho "boom from the failing suite"; exit 1\n' > "$FAKE/test-check-design-tokens.sh"
+start=$SECONDS
+out="$(UNIT_TESTS_DIR="$FAKE" bash scripts/run-unit-tests.sh scripts/check-secret-detection.sh \
+  scripts/emit-dora-event.sh design/tokens.json 2>&1)" && rc=0 || rc=$?
+took=$((SECONDS - start))
+check() { # check <description> <command...>
+  local desc="$1"
+  shift
+  if "$@"; then echo "  ok   $desc"; else
+    echo "  FAIL $desc"
+    fails=$((fails + 1))
+  fi
+}
+order="$(grep -oE '(PASS|FAIL) +test-[a-z-]+' <<< "$out" | awk '{print $2}' | tr '\n' ' ')"
+check "two 2s suites finish in under 4s (took ${took}s)" test "$took" -lt 4
+check "a failing suite fails the run" test "$rc" -eq 1
+check "the failing suite's output is shown" grep -q "boom from the failing suite" <<< "$out"
+check "passing suites still report" grep -qE "PASS +test-check-secret-detection — slow one" <<< "$out"
+check "results print in suite order, not finish order" \
+  test "$order" = "test-check-secret-detection test-emit-dora-event test-check-design-tokens "
+
 if [[ "$fails" -ne 0 ]]; then
   echo "test-run-unit-tests: $fails FAILED" >&2
   exit 1
