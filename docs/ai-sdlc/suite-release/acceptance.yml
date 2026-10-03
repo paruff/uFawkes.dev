@@ -27,33 +27,37 @@
 # `make status` runs every `check: command` entry and writes the results to
 # _data/suite_status.json (see docs/ai-sdlc/suite-status/spec.md, R1-R3).
 #
-# check: command  -> `run` is executed (60s timeout); exit 0 = pass
-# check: manual   -> passes only when `evidence` is a URL (a transcript, run or PR)
-# Evidence for AC-SUITE-01..03 is the PR that recorded the Phase 0 verification
-# in suite-release/plan.md (#101 issues routed and gate status, #102 owner decision).
+# check: command  -> `run` is executed (60s timeout); exit 0 = pass. Checks that look
+#                    at the board read $STATUS_ITEMS_JSON (see scripts/checks/).
+# check: manual   -> `evidence` is VERIFIED, never just present: a link must resolve,
+#                    a GitHub PR must be merged, an issue closed. Evidence older than
+#                    30 days is "stale", not "pass". A link that is not a GitHub PR or
+#                    issue also needs `evidence_date: YYYY-MM-DD`. No evidence = "manual".
+# AC-SUITE-01..03, AC-DOJO-01 and AC-OBS-02 are fully machine-checkable, so they run
+# as commands. AC-SUITE-01's scope (public entry points) is the owner's 2026-10-02 call.
 # Release order on the status page is the order of first appearance below.
 
 # --- Suite hygiene ---------------------------------------------------------
 - id: AC-SUITE-01
   release: Suite hygiene
   title: No public claim is contradicted by a repo
-  check: manual
-  run: ""
-  evidence: "https://github.com/paruff/uFawkes.dev/pull/102"
+  check: command
+  run: bash scripts/checks/ac-suite-01.sh
+  evidence: ""
 
 - id: AC-SUITE-02
   release: Suite hygiene
   title: Every tracked issue is routed
-  check: manual
-  run: ""
-  evidence: "https://github.com/paruff/uFawkes.dev/pull/101"
+  check: command
+  run: bash scripts/checks/ac-suite-02.sh
+  evidence: ""
 
 - id: AC-SUITE-03
   release: Suite hygiene
   title: Every repo follows, and enforces, the document levels
-  check: manual
-  run: ""
-  evidence: "https://github.com/paruff/uFawkes.dev/pull/101"
+  check: command
+  run: bash scripts/checks/ac-suite-03.sh
+  evidence: ""
 
 - id: AC-SITE-01
   release: Suite hygiene
@@ -130,8 +134,8 @@
 - id: AC-DOJO-01
   release: Dojo 0.2
   title: The curriculum is accurate
-  check: manual
-  run: ""
+  check: command
+  run: bash scripts/checks/ac-dojo-01.sh
   evidence: ""
 
 - id: AC-DOJO-02
@@ -166,8 +170,8 @@
 - id: AC-OBS-02
   release: Obs 1.0
   title: No open release blockers
-  check: manual
-  run: ""
+  check: command
+  run: bash scripts/checks/ac-obs-02.sh
   evidence: ""
 
 - id: AC-OBS-03

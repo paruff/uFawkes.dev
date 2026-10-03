@@ -1,0 +1,10 @@
+# Reviewed exceptions for ac-suite-01.sh: lines that name a retired term but are
+# already explained in context, though the explanation is not on the same line.
+# Format: label|substring of the line|reason. label is "repo:file".
+# Reviewed 2026-10-02 against each repo's main. Add a line only after reading it.
+
+uFawkesPipe:README.md|uFawkesRes*|Diagram box; the footnote below it says uFawkesRes is deprecated and suite mode is unsupported
+uFawkesDevX:INTENT.md|AC-DEVX-01: running without uFawkesRes|The criterion's own name; the same file says uFawkesRes is deprecated
+uFawkesDojo:INTENT.md|Jenkins), and `uFawkesDevX`|Wrapped line; the previous line reads "Woodpecker-based, not Jenkins"
+uFawkesDojo:INTENT.md|Module 5's Jenkins content is stale|The line itself says the content is stale
+uFawkesDojo:INTENT.md|documented `uFawkesRes` dependency is confirmed stale|The line itself says the dependency is stale
