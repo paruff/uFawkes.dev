@@ -23,5 +23,9 @@
   },
   "forwardPorts": [4000],
   "remoteUser": "dev",
-  "postCreateCommand": "echo 'uFawkes.dev devcontainer ready — all tools pre-installed'"
+  "postCreateCommand": "echo 'uFawkes.dev devcontainer ready — all tools pre-installed'",
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "4gb"
+  }
 }
