@@ -5,9 +5,9 @@
 Small PRs, each mergeable alone. Measure first, because the stage budgets in
 the spec are guesses until we've timed the real hooks.
 
-**Progress:** A1 done; its first run is [`baseline.md`](baseline.md).
+**Progress:** A1 and A2 done; A1's first run is [`baseline.md`](baseline.md).
 `unit-tests` is 60–80% of pre-commit in every repo, so before phase B:
-A2 gives each test suite its own hook and `files:` (full run at pre-push),
+A2 runs only the test suites a commit affects (all of them in CI and at pre-push),
 A3 runs the suites in parallel, and A4 revises the spec from the baseline.
 
 ## Order of work
@@ -15,7 +15,7 @@ A3 runs the suites in parallel, and A4 revises the spec from the baseline.
 | Phase | What                                                                                                                                                  | Route | Why that route                                      |
 | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | --------------------------------------------------- |
 | A1    | `scripts/shift-left-audit.sh` (read-only): the matrix of check × repo, plus a per-hook timing. Its first run is the baseline                          | U     | Bounded; the spec gives the output                  |
-| A2    | One pre-commit hook per test suite, each with its own `files:`; the full suite runs at pre-push                                                       | U     | Native pre-commit matching; no cache to go stale    |
+| A2    | The `unit-tests` hook passes the staged files; `run-unit-tests.sh` maps them to the suites they affect, and every suite must be mapped                | U     | One hook keeps A3's parallel run useful             |
 | A3    | `scripts/run-unit-tests.sh` runs its suites in parallel (33 s → ~15 s in the baseline)                                                                | U     | Suites already use their own temp dirs              |
 | A4    | Revise the spec's budgets and stages from the baseline (decision 2)                                                                                   | G     | Owner decision                                      |
 | B1    | `scripts/require-tool.sh`, and convert every `language: system` hook to use it or to a pinned `python`/`node` hook (R4, AC-SHIFT-02)                  | U     | Mechanical once the wrapper exists                  |
