@@ -1,34 +1,62 @@
 #!/usr/bin/env bash
-# scripts/run-unit-tests.sh — run every offline test suite in this repo.
+# scripts/run-unit-tests.sh — run the offline test suites a change affects.
 #
 # One entry point so pre-commit, preflight, and CI run exactly the same set.
 # Previously each suite was invoked ad hoc, and three of the four were wired
 # to nothing at all.
 #
-# All four suites are offline and dependency-free: they stub `gh`, bind an
+# All suites are offline and dependency-free: they stub `gh`, bind an
 # ephemeral loopback port, and use vendored fixtures. That is what makes them
 # safe to run on every commit — a test that needs the network or a pip install
 # is a test whose result depends on the machine, not the code.
 #
-# Exit 0 = every suite passed. Exit 1 = at least one failed.
+# Usage: run-unit-tests.sh [changed files...]
+#   No files (or this runner among them): every suite. Otherwise only the
+#   suites whose pattern matches a changed file (shift-left plan, phase A2).
+#   The pre-commit hook passes the staged files; `--all-files` in CI and at
+#   pre-push passes every file, so every suite runs there.
+#   UNIT_TESTS_DRY_RUN=1 prints the selected suites instead of running them.
+#
+# Exit 0 = every selected suite passed. Exit 1 = at least one failed.
 set -uo pipefail
 
 cd "$(dirname "$0")/.." || exit 1
 
+# "<suite> <regex of the files it tests>". Every scripts/test-*.sh must be
+# listed: test-run-unit-tests.sh fails on one that isn't.
 SUITES=(
-  scripts/test-check-secret-detection.sh
-  scripts/test-emit-dora-event.sh
-  scripts/test-artifact-chain.sh
-  scripts/test-dojo-feedback-intent.sh
-  scripts/test-suite-status.sh
-  scripts/test-check-design-tokens.sh
-  scripts/test-shift-left-audit.sh
+  "test-check-secret-detection ^scripts/(test-)?check-secret-detection\.sh$"
+  "test-emit-dora-event ^scripts/(test-)?emit-dora-event\.sh$|^scripts/testdata/ufawkesobs-"
+  "test-artifact-chain ^scripts/(test-)?check-artifact-chain\.sh$"
+  "test-dojo-feedback-intent ^scripts/(test-)?dojo-feedback-intent\.sh$"
+  "test-suite-status ^scripts/(test-suite-status|suite-status|check-status-drift)\.sh$|^scripts/checks/|^scripts/testdata/suite-status"
+  "test-check-design-tokens ^scripts/(test-)?check-design-tokens\.sh$|^design/tokens\.json$"
+  "test-shift-left-audit ^scripts/(test-)?shift-left-audit\.sh$|^scripts/testdata/shift-left/"
+  "test-run-unit-tests ^scripts/test-run-unit-tests\.sh$"
 )
+
+selected=()
+for entry in "${SUITES[@]}"; do
+  name="${entry%% *}"
+  pattern="${entry#* }"
+  if [[ $# -eq 0 ]] || printf '%s\n' "$@" | grep -qE "$pattern|^scripts/run-unit-tests\.sh$"; then
+    selected+=("scripts/$name.sh")
+  fi
+done
+
+if [[ -n "${UNIT_TESTS_DRY_RUN:-}" ]]; then
+  for suite in "${selected[@]}"; do basename "$suite" .sh; done
+  exit 0
+fi
+if [[ ${#selected[@]} -eq 0 ]]; then
+  echo "run-unit-tests: no suite covers the changed files."
+  exit 0
+fi
 
 failed=0
 results=()
 
-for suite in "${SUITES[@]}"; do
+for suite in "${selected[@]}"; do
   name="$(basename "$suite" .sh)"
   if [[ ! -f "$suite" ]]; then
     results+=("MISSING  $name")
@@ -45,7 +73,7 @@ for suite in "${SUITES[@]}"; do
   fi
 done
 
-echo "Unit test suites (${#SUITES[@]}):"
+echo "Unit test suites (${#selected[@]} of ${#SUITES[@]}):"
 for line in "${results[@]}"; do
   echo "  $line"
 done
@@ -56,4 +84,4 @@ if [[ "$failed" -ne 0 ]]; then
   exit 1
 fi
 
-echo "run-unit-tests: all ${#SUITES[@]} suites passed."
+echo "run-unit-tests: all ${#selected[@]} selected suites passed."
