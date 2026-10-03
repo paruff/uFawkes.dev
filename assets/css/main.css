@@ -1312,6 +1312,11 @@ a:focus-visible {
   color: #4b5563;
 }
 
+.status-badge--stale {
+  background: #fef3c7;
+  color: #92400e;
+}
+
 .status-burnup {
   display: block;
   max-width: 100%;

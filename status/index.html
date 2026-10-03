@@ -25,7 +25,7 @@ permalink: /status/
     {% if next %}
     <h2 id="status-next">Next milestone: {{ next.name }}</h2>
     <p class="status-headline__facts">
-      {{ next.acs.pass }} of {{ next.acs.total }} acceptance checks pass ·
+      {{ next.acs.pass }} of {{ next.acs.total }} acceptance checks pass{% if next.acs.stale > 0 %}, {{ next.acs.stale }} stale{% endif %}{% if next.acs.manual_pending > 0 %}, {{ next.acs.manual_pending }} awaiting evidence{% endif %} ·
       {{ next.issues.done }} of {{ next.issues.total }} issues done ·
       {{ next.blockers.size }} open blocker{% if next.blockers.size != 1 %}s{% endif %}
     </p>
@@ -87,7 +87,7 @@ permalink: /status/
       <tbody>
         {% for ac in next.ac_results %}
         <tr class="status-table__row">
-          <td><span class="status-badge status-badge--{{ ac.status }}">{% if ac.status == "pass" %}✓ PASS{% elsif ac.status == "fail" %}✗ FAIL{% else %}… MANUAL{% endif %}</span></td>
+          <td><span class="status-badge status-badge--{{ ac.status }}">{% if ac.status == "pass" %}✓ PASS{% elsif ac.status == "fail" %}✗ FAIL{% elsif ac.status == "stale" %}⏱ STALE{% else %}… MANUAL{% endif %}</span></td>
           <td>{{ ac.id }}</td>
           <td>{{ ac.title }}</td>
           <td class="status-table__detail">{{ ac.detail }}</td>

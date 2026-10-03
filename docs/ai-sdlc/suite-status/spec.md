@@ -15,6 +15,7 @@ release spec:
   check: command # command | manual
   run: docker manifest inspect ghcr.io/paruff/ufawkesai-devcontainer:2.0.0
   evidence: "" # manual ACs: link to the transcript, run or PR
+  evidence_date: "" # YYYY-MM-DD; needed unless the evidence is a GitHub PR or issue
 ```
 
 `spec.md` stays the human source. A check fails if any `#### AC-` heading
@@ -25,7 +26,15 @@ way round, so the two can't drift.
 
 - runs each `check: command` AC with a 60-second timeout and records pass
   or fail, with the first lines of output on a failure
-- counts a `check: manual` AC as passing only if `evidence` is a URL
+- **verifies** a `check: manual` AC's evidence instead of trusting it: a link must
+  resolve (HTTP 2xx), a GitHub PR must be merged, an issue closed, and the
+  evidence must be no more than 30 days old (the PR's merge date, the issue's
+  close date, or `evidence_date`). Otherwise the AC is `stale`; with no evidence
+  it is `manual`. Anything that cannot be looked up is `stale`, never `pass`
+- runs the criteria that are fully machine-checkable as commands:
+  AC-SUITE-01 (public entry points, with a reviewed allowlist), AC-SUITE-02 and
+  AC-OBS-02 (read the board items the script already fetched, so the check and the
+  dashboard agree), AC-SUITE-03, and AC-DOJO-01
 - queries Project #7 (GraphQL) for each item's release, status, labels and
   `closedAt`
 - writes `_data/suite_status.json` (R3) and prints a terminal summary
@@ -44,7 +53,13 @@ failing AC is a result, not a script error.
     {
       "name": "AI 2.0",
       "order": 1,
-      "acs": { "pass": 3, "fail": 4, "manual_pending": 2, "total": 9 },
+      "acs": {
+        "pass": 3,
+        "fail": 4,
+        "stale": 1,
+        "manual_pending": 1,
+        "total": 9
+      },
       "issues": { "done": 5, "in_progress": 2, "todo": 11, "total": 18 },
       "blockers": [
         { "repo": "uFawkesAI", "number": 111, "title": "...", "url": "..." }
@@ -56,7 +71,9 @@ failing AC is a result, not a script error.
           "id": "AC-AI-01",
           "title": "...",
           "status": "fail",
-          "detail": "manifest unknown"
+          "detail": "manifest unknown",
+          "verified_at": "2026-10-02T06:00:00Z",
+          "age_days": null
         }
       ],
       "ready": [
@@ -236,15 +253,17 @@ protocol on `/status/`.
 
 ## Acceptance criteria
 
-| ID           | Criterion                                                                              | Verification                                                      |
-| ------------ | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| AC-STATUS-01 | Every AC in `suite-release/spec.md` is in `acceptance.yml`, and vice versa             | The drift check fails a PR that adds a spec AC without an entry   |
-| AC-STATUS-02 | `make status` runs locally and in CI and produces JSON matching R3                     | A schema check on the output, in CI                               |
-| AC-STATUS-03 | A failing AC shows red on the page; a broken script fails the workflow                 | Two test PRs: one breaks an AC, one breaks the script             |
-| AC-STATUS-04 | `/status/` updates daily without a commit to `main`                                    | Two consecutive scheduled runs; `git log main` has no bot commits |
-| AC-STATUS-05 | The page shows the next milestone, both progress bars, blockers and a burn-up          | Screenshot at desktop, 767px and 640px                            |
-| AC-STATUS-06 | The page passes the site's existing accessibility job                                  | `Accessibility Testing` check green                               |
-| AC-STATUS-07 | A product owner and a developer each answer their question from the page in 30 seconds | Wireframe test before PR 3; `ux-audit` after launch               |
+| ID           | Criterion                                                                                                                                                                    | Verification                                                                |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| AC-STATUS-01 | Every AC in `suite-release/spec.md` is in `acceptance.yml`, and vice versa                                                                                                   | The drift check fails a PR that adds a spec AC without an entry             |
+| AC-STATUS-02 | `make status` runs locally and in CI and produces JSON matching R3                                                                                                           | A schema check on the output, in CI                                         |
+| AC-STATUS-03 | A failing AC shows red on the page; a broken script fails the workflow                                                                                                       | Two test PRs: one breaks an AC, one breaks the script                       |
+| AC-STATUS-04 | `/status/` updates daily without a commit to `main`                                                                                                                          | Two consecutive scheduled runs; `git log main` has no bot commits           |
+| AC-STATUS-05 | The page shows the next milestone, both progress bars, blockers and a burn-up                                                                                                | Screenshot at desktop, 767px and 640px                                      |
+| AC-STATUS-06 | The page passes the site's existing accessibility job                                                                                                                        | `Accessibility Testing` check green                                         |
+| AC-STATUS-08 | Manual evidence is verified, not trusted: a dead link, an unmerged PR, an unreadable date or evidence older than 30 days is `stale`, and a lookup that fails is never `pass` | Offline tests with stubbed `gh` and `curl` (`scripts/test-suite-status.sh`) |
+| AC-STATUS-09 | Every fully machine-checkable criterion runs as a command and reports the lines or issues that fail it                                                                       | The same tests, one fixture per check, plus a live run (`make status`)      |
+| AC-STATUS-07 | A product owner and a developer each answer their question from the page in 30 seconds                                                                                       | Wireframe test before PR 3; `ux-audit` after launch                         |
 
 ## Concerns
 

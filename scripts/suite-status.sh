@@ -39,6 +39,12 @@ command -v python3 > /dev/null || die "python3 is required"
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 
+# One authenticated identity for every check and lookup below; unauthenticated,
+# the ~100 API calls would hit GitHub's 60-per-hour limit.
+if [[ -n "${SUITE_STATUS_TOKEN:-}" ]]; then export GH_TOKEN="$SUITE_STATUS_TOKEN"; fi
+# Manual evidence older than this many days is "stale", not "pass" (owner decision).
+STALE_DAYS="${STATUS_STALE_DAYS:-30}"
+
 # --- 1. acceptance criteria -------------------------------------------------
 python3 - "$ACS" > "$WORK/acs.json" << 'PY' || die "cannot parse $ACS"
 import json, sys, yaml
@@ -51,50 +57,11 @@ for ac in data:
             sys.exit("AC missing %s: %r" % (k, ac))
     if ac["check"] not in ("command", "manual"):
         sys.exit("AC %s: check must be command or manual" % ac["id"])
-json.dump(data, sys.stdout)
+# default=str: YAML reads `evidence_date: 2026-09-20` as a date object, which JSON can't hold
+json.dump(data, sys.stdout, default=str)
 PY
 
-: > "$WORK/results.jsonl"
-n="$(jq length "$WORK/acs.json")"
-for ((i = 0; i < n; i++)); do
-  ac="$(jq -c ".[$i]" "$WORK/acs.json")"
-  id="$(jq -r .id <<< "$ac")"
-  check="$(jq -r .check <<< "$ac")"
-  status="pass"
-  detail=""
-  if [[ "$check" == "manual" ]]; then
-    ev="$(jq -r '.evidence // ""' <<< "$ac")"
-    if [[ "$ev" =~ ^https?:// ]]; then
-      status="pass"
-      detail="$ev"
-    else
-      status="manual"
-      detail="evidence pending"
-    fi
-  elif [[ -n "${STATUS_SKIP_CHECKS:-}" ]]; then
-    status="fail"
-    detail="skipped"
-  else
-    run="$(jq -r '.run // ""' <<< "$ac")"
-    [[ -n "$run" ]] || die "$id: check is command but run is empty"
-    set +e
-    out="$(timeout "$TIMEOUT" bash -c "$run" 2>&1)"
-    rc=$?
-    set -e
-    if [[ "$rc" -eq 124 ]]; then
-      status="fail"
-      detail="timed out after ${TIMEOUT}s"
-    elif [[ "$rc" -ne 0 ]]; then
-      status="fail"
-      detail="$(printf '%s\n' "$out" | head -n 3 | tr '\n' ' ' | cut -c1-300)"
-      [[ -n "$detail" ]] || detail="exit code $rc"
-    fi
-  fi
-  jq -c --arg status "$status" --arg detail "$detail" \
-    '{id, release, title, status: $status, detail: $detail}' <<< "$ac" >> "$WORK/results.jsonl"
-done
-
-# --- 2. project items -------------------------------------------------------
+# --- 1b. project items (loaded first: the checks read them) -----------------
 if [[ -n "${STATUS_ITEMS_FILE:-}" ]]; then
   cp "$STATUS_ITEMS_FILE" "$WORK/items.json"
 else
@@ -131,6 +98,116 @@ else
             labels: [.content.labels.nodes[].name] } ]' "$WORK/raw.json" > "$WORK/items.json" \
     || die "cannot parse the Project #$PROJECT response"
 fi
+# The checks that look at the board (AC-SUITE-02, AC-OBS-02) read this file, so
+# they and the dashboard always see the same data.
+export STATUS_ITEMS_JSON="$WORK/items.json"
+
+: > "$WORK/results.jsonl"
+n="$(jq length "$WORK/acs.json")"
+# age_days <iso8601 | yyyy-mm-dd>: whole days between that moment and NOW.
+age_days() {
+  jq -nr --arg a "$1" --arg n "$NOW" '
+    def ts: if test("^[0-9]{4}-[0-9]{2}-[0-9]{2}$") then . + "T00:00:00Z"
+            else sub("\\.[0-9]+Z$"; "Z") end | fromdate;
+    ((($n | ts) - ($a | ts)) / 86400 | floor) | if . < 0 then 0 else . end' 2> /dev/null
+}
+
+# judge_evidence <evidence> <evidence_date>: sets EV_STATUS, EV_DETAIL, EV_AGE.
+# Evidence is checked, never trusted: a link must resolve, a PR must be merged,
+# an issue closed, and it must be no older than STALE_DAYS.
+judge_evidence() {
+  local ev="$1" evdate="$2" date="" code="" json="" kind="" path="" field=""
+  EV_AGE=""
+  if [[ ! "$ev" =~ ^https?:// ]]; then
+    EV_STATUS="manual"
+    EV_DETAIL="evidence pending"
+    return
+  fi
+  if [[ "$ev" =~ ^https://github\.com/([^/]+)/([^/]+)/(pull|issues)/([0-9]+) ]]; then
+    kind="${BASH_REMATCH[3]}"
+    if [[ "$kind" == "pull" ]]; then
+      path="pulls"
+      field="merged_at"
+    else
+      path="issues"
+      field="closed_at"
+    fi
+    if ! json="$(gh api "repos/${BASH_REMATCH[1]}/${BASH_REMATCH[2]}/$path/${BASH_REMATCH[4]}" \
+      --jq "{state, at: .$field}" 2>&1)"; then
+      EV_STATUS="stale"
+      EV_DETAIL="could not verify evidence ($(head -n 1 <<< "$json" | cut -c1-80)): $ev"
+      return
+    fi
+    date="$(jq -r '.at // ""' <<< "$json")"
+    if [[ -z "$date" ]]; then
+      EV_STATUS="manual"
+      EV_DETAIL="evidence not complete yet (the $kind is still open): $ev"
+      return
+    fi
+  else
+    code="$(curl -sS -o /dev/null -L --max-time 20 -w '%{http_code}' "$ev" 2> /dev/null || true)"
+    if [[ ! "$code" =~ ^2 ]]; then
+      EV_STATUS="stale"
+      EV_DETAIL="evidence link unreachable (HTTP ${code:-none}): $ev"
+      return
+    fi
+    date="$evdate"
+    if [[ -z "$date" ]]; then
+      EV_STATUS="stale"
+      EV_DETAIL="no evidence_date recorded: $ev"
+      return
+    fi
+  fi
+  EV_AGE="$(age_days "$date")"
+  local unit="days"
+  [[ "$EV_AGE" == "1" ]] && unit="day"
+  if [[ -z "$EV_AGE" ]]; then
+    EV_STATUS="stale"
+    EV_DETAIL="unreadable evidence date '$date': $ev"
+  elif ((EV_AGE > STALE_DAYS)); then
+    EV_STATUS="stale"
+    EV_DETAIL="evidence is $EV_AGE $unit old (limit $STALE_DAYS): $ev"
+  else
+    EV_STATUS="pass"
+    EV_DETAIL="$ev ($EV_AGE $unit old)"
+  fi
+}
+
+for ((i = 0; i < n; i++)); do
+  ac="$(jq -c ".[$i]" "$WORK/acs.json")"
+  id="$(jq -r .id <<< "$ac")"
+  check="$(jq -r .check <<< "$ac")"
+  status="pass"
+  detail=""
+  age=""
+  if [[ "$check" == "manual" ]]; then
+    judge_evidence "$(jq -r '.evidence // ""' <<< "$ac")" "$(jq -r '.evidence_date // ""' <<< "$ac")"
+    status="$EV_STATUS"
+    detail="$EV_DETAIL"
+    age="$EV_AGE"
+  elif [[ -n "${STATUS_SKIP_CHECKS:-}" ]]; then
+    status="fail"
+    detail="skipped"
+  else
+    run="$(jq -r '.run // ""' <<< "$ac")"
+    [[ -n "$run" ]] || die "$id: check is command but run is empty"
+    set +e
+    out="$(timeout "$TIMEOUT" bash -c "$run" 2>&1)"
+    rc=$?
+    set -e
+    if [[ "$rc" -eq 124 ]]; then
+      status="fail"
+      detail="timed out after ${TIMEOUT}s"
+    elif [[ "$rc" -ne 0 ]]; then
+      status="fail"
+      detail="$(printf '%s\n' "$out" | head -n 3 | tr '\n' ' ' | cut -c1-300)"
+      [[ -n "$detail" ]] || detail="exit code $rc"
+    fi
+  fi
+  jq -c --arg status "$status" --arg detail "$detail" --arg age "$age" --arg at "$NOW" \
+    '{id, release, title, status: $status, detail: $detail, verified_at: $at,
+      age_days: (if $age == "" then null else ($age | tonumber) end)}' <<< "$ac" >> "$WORK/results.jsonl"
+done
 
 # --- 3. assemble the R3 document -------------------------------------------
 RUN_URL=""
@@ -140,7 +217,7 @@ fi
 
 mkdir -p "$(dirname "$OUT")"
 jq -n --slurpfile acs "$WORK/results.jsonl" --slurpfile items "$WORK/items.json" \
-  --arg now "$NOW" --arg run_url "$RUN_URL" '
+  --arg now "$NOW" --arg run_url "$RUN_URL" --argjson stale_days "$STALE_DAYS" '
   def epoch: sub("Z$"; "") | strptime("%Y-%m-%dT%H:%M:%S") | mktime;
   def day: strftime("%Y-%m-%d");
   def route: if (.labels | index("goal")) then "goal"
@@ -162,6 +239,7 @@ jq -n --slurpfile acs "$WORK/results.jsonl" --slurpfile items "$WORK/items.json"
           order: ($e.key + 1),
           acs: { pass: ($a | map(select(.status == "pass")) | length),
                  fail: ($a | map(select(.status == "fail")) | length),
+                 stale: ($a | map(select(.status == "stale")) | length),
                  manual_pending: ($a | map(select(.status == "manual")) | length),
                  total: ($a | length) },
           issues: { done: ($done | length),
@@ -177,7 +255,7 @@ jq -n --slurpfile acs "$WORK/results.jsonl" --slurpfile items "$WORK/items.json"
                   weeks_to_done_estimate:
                     (if ($recent | length) < 3 or ($open | length) == 0 then null
                      else ((($open | length) / (($recent | length) / 4)) * 10 | round / 10) end) },
-          ac_results: ($a | map({id, title, status, detail})),
+          ac_results: ($a | map({id, title, status, detail, verified_at, age_days})),
           ready: ($open | map(select(.assigned | not))
                   | map({route: route, repo, number, title, url})) }
     ] as $releases
@@ -185,6 +263,7 @@ jq -n --slurpfile acs "$WORK/results.jsonl" --slurpfile items "$WORK/items.json"
   | ($all | map(.createdAt | epoch) | min // $t) as $start
   | { generated_at: $now,
       run_url: $run_url,
+      stale_days: $stale_days,
       next_release: $next,
       releases: ($releases | map(if .name == $next then . else del(.ready) end)),
       burnup: ( [ range($start; $t; 7*86400), $t ] | unique

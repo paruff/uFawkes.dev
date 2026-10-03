@@ -31,16 +31,40 @@ repository secret. That's an account action I can't take for you.
 - Both reuse the JSON contract unchanged. If either needs a new field, it's
   added to R3 first.
 
+## Accuracy upgrades (2026-10-03)
+
+The first version counted a manual criterion as passing if its evidence field
+held any URL, and automated 6 of 27 criteria. Owner request: "as complete
+accurate data as possible", with 30 days as the stale limit.
+
+- **Tier 1: evidence is verified, not trusted.** A link must resolve, a PR must
+  be merged, an issue closed, and the evidence must be at most 30 days old,
+  else `stale`. A lookup that fails is `stale`, never `pass`. AC-SUITE-01, -02,
+  -03, AC-DOJO-01 and AC-OBS-02 are fully machine-checkable, so they run as
+  commands (`scripts/checks/`).
+- **Tier 2: live systems.** `live-checks.yml` names the workflows that start a
+  real stack; the page shows each one's latest run on `main` (pass, stale, fail
+  with the failed steps, or none). Obs's three acceptance workflows and fawkes's
+  kind-cluster E2E already existed; Pipe, DevX, Dojo and AI have none, tracked in
+  uFawkesPipe#125, uFawkesDevX#88, uFawkesDojo#55 and uFawkesAI#160.
+- **Still manual by nature:** the criteria that need a real run or a human
+  judgment (16 today). They show "evidence pending" until evidence exists, and
+  are then verified and aged like any other.
+- **Not done:** per-scenario results from the acceptance suites (the page shows
+  the suite's pass or fail, not each test).
+
 ## Verification Strategy
 
-| Criterion    | How it's proven                                               | Test type   | Command / CI job                         |
-| ------------ | ------------------------------------------------------------- | ----------- | ---------------------------------------- |
-| AC-STATUS-01 | Drift check fails on a spec AC with no `acceptance.yml` entry | unit        | `make status-check-drift` in Pre-flight  |
-| AC-STATUS-02 | JSON validates against the R3 shape                           | unit        | `make status && jq -e` schema assertions |
-| AC-STATUS-03 | Broken AC → red; broken script → failed run                   | integration | Two throwaway PRs                        |
-| AC-STATUS-04 | Two scheduled runs update the page; no bot commits on `main`  | live-system | `gh run list -w deploy.yml`, `git log`   |
-| AC-STATUS-05 | Page renders at three widths                                  | live-system | Playwright screenshots                   |
-| AC-STATUS-06 | Accessibility job passes                                      | integration | `Accessibility Testing` check            |
+| Criterion    | How it's proven                                                | Test type   | Command / CI job                                         |
+| ------------ | -------------------------------------------------------------- | ----------- | -------------------------------------------------------- |
+| AC-STATUS-01 | Drift check fails on a spec AC with no `acceptance.yml` entry  | unit        | `make status-check-drift` in Pre-flight                  |
+| AC-STATUS-02 | JSON validates against the R3 shape                            | unit        | `make status && jq -e` schema assertions                 |
+| AC-STATUS-03 | Broken AC → red; broken script → failed run                    | integration | Two throwaway PRs                                        |
+| AC-STATUS-04 | Two scheduled runs update the page; no bot commits on `main`   | live-system | `gh run list -w deploy.yml`, `git log`                   |
+| AC-STATUS-05 | Page renders at three widths                                   | live-system | Playwright screenshots                                   |
+| AC-STATUS-06 | Accessibility job passes                                       | integration | `Accessibility Testing` check                            |
+| AC-STATUS-08 | A dead link, unmerged PR or evidence over 30 days old is stale | unit        | `scripts/test-suite-status.sh` (stubbed `gh` and `curl`) |
+| AC-STATUS-09 | Machine-checkable criteria run as commands and name what fails | unit + live | The same tests, plus `make status` against GitHub        |
 
 ## Risks
 
@@ -53,16 +77,16 @@ repository secret. That's an account action I can't take for you.
 
 ## Implementation status
 
-PRs 1, 2, 3, 4 and 5 are implemented together on one branch. What is
-verified and what is not:
+Verified, as of 2026-10-03:
 
-- **Verified offline:** the drift check, the R3 JSON shape, the pace and
-  burn-up arithmetic, and the failing-AC / broken-script behavior
-  (`scripts/test-suite-status.sh`, part of `make` unit tests). The page
-  builds and renders without horizontal scroll at 1100, 767 and 640px.
-- **Not verified:** the live Project #7 GraphQL query (no token in the
-  build environment), the scheduled runs (AC-STATUS-04), the
-  `Accessibility Testing` check (AC-STATUS-06) and AC-STATUS-03's two
-  throwaway PRs.
-- **Open for the owner:** create the `SUITE_STATUS_TOKEN` secret; PR 2b, the
-  wireframe review with real readers (AC-STATUS-07), was not done.
+- **Offline:** the drift check, the R3 JSON shape, the pace and burn-up
+  arithmetic, the failing-AC and broken-script behavior, evidence verification
+  and every machine check (`scripts/test-suite-status.sh`, part of the unit
+  tests that run in Pre-flight). The page builds and renders without
+  horizontal scroll at 1100, 767 and 640px.
+- **Live:** the Project #7 query and all machine checks run against GitHub
+  (`make status` takes about 30 seconds). The `SUITE_STATUS_TOKEN` secret exists
+  and the scheduled deploy of 2026-10-03 ran the status step successfully.
+- **Not verified:** AC-STATUS-03's two throwaway PRs, the `Accessibility
+Testing` check for the new sections (AC-STATUS-06), and the wireframe review
+  with real readers (AC-STATUS-07).
