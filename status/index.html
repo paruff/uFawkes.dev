@@ -63,11 +63,15 @@ permalink: /status/
         <progress class="status-bar__track" max="{{ r.acs.total }}" value="{{ r.acs.pass }}" aria-labelledby="acs-{{ r.order }}">{{ r.acs.pass }} / {{ r.acs.total }}</progress>
         <span class="status-bar__value">{{ r.acs.pass }} / {{ r.acs.total }}</span>
       </div>
+      {% if r.issues.total > 0 %}
       <div class="status-bar">
         <span class="status-bar__label" id="iss-{{ r.order }}">Issues</span>
         <progress class="status-bar__track" max="{{ r.issues.total }}" value="{{ r.issues.done }}" aria-labelledby="iss-{{ r.order }}">{{ r.issues.done }} / {{ r.issues.total }}</progress>
         <span class="status-bar__value">{{ r.issues.done }} / {{ r.issues.total }}</span>
       </div>
+      {% else %}
+      <p class="status-bar status-bar--empty">Issues: none tracked yet</p>
+      {% endif %}
       {% for b in r.blockers %}
       <p class="status-card__blocker">Blocker: <a href="{{ b.url }}" rel="noopener noreferrer" target="_blank">{{ b.repo }}#{{ b.number }} {{ b.title }}</a></p>
       {% endfor %}
@@ -88,7 +92,7 @@ permalink: /status/
         {% for ac in next.ac_results %}
         <tr class="status-table__row">
           <td><span class="status-badge status-badge--{{ ac.status }}">{% if ac.status == "pass" %}✓ PASS{% elsif ac.status == "fail" %}✗ FAIL{% elsif ac.status == "stale" %}⏱ STALE{% else %}… MANUAL{% endif %}</span></td>
-          <td>{{ ac.id }}</td>
+          <td class="status-table__id">{{ ac.id }}</td>
           <td>{{ ac.title }}</td>
           <td class="status-table__detail">{{ ac.detail }}</td>
         </tr>

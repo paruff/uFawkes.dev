@@ -1928,3 +1928,45 @@ pre {
     color: #c7d2fe;
   }
 }
+
+/* Status page fixes.
+   In dark mode the empty part of a progress bar kept its light track, so
+   "0 / 4" looked complete. The check ID wrapped mid-word ("AC-SUITE-" /
+   "01"), and a release with no tracked issues showed an empty bar that read
+   as zero progress. */
+.status-table__id {
+  white-space: nowrap;
+}
+
+.status-bar--empty {
+  color: #4b5563;
+}
+
+@media (prefers-color-scheme: dark) {
+  .status-bar__track {
+    background: #374151;
+  }
+
+  .status-bar__track::-webkit-progress-bar {
+    background: #374151;
+  }
+
+  .status-bar--empty {
+    color: #9ca3af;
+  }
+
+  .status-card__blocker {
+    color: #f87171;
+  }
+
+  .status-done-line {
+    color: #4ade80;
+  }
+
+  .status-card__work,
+  .status-page__checked,
+  .status-page__board,
+  .status-headline__pace {
+    color: #9ca3af;
+  }
+}
