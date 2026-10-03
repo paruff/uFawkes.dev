@@ -202,14 +202,16 @@ repos:
         files: (^|/)AI_STANCE\.md$|^\.agents/skills/ai-stance/
         pass_filenames: false
 
-      # Unit tests (dependency-free offline suites)
+      # Unit tests (dependency-free offline suites). Gets the staged files and
+      # runs only the suites they affect; --all-files (CI, pre-push) runs all.
+      # The file-to-suite map lives in scripts/run-unit-tests.sh.
       - id: unit-tests
         name: Unit tests (offline suites)
         entry: scripts/run-unit-tests.sh
         language: script
         stages: [pre-commit]
-        files: ^(scripts/(test-.*|emit-dora-event|check-secret-detection|check-ai-stance|check-dora-vocabulary|run-unit-tests|suite-status|check-status-drift|check-design-tokens|shift-left-audit).*|design/tokens\.json|templates/.*\.py)$
-        pass_filenames: false
+        files: ^(scripts/|design/tokens\.json$)
+        require_serial: true
 
       # Suite status: spec.md and acceptance.yml must list the same ACs
       - id: status-drift
