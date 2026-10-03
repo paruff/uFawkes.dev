@@ -5,7 +5,7 @@
 Small PRs, each mergeable alone. Measure first, because the stage budgets in
 the spec are guesses until we've timed the real hooks.
 
-**Progress:** A1–A3 done (full unit run 33 s → 14 s); A4 is spec revision 2; B1 done (`require-tool.sh`); B2 done (`make doctor`, D1–D5); B3 done (pre-push 29 s worst case); A1's first run is [`baseline.md`](baseline.md).
+**Progress:** A1–A3 done (full unit run 33 s → 14 s); A4 is spec revision 2; B1 done (`require-tool.sh`); B2 done (`make doctor`, D1–D5); B3 done (pre-push 29 s worst case); B4 done (CI runs every stage; parity check, D6); A1's first run is [`baseline.md`](baseline.md).
 `unit-tests` is 60–80% of pre-commit in every repo, so before phase B:
 A2 runs only the test suites a commit affects (all of them in CI and at pre-push),
 A3 runs the suites in parallel, and A4 revises the spec from the baseline.
@@ -45,19 +45,19 @@ A3 runs the suites in parallel, and A4 revises the spec from the baseline.
 
 ## Verification Strategy
 
-| Criterion   | How it's proven                                                                                                       | Test type   | Command / CI job                                       |
-| ----------- | --------------------------------------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------ |
-| AC-SHIFT-01 | Remove a hook stage in a throwaway repo; the doctor exits 1 and names the fix                                         | unit        | `bash scripts/test-doctor.sh` (scenario)               |
-| AC-SHIFT-02 | Unset a tool; the hook fails. With `SHIFT_LEFT_ALLOW_MISSING`, it prints `SKIPPED`                                    | unit        | `bash scripts/test-doctor.sh` (scenario)               |
-| AC-SHIFT-03 | Add a hook to the config only; the parity check fails                                                                 | unit        | `bash scripts/test-doctor.sh` (scenario)               |
-| AC-SHIFT-04 | The audit matrix shows every required cell present or as a recorded decision                                          | integration | `scripts/shift-left-audit.sh`, reviewed per phase      |
-| AC-SHIFT-05 | A seeded semgrep violation fails identically locally and in CI                                                        | integration | A throwaway PR with a seeded violation                 |
-| AC-SHIFT-06 | Two scheduled audit runs; a seeded regression opens exactly one issue, and fixing it closes it                        | live-system | `gh run list -w shift-left-audit.yml`, `gh issue list` |
-| AC-SHIFT-07 | The full fault-injection suite: uninstalled stage, deleted script, missing tool, removed CI job, hook missing from CI | unit        | `bash scripts/test-doctor.sh`, run in CI               |
-| AC-SHIFT-08 | A seeded vulnerable dependency: the log table names it                                                                | integration | A throwaway PR in a repo with a scanner                |
-| AC-SHIFT-09 | Per-stage timings within 10 s and 60 s in every repo                                                                  | integration | `make shift-left-audit ARGS=--time`, per phase         |
-| AC-SHIFT-10 | An agent edit that breaks a lint: the `Stop` hook blocks and shows the failure                                        | integration | A scripted session in a throwaway repo                 |
-| AC-SHIFT-11 | Seeded lint, format and failing-test failures: the first two are fixed and rerun green, the test is handed off        | integration | The skill run against a seeded log                     |
+| Criterion   | How it's proven                                                                                                          | Test type   | Command / CI job                                       |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------ | ----------- | ------------------------------------------------------ |
+| AC-SHIFT-01 | Remove a hook stage in a throwaway repo; the doctor exits 1 and names the fix                                            | unit        | `bash scripts/test-doctor.sh` (scenario)               |
+| AC-SHIFT-02 | Unset a tool; the hook fails. With `SHIFT_LEFT_ALLOW_MISSING`, it prints `SKIPPED`                                       | unit        | `bash scripts/test-doctor.sh` (scenario)               |
+| AC-SHIFT-03 | A hook at a stage CI doesn't run (or CI stops running a stage) fails the parity check; a new hook needs no workflow edit | unit        | `bash scripts/test-shift-left-parity.sh`               |
+| AC-SHIFT-04 | The audit matrix shows every required cell present or as a recorded decision                                             | integration | `scripts/shift-left-audit.sh`, reviewed per phase      |
+| AC-SHIFT-05 | A seeded semgrep violation fails identically locally and in CI                                                           | integration | A throwaway PR with a seeded violation                 |
+| AC-SHIFT-06 | Two scheduled audit runs; a seeded regression opens exactly one issue, and fixing it closes it                           | live-system | `gh run list -w shift-left-audit.yml`, `gh issue list` |
+| AC-SHIFT-07 | The full fault-injection suite: uninstalled stage, deleted script, missing tool, removed CI job, hook missing from CI    | unit        | `bash scripts/test-doctor.sh`, run in CI               |
+| AC-SHIFT-08 | A seeded vulnerable dependency: the log table names it                                                                   | integration | A throwaway PR in a repo with a scanner                |
+| AC-SHIFT-09 | Per-stage timings within 10 s and 60 s in every repo                                                                     | integration | `make shift-left-audit ARGS=--time`, per phase         |
+| AC-SHIFT-10 | An agent edit that breaks a lint: the `Stop` hook blocks and shows the failure                                           | integration | A scripted session in a throwaway repo                 |
+| AC-SHIFT-11 | Seeded lint, format and failing-test failures: the first two are fixed and rerun green, the test is handed off           | integration | The skill run against a seeded log                     |
 
 ## Risks
 
