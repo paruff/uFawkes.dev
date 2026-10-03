@@ -403,6 +403,14 @@ repos:
         stages: [pre-push]
         files: (^|/)(Gemfile\.lock|package-lock\.json|yarn\.lock|pnpm-lock\.yaml|requirements[^/]*\.txt|poetry\.lock|uv\.lock|go\.sum|Cargo\.lock)$
 
+      # Every hook runs in CI or .shift-left.yml says why not (spec R3, D6).
+      - id: shift-left-parity
+        name: CI parity (every hook runs in CI, or .shift-left.yml says why)
+        entry: scripts/check-shift-left-parity.sh
+        language: script
+        pass_filenames: false
+        files: ^(\.pre-commit-config\.yaml|\.shift-left\.yml|\.github/workflows/.*\.ya?ml|scripts/check-shift-left-parity\.sh)$
+
       # Stamp each stage with the tree it ran on, for scripts/doctor.sh (D5).
       # Keep these last: a stamp says every hook above ran on that content.
       - id: shift-left-stamp

@@ -19,10 +19,10 @@ on:
         type: boolean
         default: false
       timeout-minutes:
-        description: "Job timeout in minutes"
+        description: "Job timeout in minutes (pre-push hooks run here too)"
         required: false
         type: number
-        default: 2
+        default: 8
     outputs:
       result:
         description: "Preflight result (pass/fail)"
@@ -86,9 +86,21 @@ jobs:
           restore-keys: |
             pre-commit-${{ runner.os }}-
 
-      - name: Run pre-commit hooks
+      # The same hooks a laptop runs, by stage (shift-left spec R3). Hooks
+      # listed local-only in .shift-left.yml are skipped; at pre-push, so are
+      # hooks that already ran at pre-commit. scripts/check-shift-left-parity.sh
+      # (a hook itself) fails a PR whose hooks would not all run here.
+      - name: Run pre-commit hooks (pre-commit stage)
         if: steps.bypass.outputs.skipped != 'true'
-        run: pre-commit run --all-files
+        run: |
+          skip="$(bash scripts/check-shift-left-parity.sh --skip-list pre-commit)"
+          SKIP="$skip" pre-commit run --all-files --show-diff-on-failure
+
+      - name: Run pre-commit hooks (pre-push stage)
+        if: steps.bypass.outputs.skipped != 'true'
+        run: |
+          skip="$(bash scripts/check-shift-left-parity.sh --skip-list pre-push)"
+          SKIP="$skip" pre-commit run --all-files --show-diff-on-failure --hook-stage pre-push
 
       # ── Local Preflight Script ──────────────────────────────────────────────
       - name: Run local preflight checks
@@ -138,50 +150,26 @@ jobs:
             }
 
       # ── Commit Format Check ─────────────────────────────────────────────────
-      - name: Check commit messages
+      - name: Check commit messages (the same hook as a local commit)
         if: |
           steps.bypass.outputs.skipped != 'true' &&
           inputs.commit-format == 'conventional'
-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
-        with:
-          script: |
-            const conventionalRegex = /^(feat|fix|docs|style|refactor|test|chore|ci|perf|build|revert)(\(.+\))?: .{1,72}$/;
-            const mergeCommitRegex = /^Merge /;
-
-            let commits;
-            if (context.eventName === 'pull_request') {
-              const { data: prCommits } = await github.rest.pulls.listCommits({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: context.issue.number,
-                per_page: 100
-              });
-              commits = prCommits.map(c => ({ message: c.commit.message.split('\n')[0], sha: c.sha }));
-            } else {
-              // Only the commits in this push. Re-checking the last N commits on the
-              // branch kept main red for N pushes after one bad merged title.
-              // ponytail: the push payload lists at most 20 commits; use compareCommits if pushes get bigger
-              commits = (context.payload.commits || []).map(c => ({ message: c.message.split('\n')[0], sha: c.id }));
-            }
-
-            let failures = 0;
-            for (const commit of commits) {
-              if (mergeCommitRegex.test(commit.message)) continue;
-              if (!conventionalRegex.test(commit.message)) {
-                core.error(`❌ Commit ${commit.sha.slice(0, 7)}: "${commit.message}"`);
-                failures++;
-              }
-            }
-
-            if (failures > 0) {
-              core.setFailed(
-                `❌ ${failures} commit(s) don't follow Conventional Commits format.\n` +
-                `Expected: type(scope): description\n` +
-                `Types: feat, fix, docs, style, refactor, test, chore, ci, perf, build, revert`
-              );
-            } else {
-              console.log(`✅ All ${commits.length} commit(s) follow Conventional Commits format`);
-            }
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          # Only this PR's or this push's commits; a new branch has no "before".
+          if [[ -z "$BASE_SHA" || "$BASE_SHA" =~ ^0+$ ]]; then range="$HEAD_SHA^!"; else range="$BASE_SHA..$HEAD_SHA"; fi
+          msg="$(mktemp)"
+          failed=0
+          for sha in $(git rev-list --no-merges "$range"); do
+            git log -1 --format=%B "$sha" > "$msg"
+            if ! pre-commit run --hook-stage commit-msg --commit-msg-filename "$msg"; then
+              echo "::error::Commit ${sha:0:7}: $(head -1 "$msg")"
+              failed=1
+            fi
+          done
+          exit "$failed"
 
       # ── Secret Detection ────────────────────────────────────────────────────
       - name: Verify .env.example has no concrete secrets
