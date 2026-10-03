@@ -16,6 +16,10 @@
 #   The pre-commit hook passes the staged files; `--all-files` in CI and at
 #   pre-push passes every file, so every suite runs there.
 #   UNIT_TESTS_DRY_RUN=1 prints the selected suites instead of running them.
+#   UNIT_TESTS_DIR overrides where the suites live (tests; default scripts).
+#
+# The selected suites run in parallel (phase A3): each works in its own mktemp
+# directory and stubs, so they share no state. Results print in suite order.
 #
 # Exit 0 = every selected suite passed. Exit 1 = at least one failed.
 set -uo pipefail
@@ -40,7 +44,7 @@ for entry in "${SUITES[@]}"; do
   name="${entry%% *}"
   pattern="${entry#* }"
   if [[ $# -eq 0 ]] || printf '%s\n' "$@" | grep -qE "$pattern|^scripts/run-unit-tests\.sh$"; then
-    selected+=("scripts/$name.sh")
+    selected+=("${UNIT_TESTS_DIR:-scripts}/$name.sh")
   fi
 done
 
@@ -55,6 +59,19 @@ fi
 
 failed=0
 results=()
+OUT="$(mktemp -d)"
+trap 'rm -rf "$OUT"' EXIT
+
+# ponytail: one process per suite, all at once; cap it if the list outgrows the cores.
+for suite in "${selected[@]}"; do
+  name="$(basename "$suite" .sh)"
+  [[ -f "$suite" ]] || continue
+  (
+    bash "$suite" > "$OUT/$name.out" 2>&1
+    echo $? > "$OUT/$name.rc"
+  ) &
+done
+wait
 
 for suite in "${selected[@]}"; do
   name="$(basename "$suite" .sh)"
@@ -63,7 +80,8 @@ for suite in "${selected[@]}"; do
     failed=1
     continue
   fi
-  if out="$(bash "$suite" 2>&1)"; then
+  out="$(cat "$OUT/$name.out")"
+  if [[ "$(cat "$OUT/$name.rc")" == 0 ]]; then
     last="$(printf '%s\n' "$out" | grep -E '✅|passed|PASSED|BEHAVED' | tail -1 | sed 's/^[[:space:]]*//')"
     results+=("PASS     $name — ${last:-ok}")
   else

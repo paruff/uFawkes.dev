@@ -5,7 +5,7 @@
 Small PRs, each mergeable alone. Measure first, because the stage budgets in
 the spec are guesses until we've timed the real hooks.
 
-**Progress:** A1 and A2 done; A1's first run is [`baseline.md`](baseline.md).
+**Progress:** A1–A3 done (full unit run 33 s → 14 s); A1's first run is [`baseline.md`](baseline.md).
 `unit-tests` is 60–80% of pre-commit in every repo, so before phase B:
 A2 runs only the test suites a commit affects (all of them in CI and at pre-push),
 A3 runs the suites in parallel, and A4 revises the spec from the baseline.
