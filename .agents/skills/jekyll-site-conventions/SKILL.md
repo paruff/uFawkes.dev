@@ -78,8 +78,8 @@ truncate        slugify
 ### Brand tokens (use hex directly — no CSS variables yet)
 
 ```
-#4f46e5   Indigo — CTAs, links, focus rings, Dojo accent (action colour)
-#f06300   Flame — brand/identity: marks, favicon, accents (graphics only, not text)
+#4f46e5   Indigo — links, focus rings, secondary buttons, Dojo accent
+#f06300   Flame — brand/identity: marks, favicon, accents, and the primary button fill with a #061723 label (never as text)
 #15803d   green — pass / live status only
 (full palette and contrast rules: DESIGN.md, design/tokens.json)
 #111827   text primary — headings

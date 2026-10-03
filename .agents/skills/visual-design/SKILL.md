@@ -51,10 +51,10 @@ All spacing in multiples of 8px:
 
 ```
 Canonical palette: DESIGN.md and design/tokens.json (check: make design-check).
-Rule: orange says who we are, indigo says you can act, green/red/amber say state.
+Rule: orange says who we are (and fills the primary button), indigo says you can act, green/red/amber say state.
 
-#4f46e5  — Indigo 600, action colour
-  Use: CTAs, links, focus rings, hover borders on cards, selected items
+#4f46e5  — Indigo 600, interaction colour
+  Use: links, focus rings, secondary buttons, hover borders on cards, selected items
   White label on it: 6.29:1 (AA pass). Hover: #4338ca
 
 #f06300  — Flame 500, brand/identity colour
@@ -103,14 +103,15 @@ transition:    border-color 150ms ease, box-shadow 150ms ease
 ### Primary CTA buttons
 
 ```
-background:    #4f46e5
-color:         #ffffff
+background:    #f06300 (Flame 500)
+color:         #061723 (Night), 5.62:1
 padding:       12px 24px
 border-radius: 6px
 font-size:     16px
 font-weight:   600
 border:        none
-hover:         background #4338ca
+hover:         background #e85800 on light (label 5.05:1), #fc8200 on dark
+secondary:     transparent, 2px solid #4f46e5, label #4f46e5 (it also has .cta-button, so exclude it with :not(.cta-button--secondary))
 focus:         outline 2px solid #4f46e5, outline-offset 2px
 visited:       keep the label colour (a generic a:visited rule outranks a plain class)
 ```
