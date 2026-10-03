@@ -282,7 +282,7 @@ next_guide_title: Next Guide Title
 - Single file: `assets/css/main.css` — **append only, never reorder**
 - BEM: `.block`, `.block__element`, `.block--modifier`
 - Breakpoints: `767px` (tablet), `640px` (mobile) — canonical, never invent others
-- Brand: Flame `#f06300` (identity, marks) | Action: Indigo `#4f46e5` | Pass/live: green `#15803d` | Text primary: `#111827` | Border: `#e5e7eb` | Bg subtle: `#f9fafb`. Full palette, contrast floors and rules: `DESIGN.md` and `design/tokens.json`. `#16a34a` fails text contrast (3.3:1); don't use it for text or buttons
+- Brand: Flame `#f06300` (identity, marks) | Primary button: Flame fill `#f06300` with a Night `#061723` label | Links, focus, secondary button: Indigo `#4f46e5` | Pass/live: green `#15803d` | Text primary: `#111827` | Border: `#e5e7eb` | Bg subtle: `#f9fafb`. Full palette, contrast floors and rules: `DESIGN.md` and `design/tokens.json`. `#16a34a` fails text contrast (3.3:1); don't use it for text or buttons
 - Spacing: multiples of 8px
 - No CSS variables — hex values directly until design-system token migration
 
