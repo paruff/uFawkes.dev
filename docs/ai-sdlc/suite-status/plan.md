@@ -90,3 +90,17 @@ Verified, as of 2026-10-03:
 - **Not verified:** AC-STATUS-03's two throwaway PRs, the `Accessibility
 Testing` check for the new sections (AC-STATUS-06), and the wireframe review
   with real readers (AC-STATUS-07).
+
+### Verification for the status page fixes (dark bars, ID wrapping, empty issues)
+
+| Criterion                                                                | How it's proven                                                                                    | Test type   | Command / CI job                      |
+| ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- | ----------- | ------------------------------------- |
+| An empty progress bar is not light in dark mode                          | Read the computed track colour at 1100px and 390px in dark mode: `rgb(55, 65, 81)`, not `#e5e7eb`  | live-system | Playwright against a local build      |
+| The check ID does not wrap mid-word                                      | `white-space: nowrap` on `.status-table__id`, checked in the same run                              | live-system | Playwright against a local build      |
+| A release with no tracked issues says so instead of showing an empty bar | Screenshot of the local build, where four releases have none                                       | live-system | Playwright against a local build      |
+| The blocker label and the done line are legible in dark mode             | Dark overrides use `#f87171` and `#4ade80` (6.58:1 and 10.44:1 on Night, from `make design-check`) | unit        | `bash scripts/check-design-tokens.sh` |
+| No page scrolls sideways                                                 | `scrollWidth` equals `innerWidth` at 1100 and 390px                                                | live-system | Playwright against a local build      |
+| CSS stays append-only                                                    | `git diff --numstat assets/css/main.css` shows no deleted lines                                    | unit        | `git diff --numstat`                  |
+
+Not covered: the data in these screenshots comes from the real acceptance
+checks run locally plus the fixture issue list, not from Project #7.

@@ -1929,37 +1929,44 @@ pre {
   }
 }
 
-/* Primary button: Flame (owner decision, option B).
-   Flame 500 fill with a Night label, 5.62:1; hover Flame 600, 5.05:1. The
-   secondary button, links and focus rings stay Indigo. Values come from
-   design/tokens.json (buttonBackground, buttonText, buttonHover). The
-   secondary button also carries .cta-button, so it is excluded here. */
-.cta-button:not(.cta-button--secondary),
-.cta-button:not(.cta-button--secondary):visited {
-  background: #f06300;
-  color: #061723;
+/* Status page fixes.
+   In dark mode the empty part of a progress bar kept its light track, so
+   "0 / 4" looked complete. The check ID wrapped mid-word ("AC-SUITE-" /
+   "01"), and a release with no tracked issues showed an empty bar that read
+   as zero progress. */
+.status-table__id {
+  white-space: nowrap;
 }
 
-.cta-button:not(.cta-button--secondary):hover,
-.cta-button:not(.cta-button--secondary):focus-visible,
-.cta-button:not(.cta-button--secondary):visited:hover,
-.cta-button:not(.cta-button--secondary):visited:focus-visible {
-  background: #e85800;
-  color: #061723;
+.status-bar--empty {
+  color: #4b5563;
 }
 
 @media (prefers-color-scheme: dark) {
-  .cta-button:not(.cta-button--secondary),
-  .cta-button:not(.cta-button--secondary):visited {
-    background: #f06300;
-    color: #061723;
+  .status-bar__track {
+    background: #374151;
   }
 
-  .cta-button:not(.cta-button--secondary):hover,
-  .cta-button:not(.cta-button--secondary):focus-visible,
-  .cta-button:not(.cta-button--secondary):visited:hover,
-  .cta-button:not(.cta-button--secondary):visited:focus-visible {
-    background: #fc8200;
-    color: #061723;
+  .status-bar__track::-webkit-progress-bar {
+    background: #374151;
+  }
+
+  .status-bar--empty {
+    color: #9ca3af;
+  }
+
+  .status-card__blocker {
+    color: #f87171;
+  }
+
+  .status-done-line {
+    color: #4ade80;
+  }
+
+  .status-card__work,
+  .status-page__checked,
+  .status-page__board,
+  .status-headline__pace {
+    color: #9ca3af;
   }
 }
