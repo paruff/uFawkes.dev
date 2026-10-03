@@ -44,7 +44,7 @@ git_q() { git -c user.email=t@example.invalid -c user.name=t "$@"; }
 # --- the healthy template ----------------------------------------------------
 T="$TMP/template"
 mkdir -p "$T/scripts" "$T/src"
-cp scripts/doctor.sh scripts/require-tool.sh scripts/shift-left-stamp.sh "$T/scripts/"
+cp scripts/doctor.sh scripts/require-tool.sh scripts/shift-left-stamp.sh scripts/check-shift-left-parity.sh "$T/scripts/"
 cat > "$T/scripts/lint.sh" << 'SH'
 #!/usr/bin/env bash
 exit 0
@@ -90,6 +90,22 @@ repos:
         always_run: true
         pass_filenames: false
         stages: [pre-push]
+YML
+mkdir -p "$T/.github/workflows"
+cat > "$T/.github/workflows/ci.yml" << 'YML'
+jobs:
+  hooks:
+    steps:
+      - run: pre-commit run --all-files
+      - run: pre-commit run --all-files --hook-stage pre-push
+      - run: pre-commit run --hook-stage commit-msg --commit-msg-filename "$f"
+YML
+cat > "$T/.shift-left.yml" << 'YML'
+local-only:
+  - id: shift-left-stamp
+    reason: records that hooks ran in this clone
+  - id: shift-left-stamp-pre-push
+    reason: as above, for pre-push
 YML
 (
   cd "$T"
@@ -208,9 +224,19 @@ s7() {
 }
 
 # The scenarios are independent: run them at once, print them in order.
+s8() {
+  echo "D6 CI parity:"
+  scenario no-ci-pre-commit
+  sed -i.bak '/pre-commit run --all-files$/d' "$R/.github/workflows/ci.yml"
+  rm "$R/.github/workflows/ci.yml.bak"
+  doctor "$R"
+  check "CI no longer runs the pre-commit stage: D6 names the hook" says "FAIL +D6 .*hook lint .*pre-commit"
+  check "only D6 fails" fails_only D6
+}
+
 # A scenario that dies part-way (set -u, a failed git step) is a failure,
 # not a pass with fewer checks.
-SCENARIOS=(s1 s2 s3 s4 s5 s6 s7)
+SCENARIOS=(s1 s2 s3 s4 s5 s6 s7 s8)
 for s in "${SCENARIOS[@]}"; do
   (
     set -e

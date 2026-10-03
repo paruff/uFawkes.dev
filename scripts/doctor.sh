@@ -9,7 +9,9 @@
 #   D4  the config validates and the remote hook environments are installed
 #   D5  the last local commit, and the last push of this branch, went through
 #       their hooks: the stage's stamp (scripts/shift-left-stamp.sh) matches its tree
-# D6 (CI parity) and D7 (required checks) arrive with phases B4 and E1.
+#   D6  every hook runs in CI, or .shift-left.yml says why not
+#       (scripts/check-shift-left-parity.sh)
+# D7 (required checks) arrives with phase E1.
 #
 # One line per check, a fix under each failure. --quiet prints only failures,
 # so it can run at every session start without noise. Exit 1 on any failure.
@@ -166,5 +168,16 @@ if has_hook shift-left-stamp-pre-push && up="$(git rev-parse -q --abbrev-ref '@{
   fi
 fi
 [[ "$d5" -eq 0 ]] && ok D5 "the last commit and push went through their hooks"
+
+# --- D6: CI parity -------------------------------------------------------------
+if [[ ! -x scripts/check-shift-left-parity.sh ]]; then
+  fail D6 "no scripts/check-shift-left-parity.sh, so nothing checks that CI runs these hooks" "copy it from uFawkes.dev"
+elif parity="$(bash scripts/check-shift-left-parity.sh 2>&1)"; then
+  ok D6 "${parity#parity: }"
+else
+  while read -r line; do
+    fail D6 "${line#FAIL }" "run that stage in CI, or list the hook in .shift-left.yml with a reason"
+  done < <(grep '^FAIL' <<< "$parity" || echo "FAIL $parity")
+fi
 
 finish
