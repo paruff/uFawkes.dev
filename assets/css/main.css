@@ -1763,3 +1763,163 @@ pre {
     background: #111827;
   }
 }
+
+/* Visited links keep their component colours.
+   The base theme's `a:visited` (and the generic one above) is more specific
+   than a plain class, so a visited button lost its label colour (Indigo-700
+   text on an Indigo-600 button) until hover. Found by forcing :visited on
+   every link on 12 pages; 24 link styles were affected. */
+.site-header__logo:visited {
+  color: #111827;
+}
+
+.site-header__logo:visited:hover {
+  color: #4338ca;
+}
+
+.main-nav__link:visited {
+  color: #374151;
+}
+
+.main-nav__link:visited:hover {
+  color: #111827;
+}
+
+.main-nav__link--accent:visited,
+.main-nav__link[aria-current="page"]:visited {
+  color: #4338ca;
+}
+
+.cta-button:visited {
+  color: #ffffff;
+}
+
+.cta-button--secondary:visited {
+  color: #4f46e5;
+}
+
+.cta-button--secondary:visited:hover,
+.cta-button--secondary:visited:focus-visible {
+  color: #4338ca;
+}
+
+.badge--live:visited,
+.badge--live:hover,
+.badge--live:visited:hover {
+  color: #15803d;
+}
+
+.guide-meta__back:visited {
+  color: #6b7280;
+}
+
+.guide-meta__back:visited:hover {
+  color: #4338ca;
+}
+
+.error-page__links a:visited {
+  color: #374151;
+}
+
+.error-page__links a:visited:hover {
+  color: #4338ca;
+}
+
+@media (prefers-color-scheme: dark) {
+  .site-header__logo:visited {
+    color: #e5e7eb;
+  }
+
+  .site-header__logo:visited:hover {
+    color: #c7d2fe;
+  }
+
+  .main-nav__link:visited {
+    color: #e5e7eb;
+  }
+
+  .main-nav__link:visited:hover {
+    color: #ffffff;
+  }
+
+  .main-nav__link--accent:visited,
+  .main-nav__link[aria-current="page"]:visited {
+    color: #c7d2fe;
+  }
+
+  .main-nav__link--accent:visited:hover {
+    color: #4338ca;
+  }
+
+  .cta-button:visited {
+    color: #061723;
+  }
+
+  .cta-button--secondary:visited {
+    color: #a5b4fc;
+  }
+
+  .cta-button--secondary:visited:hover,
+  .cta-button--secondary:visited:focus-visible {
+    color: #c7d2fe;
+  }
+
+  .research-section a,
+  .post-link,
+  .stack-actions a,
+  .compose-list a,
+  .guide-meta__next a {
+    color: #a5b4fc;
+  }
+
+  .research-section a:visited,
+  .post-link:visited,
+  .stack-actions a:visited,
+  .compose-list a:visited,
+  .guide-meta__next a:visited {
+    color: #a5b4fc;
+  }
+
+  .research-section a:hover,
+  .post-link:hover,
+  .stack-actions a:hover,
+  .compose-list a:hover,
+  .guide-meta__next a:hover,
+  .research-section a:visited:hover,
+  .post-link:visited:hover,
+  .stack-actions a:visited:hover,
+  .compose-list a:visited:hover,
+  .guide-meta__next a:visited:hover {
+    color: #c7d2fe;
+  }
+
+  .home-footer a:visited {
+    color: #9ca3af;
+  }
+
+  .home-footer a:visited:hover {
+    color: #4ade80;
+  }
+
+  .guide-meta__back:visited {
+    color: #9ca3af;
+  }
+
+  .guide-meta__back:hover,
+  .guide-meta__back:visited:hover,
+  .breadcrumbs__item a:hover {
+    color: #c7d2fe;
+  }
+
+  .error-page__links a:visited {
+    color: #e5e7eb;
+  }
+
+  .error-page__links a:hover,
+  .error-page__links a:focus-visible,
+  .error-page__links a:visited:hover {
+    background: #1f2937;
+    border-color: #a5b4fc;
+    color: #c7d2fe;
+  }
+}

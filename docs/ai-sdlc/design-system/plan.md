@@ -32,6 +32,14 @@
 | No page scrolls sideways at 1280, 800 and 390px; each has one `<h1>`        | `scrollWidth <= innerWidth` and an `h1` count on six pages                            | live-system | Playwright against a local build |
 | CSS stays append-only                                                       | The diff to `assets/css/main.css` only adds lines                                     | unit        | `git diff --stat` (no deletions) |
 
+### Verification for the visited-link fix
+
+| Criterion                                                                     | How it's proven                                                                                                     | Test type   | Command / CI job                 |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------- | -------------------------------- |
+| A visited link keeps its component colour (buttons, nav, logo, badge, footer) | Force `:visited` through the DevTools protocol on every link on 12 pages; compare the winning colour rule           | live-system | Playwright against a local build |
+| No hover or focus state is below 4.5:1                                        | Hover and focus one link of each style on 12 pages in light and dark; compute the ratio against its real background | live-system | Playwright against a local build |
+| No resting text is below its floor                                            | Walk every text node on 10 pages in light and dark                                                                  | live-system | Playwright against a local build |
+
 ## Risks
 
 | Risk                                                             | Mitigation                                                                                          |
