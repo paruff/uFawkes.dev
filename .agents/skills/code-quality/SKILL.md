@@ -70,7 +70,7 @@ markdownify   strip_html    truncate    slugify
 
 ### Values
 
-- Colors: hex only (`#16a34a` not `green` not `rgb(22, 163, 74)`)
+- Colors: hex only (`#4f46e5` not `blue` not `rgb(79, 70, 229)`)
 - Spacing: multiples of 8px
 - No `!important` except in accessibility utilities (sr-only, prefers-reduced-motion)
 - No `z-index` values above 100 without Planning agent approval

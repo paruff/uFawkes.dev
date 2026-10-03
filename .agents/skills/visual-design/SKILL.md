@@ -50,10 +50,21 @@ All spacing in multiples of 8px:
 ## Color usage rules
 
 ```
-#16a34a  — brand green
-  Use: CTAs, live badges, Dojo accent border, hover borders on cards
-  Never use as background for large text areas
-  Contrast on white: 4.7:1 (AA pass)
+Canonical palette: DESIGN.md and design/tokens.json (check: make design-check).
+Rule: orange says who we are, indigo says you can act, green/red/amber say state.
+
+#4f46e5  — Indigo 600, action colour
+  Use: CTAs, links, focus rings, hover borders on cards, selected items
+  White label on it: 6.29:1 (AA pass). Hover: #4338ca
+
+#f06300  — Flame 500, brand/identity colour
+  Use: marks, favicon, hero accent borders, bullets, large graphics only
+  Never for text or button labels: 3.24:1 on white (graphics floor is 3:1)
+  Orange text on white: use Ember #c2410c (5.18:1)
+
+#15803d  — green 700, pass / live status only
+  Use: live and pass badges (on #dcfce7, 4.57:1), always with a word or symbol
+  Retired: #16a34a as an accent. It is 3.30:1 on white and fails for text
 
 #111827  — text primary
   Use: H1, H2, H3, strong emphasis
@@ -85,22 +96,23 @@ background:    #ffffff
 border:        1px solid #e5e7eb
 border-radius: 8px
 padding:       24px (desktop), 16px (mobile)
-hover:         border-color #16a34a, box-shadow 0 2px 8px rgba(22,163,74,0.12)
+hover:         border-color #4f46e5, box-shadow 0 2px 8px rgba(79,70,229,0.12)
 transition:    border-color 150ms ease, box-shadow 150ms ease
 ```
 
 ### Primary CTA buttons
 
 ```
-background:    #16a34a
+background:    #4f46e5
 color:         #ffffff
 padding:       12px 24px
 border-radius: 6px
 font-size:     16px
 font-weight:   600
 border:        none
-hover:         background #15803d (10% darker)
-focus:         outline 2px solid #16a34a, outline-offset 2px
+hover:         background #4338ca
+focus:         outline 2px solid #4f46e5, outline-offset 2px
+visited:       keep the label colour (a generic a:visited rule outranks a plain class)
 ```
 
 ### Code blocks / quick start commands
@@ -108,7 +120,7 @@ focus:         outline 2px solid #16a34a, outline-offset 2px
 ```
 background:    #f9fafb
 border:        1px solid #e5e7eb
-border-left:   3px solid #16a34a
+border-left:   3px solid #f06300
 border-radius: 4px
 padding:       16px
 font-family:   ui-monospace, 'Cascadia Code', monospace
@@ -121,7 +133,7 @@ overflow-x:    auto
 
 ```
 background:    #dcfce7
-color:         #16a34a
+color:         #15803d
 border-radius: 12px
 padding:       2px 10px
 font-size:     12px
@@ -172,7 +184,7 @@ padding:    48px 24px
 
 ### Focus rings
 
-- 2px solid `#16a34a`, outline-offset 2px
+- 2px solid `#4f46e5` on light, `#a5b4fc` on dark, outline-offset 2px
 - Never remove focus rings — only style them
 
 ### Transitions to avoid

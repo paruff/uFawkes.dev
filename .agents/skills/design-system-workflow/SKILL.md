@@ -9,11 +9,11 @@ compatibility: opencode
 
 ## Current phase: Bootstrap
 
-No formal token system or component library exists yet. The FDS is being assembled from patterns already in `assets/css/main.css` and AGENTS.md. Design-System work is **PR 3 deferred** — do not activate without Planning agent instruction.
+A first token set now exists: `DESIGN.md` and `design/tokens.json` (canonical, checked by `make design-check`). No component library exists yet. The FDS is being assembled from patterns already in `assets/css/main.css` and AGENTS.md. Design-System work is **PR 3 deferred** — do not activate without Planning agent instruction.
 
 ## Token lifecycle
 
-1. **Identify** — UX or UI agent uses a value (e.g. `#16a34a`) in a spec
+1. **Identify** — UX or UI agent uses a value (e.g. `#4f46e5`) in a spec
 2. **Name** — Design-System agent assigns a semantic name (`color-brand`)
 3. **Document** — Add to token table in this skill
 4. **Canonicalize** — Planning agent adds to AGENTS.md Section 6
