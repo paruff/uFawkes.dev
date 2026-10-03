@@ -50,7 +50,7 @@ jobs:
 
       # ── Checkout ────────────────────────────────────────────────────────────
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
 
@@ -69,7 +69,7 @@ jobs:
       # ── Pre-commit Validation ───────────────────────────────────────────────
       - name: Set up Python
         if: steps.bypass.outputs.skipped != 'true'
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: "3.11"
 
@@ -79,7 +79,7 @@ jobs:
 
       - name: Cache pre-commit environments
         if: steps.bypass.outputs.skipped != 'true'
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ~/.cache/pre-commit
           key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
@@ -105,7 +105,9 @@ jobs:
           steps.bypass.outputs.skipped != 'true' &&
           inputs.pr-size-limit > 0 &&
           github.event_name == 'pull_request'
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
+        env:
+          PR_SIZE_LIMIT: ${{ inputs.pr-size-limit }}
         with:
           script: |
             const { data: pr } = await github.rest.pulls.get({
@@ -115,7 +117,7 @@ jobs:
             });
 
             const changed = pr.additions + pr.deletions;
-            const limit = ${{ inputs.pr-size-limit }};
+            const limit = Number(process.env.PR_SIZE_LIMIT);
             const hasOverrideLabel = pr.labels.some(l => l.name === 'large-pr-approved');
             const hasBypassLabel = pr.labels.some(l => l.name === 'emergency-bypass');
 
@@ -140,7 +142,7 @@ jobs:
         if: |
           steps.bypass.outputs.skipped != 'true' &&
           inputs.commit-format == 'conventional'
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
         with:
           script: |
             const conventionalRegex = /^(feat|fix|docs|style|refactor|test|chore|ci|perf|build|revert)(\(.+\))?: .{1,72}$/;
@@ -217,7 +219,7 @@ jobs:
 
       - name: Run gitleaks
         if: steps.bypass.outputs.skipped != 'true'
-        uses: gitleaks/gitleaks-action@v3
+        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -242,12 +244,19 @@ jobs:
       # ── Summary ─────────────────────────────────────────────────────────────
       - name: Generate summary
         if: always()
+        env:
+          PRE_COMMIT_STATUS: ${{ steps.bypass.outputs.skipped == 'true' && '⏭️ Skipped' || (job.status == 'success' && '✅ Pass' || '❌ Fail') }}
+          PR_SIZE_STATUS: ${{ inputs.pr-size-limit > 0 && '✅ Checked' || '⏭️ Skipped' }}
+          COMMIT_FORMAT_STATUS: ${{ inputs.commit-format == 'conventional' && '✅ Checked' || '⏭️ Skipped' }}
+          SECRETS_STATUS: ${{ steps.bypass.outputs.skipped == 'true' && '⏭️ Skipped' || '✅ Checked' }}
         run: |
-          echo "## Pre-flight Results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Pre-commit | ${{ steps.bypass.outputs.skipped == 'true' && '⏭️ Skipped' || (job.status == 'success' && '✅ Pass' || '❌ Fail') }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| PR Size | ${{ inputs.pr-size-limit > 0 && '✅ Checked' || '⏭️ Skipped' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Commit Format | ${{ inputs.commit-format == 'conventional' && '✅ Checked' || '⏭️ Skipped' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Secret Detection | ${{ steps.bypass.outputs.skipped == 'true' && '⏭️ Skipped' || '✅ Checked' }} |" >> $GITHUB_STEP_SUMMARY
+          {
+            echo "## Pre-flight Results"
+            echo ""
+            echo "| Check | Status |"
+            echo "|-------|--------|"
+            echo "| Pre-commit | $PRE_COMMIT_STATUS |"
+            echo "| PR Size | $PR_SIZE_STATUS |"
+            echo "| Commit Format | $COMMIT_FORMAT_STATUS |"
+            echo "| Secret Detection | $SECRETS_STATUS |"
+          } >> "$GITHUB_STEP_SUMMARY"

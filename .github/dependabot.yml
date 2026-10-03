@@ -5,11 +5,15 @@ updates:
     schedule:
       interval: "weekly"
     labels: ["dependencies", "chore"]
+    cooldown:
+      default-days: 7
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
     labels: ["dependencies", "chore"]
+    cooldown:
+      default-days: 7
   - package-ecosystem: "pre-commit"
     directory: "/"
     schedule:

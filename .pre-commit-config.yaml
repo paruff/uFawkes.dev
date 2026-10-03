@@ -84,6 +84,24 @@ repos:
         types_or: [markdown, yaml, json, javascript, css, html]
 
   # ============================================================================
+  # GitHub Actions and config schemas (shift-left spec R2): a workflow typo or
+  # an invalid dependabot.yml fails here, not in a red run weeks later.
+  # ============================================================================
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.12
+    hooks:
+      - id: actionlint
+        name: Lint GitHub Actions workflows (actionlint)
+
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.38.2
+    hooks:
+      - id: check-github-workflows
+        name: Validate workflow schemas
+      - id: check-dependabot
+        name: Validate dependabot.yml schema
+
+  # ============================================================================
   # Security Scanning — Gitleaks (single comprehensive check)
   # ============================================================================
   - repo: https://github.com/gitleaks/gitleaks
@@ -202,14 +220,15 @@ repos:
         files: (^|/)AI_STANCE\.md$|^\.agents/skills/ai-stance/
         pass_filenames: false
 
-      # Unit tests (dependency-free offline suites). Gets the staged files and
-      # runs only the suites they affect; --all-files (CI, pre-push) runs all.
+      # Unit tests (dependency-free offline suites). Gets the staged files (at
+      # pre-push, the pushed ones) and runs only the suites they affect;
+      # --all-files in CI runs all.
       # The file-to-suite map lives in scripts/run-unit-tests.sh.
       - id: unit-tests
         name: Unit tests (offline suites)
         entry: scripts/run-unit-tests.sh
         language: script
-        stages: [pre-commit]
+        stages: [pre-commit, pre-push]
         files: ^(scripts/|design/tokens\.json$)
         require_serial: true
 
@@ -344,14 +363,45 @@ repos:
         types: [text]
         files: '(requirements.*\.txt|requirements.*\.in)$'
 
-      # Pre-push validation (safety net)
-      - id: pre-push-validation
-        name: Pre-push validation
-        entry: pre-commit run --all-files
-        language: system
+      # SAST: semgrep with the registry's p/ci ruleset, online when it can be,
+      # from the last fetched copy when not (scripts/semgrep-scan.sh).
+      - id: semgrep
+        name: SAST (semgrep p/ci)
+        entry: scripts/semgrep-scan.sh
+        language: python
+        additional_dependencies: ["semgrep==1.179.0"]
         stages: [pre-push]
-        always_run: true
-        pass_filenames: false
+        require_serial: true # one ruleset fetch; semgrep parallelises itself
+        types_or:
+          [
+            python,
+            shell,
+            javascript,
+            ts,
+            ruby,
+            go,
+            yaml,
+            json,
+            html,
+            dockerfile,
+            terraform,
+          ]
+
+      # Dependency scan of each changed lockfile: HIGH and CRITICAL, as a table
+      # in the log (spec R8). Only the files passed in, never untracked ones.
+      - id: trivy
+        name: Dependency scan (Trivy, HIGH and CRITICAL)
+        entry: |
+          scripts/require-tool.sh trivy -- bash -c '
+            rc=0
+            for f in "$@"; do
+              trivy fs --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --format table --quiet "$f" || rc=1
+            done
+            exit $rc
+          ' --
+        language: script
+        stages: [pre-push]
+        files: (^|/)(Gemfile\.lock|package-lock\.json|yarn\.lock|pnpm-lock\.yaml|requirements[^/]*\.txt|poetry\.lock|uv\.lock|go\.sum|Cargo\.lock)$
 
       # Stamp each stage with the tree it ran on, for scripts/doctor.sh (D5).
       # Keep these last: a stamp says every hook above ran on that content.

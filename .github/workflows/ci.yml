@@ -21,10 +21,10 @@ jobs:
           echo "job:${{ github.job }}"
 
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1
         with:
           ruby-version: "3.3"
           bundler-cache: true
@@ -44,7 +44,7 @@ jobs:
             --typhoeus '{"timeout":20,"followlocation":true}'
 
       - name: Spell check Markdown
-        uses: crate-ci/typos@v1
+        uses: crate-ci/typos@53821664afd79bb88fcdd22fdc2f49d8d3f6cac9 # v1
         with:
           files: "**/*.md"
 

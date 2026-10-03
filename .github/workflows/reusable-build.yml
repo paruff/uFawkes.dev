@@ -62,7 +62,7 @@ jobs:
           echo "job:${{ github.job }}"
 
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       # ─── Supply Chain ────────────────────────────────────────────────────
       - name: Fail if ':latest' is used
@@ -77,34 +77,40 @@ jobs:
       # ─── Config Validation: Prometheus ──────────────────────────────────
       - name: Validate Prometheus config
         if: inputs.validate-prometheus && hashFiles('config/prometheus/prometheus.yaml') != ''
+        env:
+          PROMETHEUS_IMAGE: ${{ inputs.prometheus-image }}
         run: |
           echo "Validating Prometheus config..."
           docker run --rm \
-            -v $PWD/config/prometheus:/etc/prometheus \
+            -v "$PWD/config/prometheus:/etc/prometheus" \
             --entrypoint promtool \
-            ${{ inputs.prometheus-image }} \
+            "$PROMETHEUS_IMAGE" \
             check config /etc/prometheus/prometheus.yaml
           echo "✅ Prometheus config valid"
 
       # ─── Config Validation: OTel Collector ──────────────────────────────
       - name: Validate OTel config
         if: inputs.validate-otel && hashFiles('config/otel/collector.yaml') != ''
+        env:
+          OTEL_IMAGE: ${{ inputs.otel-image }}
         run: |
           echo "Validating OTel Collector config..."
           docker run --rm \
-            -v $PWD/config/otel/collector.yaml:/etc/otel/config.yaml \
-            ${{ inputs.otel-image }} \
+            -v "$PWD/config/otel/collector.yaml:/etc/otel/config.yaml" \
+            "$OTEL_IMAGE" \
             validate --config=/etc/otel/config.yaml
           echo "✅ OTel Collector config valid"
 
       # ─── Config Validation: Tempo ───────────────────────────────────────
       - name: Validate Tempo config
         if: inputs.validate-tempo && hashFiles('config/tempo/tempo.yaml') != ''
+        env:
+          TEMPO_IMAGE: ${{ inputs.tempo-image }}
         run: |
           echo "Validating Tempo config..."
           docker run --rm \
             -v $PWD/config/tempo/tempo.yaml:/etc/tempo.yaml \
-            ${{ inputs.tempo-image }} \
+            "$TEMPO_IMAGE" \
             -config.file=/etc/tempo.yaml -config.verify=true
           echo "✅ Tempo config valid"
 
@@ -126,24 +132,30 @@ jobs:
       # ─── Build Summary ──────────────────────────────────────────────────
       - name: Generate build summary
         if: always()
+        env:
+          VALIDATE_PROMETHEUS: ${{ inputs.validate-prometheus }}
+          VALIDATE_OTEL: ${{ inputs.validate-otel }}
+          VALIDATE_TEMPO: ${{ inputs.validate-tempo }}
+          VALIDATE_GRAFANA: ${{ inputs.validate-grafana }}
+          FAIL_ON_LATEST: ${{ inputs.fail-on-latest }}
         run: |
           echo "### Build & Validate Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          if [ "${{ inputs.fail-on-latest }}" == "true" ]; then
+          if [ "$FAIL_ON_LATEST" == "true" ]; then
             echo "- ✅ Supply chain: No :latest tags" >> $GITHUB_STEP_SUMMARY
           fi
 
-          if [ "${{ inputs.validate-prometheus }}" == "true" ]; then
+          if [ "$VALIDATE_PROMETHEUS" == "true" ]; then
             echo "- ✅ Prometheus config validated" >> $GITHUB_STEP_SUMMARY
           fi
-          if [ "${{ inputs.validate-otel }}" == "true" ]; then
+          if [ "$VALIDATE_OTEL" == "true" ]; then
             echo "- ✅ OTel Collector config validated" >> $GITHUB_STEP_SUMMARY
           fi
-          if [ "${{ inputs.validate-tempo }}" == "true" ]; then
+          if [ "$VALIDATE_TEMPO" == "true" ]; then
             echo "- ✅ Tempo config validated" >> $GITHUB_STEP_SUMMARY
           fi
-          if [ "${{ inputs.validate-grafana }}" == "true" ]; then
+          if [ "$VALIDATE_GRAFANA" == "true" ]; then
             echo "- ✅ Grafana provisioning validated" >> $GITHUB_STEP_SUMMARY
           fi
 
