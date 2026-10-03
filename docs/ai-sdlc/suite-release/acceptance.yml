@@ -33,6 +33,7 @@
 #                    a GitHub PR must be merged, an issue closed. Evidence older than
 #                    30 days is "stale", not "pass". A link that is not a GitHub PR or
 #                    issue also needs `evidence_date: YYYY-MM-DD`. No evidence = "manual".
+# Live systems (does the real stack run right now?) are in live-checks.yml.
 # AC-SUITE-01..03, AC-DOJO-01 and AC-OBS-02 are fully machine-checkable, so they run
 # as commands. AC-SUITE-01's scope (public entry points) is the owner's 2026-10-02 call.
 # Release order on the status page is the order of first appearance below.

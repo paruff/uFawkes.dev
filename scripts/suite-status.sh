@@ -112,6 +112,13 @@ age_days() {
     ((($n | ts) - ($a | ts)) / 86400 | floor) | if . < 0 then 0 else . end' 2> /dev/null
 }
 
+# age_hours <iso8601>: whole hours between that moment and NOW.
+age_hours() {
+  jq -nr --arg a "$1" --arg n "$NOW" '
+    def ts: sub("\\.[0-9]+Z$"; "Z") | fromdate;
+    ((($n | ts) - ($a | ts)) / 3600 | floor) | if . < 0 then 0 else . end' 2> /dev/null
+}
+
 # judge_evidence <evidence> <evidence_date>: sets EV_STATUS, EV_DETAIL, EV_AGE.
 # Evidence is checked, never trusted: a link must resolve, a PR must be merged,
 # an issue closed, and it must be no older than STALE_DAYS.
@@ -209,6 +216,77 @@ for ((i = 0; i < n; i++)); do
       age_days: (if $age == "" then null else ($age | tonumber) end)}' <<< "$ac" >> "$WORK/results.jsonl"
 done
 
+# --- 2. live systems --------------------------------------------------------
+# Each entry in live-checks.yml names a workflow that starts a real system. Its
+# latest completed run on main is the signal. No workflow is reported as "none".
+LIVE="${STATUS_LIVE:-docs/ai-sdlc/suite-release/live-checks.yml}"
+python3 - "$LIVE" > "$WORK/live.json" << 'PY' || die "cannot parse $LIVE"
+import json, sys, yaml
+data = yaml.safe_load(open(sys.argv[1])) or []
+if not isinstance(data, list):
+    sys.exit("live checks file must be a list")
+for e in data:
+    for k in ("id", "repo", "release", "title"):
+        if not e.get(k):
+            sys.exit("live check missing %s: %r" % (k, e))
+json.dump(data, sys.stdout, default=str)
+PY
+: > "$WORK/live.jsonl"
+nlive="$(jq length "$WORK/live.json")"
+for ((i = 0; i < nlive; i++)); do
+  e="$(jq -c ".[$i]" "$WORK/live.json")"
+  repo="$(jq -r .repo <<< "$e")"
+  wf="$(jq -r '.workflow // ""' <<< "$e")"
+  max="$(jq -r '.max_age_hours // 72' <<< "$e")"
+  issue="$(jq -r '.issue // ""' <<< "$e")"
+  lstatus="none"
+  ldetail="no live workflow yet${issue:+ ($issue)}"
+  lat=""
+  lage=""
+  lurl=""
+  if [[ -n "$wf" ]]; then
+    # Not `--branch main`: GitHub answers filtered queries from a slower index, and
+    # once returned a 22-day-old run as the newest. Fetch the plain list, filter here.
+    if ! runs="$(gh run list -R "$OWNER/$repo" --workflow "$wf" --limit 40 \
+      --json conclusion,createdAt,url,databaseId,event,headBranch 2>&1)"; then
+      lstatus="stale"
+      ldetail="could not read the runs ($(head -n 1 <<< "$runs" | cut -c1-80))"
+    else
+      run="$(jq -c '[.[] | select(.headBranch == "main")
+        | select(.conclusion == "success" or .conclusion == "failure"
+          or .conclusion == "timed_out" or .conclusion == "startup_failure")] | .[0] // empty' <<< "$runs")"
+      if [[ -z "$run" ]]; then
+        ldetail="the workflow has not completed a run on main"
+      else
+        concl="$(jq -r .conclusion <<< "$run")"
+        lat="$(jq -r .createdAt <<< "$run")"
+        lurl="$(jq -r .url <<< "$run")"
+        evt="$(jq -r .event <<< "$run")"
+        lage="$(age_hours "$lat")"
+        if [[ "$concl" == "success" ]]; then
+          if ((lage > max)); then
+            lstatus="stale"
+            ldetail="last success was $lage h ago (limit $max h)"
+          else
+            lstatus="pass"
+            ldetail="passed $lage h ago ($evt)"
+          fi
+        else
+          lstatus="fail"
+          failed="$(gh api "repos/$OWNER/$repo/actions/runs/$(jq -r .databaseId <<< "$run")/jobs" \
+            --jq '[.jobs[].steps[] | select(.conclusion == "failure") | .name] | join(", ")' 2> /dev/null || true)"
+          ldetail="$concl $lage h ago ($evt)${failed:+; failed at: $failed}"
+        fi
+      fi
+    fi
+  fi
+  jq -c --arg status "$lstatus" --arg detail "$ldetail" --arg at "$lat" --arg age "$lage" --arg url "$lurl" \
+    '{id, repo, release, title, issue: (.issue // null), status: $status, detail: $detail,
+      checked_at: (if $at == "" then null else $at end),
+      age_hours: (if $age == "" then null else ($age | tonumber) end),
+      run_url: (if $url == "" then null else $url end)}' <<< "$e" >> "$WORK/live.jsonl"
+done
+
 # --- 3. assemble the R3 document -------------------------------------------
 RUN_URL=""
 if [[ -n "${GITHUB_RUN_ID:-}" ]]; then
@@ -216,7 +294,7 @@ if [[ -n "${GITHUB_RUN_ID:-}" ]]; then
 fi
 
 mkdir -p "$(dirname "$OUT")"
-jq -n --slurpfile acs "$WORK/results.jsonl" --slurpfile items "$WORK/items.json" \
+jq -n --slurpfile acs "$WORK/results.jsonl" --slurpfile items "$WORK/items.json" --slurpfile live "$WORK/live.jsonl" \
   --arg now "$NOW" --arg run_url "$RUN_URL" --argjson stale_days "$STALE_DAYS" '
   def epoch: sub("Z$"; "") | strptime("%Y-%m-%dT%H:%M:%S") | mktime;
   def day: strftime("%Y-%m-%d");
@@ -235,8 +313,14 @@ jq -n --slurpfile acs "$WORK/results.jsonl" --slurpfile items "$WORK/items.json"
       | ($is | map(select(isdone | not))) as $open
       | ($done | map(select(.closedAt != null and ((.closedAt | epoch) >= ($t - 28*86400))))) as $recent
       | ($is | length) as $total
+      | ($live | map(select(.release == $name))) as $lv
       | { name: $name,
           order: ($e.key + 1),
+          live: { pass: ($lv | map(select(.status == "pass")) | length),
+                  fail: ($lv | map(select(.status == "fail")) | length),
+                  stale: ($lv | map(select(.status == "stale")) | length),
+                  none: ($lv | map(select(.status == "none")) | length),
+                  total: ($lv | length) },
           acs: { pass: ($a | map(select(.status == "pass")) | length),
                  fail: ($a | map(select(.status == "fail")) | length),
                  stale: ($a | map(select(.status == "stale")) | length),
@@ -264,6 +348,7 @@ jq -n --slurpfile acs "$WORK/results.jsonl" --slurpfile items "$WORK/items.json"
   | { generated_at: $now,
       run_url: $run_url,
       stale_days: $stale_days,
+      live: $live,
       next_release: $next,
       releases: ($releases | map(if .name == $next then . else del(.ready) end)),
       burnup: ( [ range($start; $t; 7*86400), $t ] | unique

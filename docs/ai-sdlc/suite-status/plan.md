@@ -55,16 +55,17 @@ accurate data as possible", with 30 days as the stale limit.
 
 ## Verification Strategy
 
-| Criterion    | How it's proven                                                | Test type   | Command / CI job                                         |
-| ------------ | -------------------------------------------------------------- | ----------- | -------------------------------------------------------- |
-| AC-STATUS-01 | Drift check fails on a spec AC with no `acceptance.yml` entry  | unit        | `make status-check-drift` in Pre-flight                  |
-| AC-STATUS-02 | JSON validates against the R3 shape                            | unit        | `make status && jq -e` schema assertions                 |
-| AC-STATUS-03 | Broken AC → red; broken script → failed run                    | integration | Two throwaway PRs                                        |
-| AC-STATUS-04 | Two scheduled runs update the page; no bot commits on `main`   | live-system | `gh run list -w deploy.yml`, `git log`                   |
-| AC-STATUS-05 | Page renders at three widths                                   | live-system | Playwright screenshots                                   |
-| AC-STATUS-06 | Accessibility job passes                                       | integration | `Accessibility Testing` check                            |
-| AC-STATUS-08 | A dead link, unmerged PR or evidence over 30 days old is stale | unit        | `scripts/test-suite-status.sh` (stubbed `gh` and `curl`) |
-| AC-STATUS-09 | Machine-checkable criteria run as commands and name what fails | unit + live | The same tests, plus `make status` against GitHub        |
+| Criterion    | How it's proven                                                                  | Test type   | Command / CI job                                                  |
+| ------------ | -------------------------------------------------------------------------------- | ----------- | ----------------------------------------------------------------- |
+| AC-STATUS-01 | Drift check fails on a spec AC with no `acceptance.yml` entry                    | unit        | `make status-check-drift` in Pre-flight                           |
+| AC-STATUS-02 | JSON validates against the R3 shape                                              | unit        | `make status && jq -e` schema assertions                          |
+| AC-STATUS-03 | Broken AC → red; broken script → failed run                                      | integration | Two throwaway PRs                                                 |
+| AC-STATUS-04 | Two scheduled runs update the page; no bot commits on `main`                     | live-system | `gh run list -w deploy.yml`, `git log`                            |
+| AC-STATUS-05 | Page renders at three widths                                                     | live-system | Playwright screenshots                                            |
+| AC-STATUS-06 | Accessibility job passes                                                         | integration | `Accessibility Testing` check                                     |
+| AC-STATUS-08 | A dead link, unmerged PR or evidence over 30 days old is stale                   | unit        | `scripts/test-suite-status.sh` (stubbed `gh` and `curl`)          |
+| AC-STATUS-09 | Machine-checkable criteria run as commands and name what fails                   | unit + live | The same tests, plus `make status` against GitHub                 |
+| AC-STATUS-10 | Live-system workflows show their latest `main` run: stale, failed steps, or none | unit + live | `scripts/test-suite-status.sh` (stubbed `gh`), plus `make status` |
 
 ## Risks
 

@@ -1,0 +1,103 @@
+# MIT License
+#
+# Copyright (c) 2026 Phil Ruff
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+# Live-system signals for the suite status page.
+#
+# An acceptance criterion in acceptance.yml answers "is this release ready?".
+# A live check answers a different question: "does the real thing run right now?".
+# Each entry names a GitHub Actions workflow that starts a running system (a
+# Docker Compose stack, a kind cluster) and checks it. `make status` reads the
+# workflow's latest completed run on main:
+#
+#   success within max_age_hours   -> pass
+#   success but older              -> stale  (a green run nobody re-ran is not evidence)
+#   failure / timed out            -> fail   (with the steps that failed)
+#   no workflow, or never run      -> none   (said plainly, with the issue to fix it)
+#
+# Nothing here changes whether a criterion passes; it is shown beside them.
+# Add a repo's workflow here once it exists. `workflow: ""` means "none yet".
+
+# --- uFawkesObs: three live workflows already run against real stacks -------
+- id: obs-acceptance-full
+  repo: uFawkesObs
+  workflow: ci-acceptance-full.yml
+  release: Obs 1.0
+  title: Core, apps and DORA start, and the acceptance suite passes
+  max_age_hours: 72 # runs on every push to main; 72h rides out a quiet weekend
+
+- id: obs-acceptance-smoke
+  repo: uFawkesObs
+  workflow: ci-acceptance-smoke.yml
+  release: Obs 1.0
+  title: The core stack starts and answers its health endpoints
+  max_age_hours: 72
+
+- id: obs-chaos-nightly
+  repo: uFawkesObs
+  workflow: ci-chaos-nightly.yml
+  release: Obs 1.0
+  title: The core stack survives chaos (nightly)
+  max_age_hours: 36
+
+# --- fawkes: a real kind cluster ---------------------------------------------
+- id: fawkes-idp-e2e
+  repo: fawkes
+  workflow: idp-e2e-tests.yml
+  release: fawkes Alpha
+  title: A kind cluster bootstraps the minimal platform and passes the end-to-end tests
+  max_age_hours: 72
+
+- id: fawkes-golden-path
+  repo: fawkes
+  workflow: golden-path-acceptance-tests.yml
+  release: fawkes Alpha
+  title: The golden-path acceptance tests pass (scheduled)
+  max_age_hours: 36
+
+# --- no live workflow yet (each has an issue) ---------------------------------
+- id: pipe-live
+  repo: uFawkesPipe
+  workflow: ""
+  release: Pipe 2.0
+  title: The standalone stack starts and runs a sample pipeline
+  issue: uFawkesPipe#125
+
+- id: devx-live
+  repo: uFawkesDevX
+  workflow: ""
+  release: DevX 0.1
+  title: The stack starts on a clean runner and its services answer
+  issue: uFawkesDevX#88
+
+- id: dojo-live
+  repo: uFawkesDojo
+  workflow: ""
+  release: Dojo 0.2
+  title: Each published lab runs against a real stack
+  issue: uFawkesDojo#55
+
+- id: ai-live
+  repo: uFawkesAI
+  workflow: ""
+  release: AI 2.0
+  title: A repo made from the template opens in the published image and its harnesses start
+  issue: uFawkesAI#160
