@@ -9,7 +9,7 @@ summary: Operational telemetry, unified DORA dashboards, and AI delivery visibil
 repo_url: https://github.com/paruff/ufawkesobs
 repo_name: paruff/ufawkesobs
 features:
-  - DORA dashboards wired to delivery and reliability signals — deployment frequency, lead time, change failure rate, and MTTR (merged from uFawkesDORA)
+  - DORA dashboards wired to delivery and reliability signals — all five DORA metrics: deployment frequency, change lead time, change fail rate, failed deployment recovery time, and deployment rework rate (merged from uFawkesDORA)
   - Value stream mapping that connects delivery changes to team outcomes
   - AI metrics for copilots, agents, and assisted workflows
   - Alerting defaults for platform health and release flow
