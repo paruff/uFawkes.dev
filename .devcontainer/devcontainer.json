@@ -21,9 +21,7 @@
       }
     }
   },
-  "forwardPorts": [
-    4000
-  ],
+  "forwardPorts": [4000],
   "remoteUser": "dev",
   "postCreateCommand": "echo 'uFawkes.dev devcontainer ready — all tools pre-installed'",
   "hostRequirements": {
