@@ -181,14 +181,16 @@ or simulated one.
 #### AC-AI-09: One hook gate, run the same way everywhere
 
 - **Expected:** `.pre-commit-config.yaml` is the only hook definition. It
-  runs locally (hooks pre-installed in the devcontainer image) and in the
+  runs locally (pre-commit and the baseline tools pre-installed in the
+  devcontainer image; remote hook environments download once, on first run) and in the
   Pre-flight workflow, which is a required check in every suite repo.
   pre-commit.ci is retired: it duplicated Pre-flight, its skip list drifted
   on template syncs, and it couldn't run the suite's own `jq`-based hooks.
   A monthly workflow opens a `pre-commit autoupdate` PR
 - **Verification:** no `ci:` block in any suite repo's config; branch
   protection lists Pre-flight; the devcontainer runs
-  `pre-commit run --all-files` offline on first open
+  `pre-commit run --all-files` as `dev` (offline-on-first-open dropped by the
+  owner on 2026-10-03: a one-time hook download is accepted)
 
 #### AC-AI-06: Delivery events reach uFawkesObs, or the claim goes
 
