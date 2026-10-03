@@ -104,3 +104,22 @@ Testing` check for the new sections (AC-STATUS-06), and the wireframe review
 
 Not covered: the data in these screenshots comes from the real acceptance
 checks run locally plus the fixture issue list, not from Project #7.
+
+### Verification for the status page redesign
+
+| Criterion                                                                           | How it's proven                                                                                                | Test type   | Command / CI job                 |
+| ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ----------- | -------------------------------- |
+| The verdict is the first thing under the title and says ready, waiting or not ready | Screenshot of the local build (light, dark, 390px): the verdict card, ring and three counts sit above the list | live-system | Playwright against a local build |
+| The ring and bars show pass, fail, stale and awaiting evidence separately           | Same screenshots: AI 2.0 shows 3 failing and 6 awaiting evidence as separate segments                          | live-system | Playwright against a local build |
+| No text is below its contrast floor, in light and dark                              | The text-node contrast walk on `/status/` in both schemes: 0 failing combinations                              | live-system | Playwright against a local build |
+| No horizontal scroll at 1100px and 390px                                            | `scrollWidth` equals `innerWidth`                                                                              | live-system | Playwright against a local build |
+| Motion respects `prefers-reduced-motion` and settles                                | Animations sit inside `prefers-reduced-motion: no-preference`; screenshots taken after 1.5s show full bars     | live-system | Playwright against a local build |
+| Every colour has a symbol and a word beside it                                      | Verdict (✗ / ⏱ / ✓), pills, badges and the legend read without colour                                          | unit        | Review of `status/index.html`    |
+| CSS stays append-only                                                               | `git diff --numstat assets/css/main.css` shows no deleted lines                                                | unit        | `git diff --numstat`             |
+
+Not covered: the contrast walk reads the nearest solid background, so text
+on the verdict card's gradient is measured against the page behind it (the
+gradient runs between two neighbouring neutrals, so the error is small but
+not zero). The data is the real acceptance checks run locally plus the
+fixture issue list, not live Project #7. No real readers have tried the new
+layout (AC-STATUS-07 is still open).
