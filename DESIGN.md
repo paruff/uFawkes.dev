@@ -1,6 +1,6 @@
 # DESIGN.md: Fawkes and uFawkes brand and design system
 
-**Status:** Draft, revision 2, for owner review | **Updated:** 2026-10-02 | **Owner:** @paruff
+**Status:** Draft, revision 3, for owner review | **Updated:** 2026-10-03 | **Owner:** @paruff
 
 This is the single reference for how Fawkes (the platform) and uFawkes (the
 open-source stacks and their site, ufawkes.dev) look, sound and behave.
@@ -73,16 +73,18 @@ The lettering in the image is image-generated, not a named font (see D3).
 
 ## 3. Colour: two tiers
 
-**Proposed rule.** Orange says _who we are_. Indigo says _you can act on
-this_. Green, red and amber say _what state something is in_. No colour does
-two jobs.
+**Rule.** Orange says _who we are_ and, by owner decision D9, fills the one
+primary button. Indigo says _you can act on this_: links, focus rings,
+secondary buttons, selected items. Green, red and amber say _what state
+something is in_. Orange and indigo are both interactive on a button, so
+orange never appears as text or as a status.
 
-| Tier        | Colours                       | Used for                                                   | Never used for                      |
-| ----------- | ----------------------------- | ---------------------------------------------------------- | ----------------------------------- |
-| Identity    | Flame, Ember, Night           | Marks, favicon, hero accents, large graphics, the phoenix  | Buttons, links, status, data series |
-| Interaction | Indigo (Fawkes design system) | Buttons, links, focus rings, selected items                | Decoration, status                  |
-| Status      | Green, red, amber, gray       | Pass, fail, warning, manual, only with a symbol and a word | Branding, buttons                   |
-| Neutral     | Gray scale                    | Text, borders, backgrounds                                 | -                                   |
+| Tier        | Colours                       | Used for                                                                                | Never used for             |
+| ----------- | ----------------------------- | --------------------------------------------------------------------------------------- | -------------------------- |
+| Identity    | Flame, Ember, Night           | Marks, favicon, hero accents, large graphics, the phoenix, the primary button fill (D9) | Links, status, data series |
+| Interaction | Indigo (Fawkes design system) | Links, focus rings, secondary buttons, selected items                                   | Decoration, status         |
+| Status      | Green, red, amber, gray       | Pass, fail, warning, manual, only with a symbol and a word                              | Branding, buttons          |
+| Neutral     | Gray scale                    | Text, borders, backgrounds                                                              | -                          |
 
 ### Palette (authoritative values are in `design/tokens.json`)
 
@@ -196,17 +198,17 @@ runtime.
 
 ## 7. Components
 
-| Component        | Rule                                                                                                                     |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Primary button   | Indigo 600 background, white label, 8px radius. The label states the action ("Run Obs in 60 seconds", not "Get started") |
-| Secondary button | Transparent, 2px Indigo 600 border, Indigo 600 label                                                                     |
-| Links in text    | Indigo 600, underlined, with a visible focus ring                                                                        |
-| Focus ring       | 2px outline, 2px offset: Indigo 600 on light, Indigo 300 on dark                                                         |
-| Navigation       | Inline above 767px, menu button at or below it. The current page is marked with `aria-current` and a text change         |
-| Status badge     | Symbol, word and colour pair from section 3                                                                              |
-| Progress bar     | 8px track `#e5e7eb`, Indigo 600 fill, and the "3 / 9" text beside it                                                     |
-| Code block       | Subtle background, wraps long commands, never makes the page scroll sideways                                             |
-| Tables on mobile | Scroll inside their own container or turn into a list. The page itself never scrolls sideways                            |
+| Component        | Rule                                                                                                                                                                             |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Primary button   | Flame 500 background, Night label (5.62:1), 8px radius; hover Flame 600 on light and Flame 400 on dark. The label states the action ("Run Obs in 60 seconds", not "Get started") |
+| Secondary button | Transparent, 2px Indigo 600 border, Indigo 600 label                                                                                                                             |
+| Links in text    | Indigo 600, underlined, with a visible focus ring                                                                                                                                |
+| Focus ring       | 2px outline, 2px offset: Indigo 600 on light, Indigo 300 on dark                                                                                                                 |
+| Navigation       | Inline above 767px, menu button at or below it. The current page is marked with `aria-current` and a text change                                                                 |
+| Status badge     | Symbol, word and colour pair from section 3                                                                                                                                      |
+| Progress bar     | 8px track `#e5e7eb`, Indigo 600 fill, and the "3 / 9" text beside it                                                                                                             |
+| Code block       | Subtle background, wraps long commands, never makes the page scroll sideways                                                                                                     |
+| Tables on mobile | Scroll inside their own container or turn into a list. The page itself never scrolls sideways                                                                                    |
 
 ## 8. Voice
 
@@ -339,12 +341,26 @@ ChatGPT, about a year ago.** That changes the question.
 | D7  | May I open small pointer PRs in the six other repos?                      | **Approved** (owner): one PR per repo, README and `AGENTS.md` only |
 | D8  | Is the interim flame acceptable until a designer delivers the final mark? | **Yes** (owner), flagged as interim                                |
 
+### Decisions recorded (2026-10-03)
+
+| #   | Decision                                                       | Outcome                                                                                          |
+| --- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| D9  | The primary button colour                                      | **Flame orange with a Night label** (owner, option B). Overrides the Indigo recommendation in D1 |
+| D10 | Should the Fawkes design system's default primary move to 600? | **Yes** (owner). Indigo 500 is 4.47:1 on white; 600 passes. Tracked in a separate fawkes PR      |
+
+**What D9 trades away.** D1 argued against an orange action colour because
+orange and amber already mean "warning" in ops tools, and I found no study
+showing a brand colour affects adoption (see above), so this is a judgment
+call, not a measured one. The mitigations: the button uses a dark label (5.62:1
+against the fill, 5.05:1 on hover), the fill is the brand orange rather than
+the amber used for warnings, links and focus rings stay Indigo, and orange
+never appears as text or as a status. If users read the button as a warning,
+revisit it.
+
 ### Still open
 
-- **The primary button colour.** The owner found the Indigo button "not what I
-  expected". Six alternatives with computed contrast were compared on
-  2026-10-02 (Indigo, Flame with a dark label, Ember, Night, green, teal). No
-  choice has been made yet.
+- Nothing from the colour questions. D1's text above is kept as the record of
+  the reasoning, with D9 as the outcome for buttons.
 
 ## 12. Implementing this
 
