@@ -1768,3 +1768,8 @@ pre {
     background: #111827;
   }
 }
+
+.status-page__note {
+  color: #4b5563;
+  margin: 0 0 16px;
+}

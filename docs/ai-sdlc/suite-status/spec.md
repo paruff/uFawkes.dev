@@ -35,6 +35,13 @@ way round, so the two can't drift.
   AC-SUITE-01 (public entry points, with a reviewed allowlist), AC-SUITE-02 and
   AC-OBS-02 (read the board items the script already fetched, so the check and the
   dashboard agree), AC-SUITE-03, and AC-DOJO-01
+- **reads live-system results** from `live-checks.yml`: each entry names a workflow
+  that starts a real system (a Compose stack, a kind cluster), and the script
+  reports the latest completed run **on `main`** as `pass`, `stale` (a green run
+  older than its limit), `fail` (with the failed steps) or `none` (no workflow, with
+  the issue that adds one). It lists runs unfiltered and picks `main` itself, because
+  GitHub's branch-filtered listing once returned a 22-day-old run as the newest.
+  Live results sit beside the criteria and do not change whether one passes
 - queries Project #7 (GraphQL) for each item's release, status, labels and
   `closedAt`
 - writes `_data/suite_status.json` (R3) and prints a terminal summary
@@ -60,6 +67,7 @@ failing AC is a result, not a script error.
         "manual_pending": 1,
         "total": 9
       },
+      "live": { "pass": 3, "fail": 1, "stale": 0, "none": 1, "total": 5 },
       "issues": { "done": 5, "in_progress": 2, "todo": 11, "total": 18 },
       "blockers": [
         { "repo": "uFawkesAI", "number": 111, "title": "...", "url": "..." }
@@ -253,17 +261,18 @@ protocol on `/status/`.
 
 ## Acceptance criteria
 
-| ID           | Criterion                                                                                                                                                                    | Verification                                                                |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| AC-STATUS-01 | Every AC in `suite-release/spec.md` is in `acceptance.yml`, and vice versa                                                                                                   | The drift check fails a PR that adds a spec AC without an entry             |
-| AC-STATUS-02 | `make status` runs locally and in CI and produces JSON matching R3                                                                                                           | A schema check on the output, in CI                                         |
-| AC-STATUS-03 | A failing AC shows red on the page; a broken script fails the workflow                                                                                                       | Two test PRs: one breaks an AC, one breaks the script                       |
-| AC-STATUS-04 | `/status/` updates daily without a commit to `main`                                                                                                                          | Two consecutive scheduled runs; `git log main` has no bot commits           |
-| AC-STATUS-05 | The page shows the next milestone, both progress bars, blockers and a burn-up                                                                                                | Screenshot at desktop, 767px and 640px                                      |
-| AC-STATUS-06 | The page passes the site's existing accessibility job                                                                                                                        | `Accessibility Testing` check green                                         |
-| AC-STATUS-08 | Manual evidence is verified, not trusted: a dead link, an unmerged PR, an unreadable date or evidence older than 30 days is `stale`, and a lookup that fails is never `pass` | Offline tests with stubbed `gh` and `curl` (`scripts/test-suite-status.sh`) |
-| AC-STATUS-09 | Every fully machine-checkable criterion runs as a command and reports the lines or issues that fail it                                                                       | The same tests, one fixture per check, plus a live run (`make status`)      |
-| AC-STATUS-07 | A product owner and a developer each answer their question from the page in 30 seconds                                                                                       | Wireframe test before PR 3; `ux-audit` after launch                         |
+| ID           | Criterion                                                                                                                                                                                   | Verification                                                                        |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| AC-STATUS-01 | Every AC in `suite-release/spec.md` is in `acceptance.yml`, and vice versa                                                                                                                  | The drift check fails a PR that adds a spec AC without an entry                     |
+| AC-STATUS-02 | `make status` runs locally and in CI and produces JSON matching R3                                                                                                                          | A schema check on the output, in CI                                                 |
+| AC-STATUS-03 | A failing AC shows red on the page; a broken script fails the workflow                                                                                                                      | Two test PRs: one breaks an AC, one breaks the script                               |
+| AC-STATUS-04 | `/status/` updates daily without a commit to `main`                                                                                                                                         | Two consecutive scheduled runs; `git log main` has no bot commits                   |
+| AC-STATUS-05 | The page shows the next milestone, both progress bars, blockers and a burn-up                                                                                                               | Screenshot at desktop, 767px and 640px                                              |
+| AC-STATUS-06 | The page passes the site's existing accessibility job                                                                                                                                       | `Accessibility Testing` check green                                                 |
+| AC-STATUS-08 | Manual evidence is verified, not trusted: a dead link, an unmerged PR, an unreadable date or evidence older than 30 days is `stale`, and a lookup that fails is never `pass`                | Offline tests with stubbed `gh` and `curl` (`scripts/test-suite-status.sh`)         |
+| AC-STATUS-09 | Every fully machine-checkable criterion runs as a command and reports the lines or issues that fail it                                                                                      | The same tests, one fixture per check, plus a live run (`make status`)              |
+| AC-STATUS-10 | The page shows the latest main run of each live-system workflow, flags stale and failing ones with the failed steps, and says "none" with a link to the issue where no live workflow exists | Offline tests with a stubbed `gh` (`scripts/test-suite-status.sh`), plus a live run |
+| AC-STATUS-07 | A product owner and a developer each answer their question from the page in 30 seconds                                                                                                      | Wireframe test before PR 3; `ux-audit` after launch                                 |
 
 ## Concerns
 

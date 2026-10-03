@@ -72,6 +72,9 @@ permalink: /status/
       <p class="status-card__blocker">Blocker: <a href="{{ b.url }}" rel="noopener noreferrer" target="_blank">{{ b.repo }}#{{ b.number }} {{ b.title }}</a></p>
       {% endfor %}
       <p class="status-card__work">Work: {{ r.routing.goal }} goal · {{ r.routing.nemotron }} Nemotron · {{ r.routing.flash }} Flash</p>
+      {% if r.live.total > 0 %}
+      <p class="status-card__work">Live systems: {{ r.live.pass }} of {{ r.live.total }} pass{% if r.live.fail > 0 %}, {{ r.live.fail }} failing{% endif %}{% if r.live.stale > 0 %}, {{ r.live.stale }} stale{% endif %}{% if r.live.none > 0 %}, {{ r.live.none }} with no live check yet{% endif %}</p>
+      {% endif %}
     </article>
     {% endif %}
     {% endfor %}
@@ -91,6 +94,32 @@ permalink: /status/
           <td>{{ ac.id }}</td>
           <td>{{ ac.title }}</td>
           <td class="status-table__detail">{{ ac.detail }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% endif %}
+
+  {% if d.live.size > 0 %}
+  <section aria-labelledby="status-live">
+    <h2 id="status-live">Live systems</h2>
+    <p class="status-page__note">The latest run of each workflow that starts a real system and checks it. A green run older than its limit shows as stale; a repo with no such workflow shows as none.</p>
+    <table class="status-table">
+      <thead>
+        <tr><th scope="col">Status</th><th scope="col">System</th><th scope="col">What it proves</th><th scope="col">Last run</th></tr>
+      </thead>
+      <tbody>
+        {% for l in d.live %}
+        <tr class="status-table__row">
+          <td><span class="status-badge status-badge--{% if l.status == "none" %}manual{% else %}{{ l.status }}{% endif %}">{% if l.status == "pass" %}✓ PASS{% elsif l.status == "fail" %}✗ FAIL{% elsif l.status == "stale" %}⏱ STALE{% else %}– NONE{% endif %}</span></td>
+          <td>{{ l.repo }} ({{ l.release }})</td>
+          <td>{{ l.title }}</td>
+          <td class="status-table__detail">
+            {% if l.run_url %}<a href="{{ l.run_url }}" rel="noopener noreferrer" target="_blank">{{ l.detail }}</a>
+            {% elsif l.issue %}{% assign ip = l.issue | split: "#" %}No live check yet: <a href="https://github.com/paruff/{{ ip[0] }}/issues/{{ ip[1] }}" rel="noopener noreferrer" target="_blank">{{ l.issue }}</a>
+            {% else %}{{ l.detail }}{% endif %}
+          </td>
         </tr>
         {% endfor %}
       </tbody>

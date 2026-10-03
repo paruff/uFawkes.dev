@@ -27,6 +27,13 @@ case "$*" in
   *pulls/102*) echo '{"state":"closed","at":"2026-08-01T10:00:00Z"}' ;; # merged 62 days ago
   *pulls/103*) echo '{"state":"open","at":null}' ;;                    # not merged
   *pulls/404*) echo "gh: Not Found (HTTP 404)" >&2; exit 1 ;;
+  # live systems: `gh run list --workflow <file>` and the failed-steps lookup
+  *"run list"*wf-ok.yml*) echo '[{"conclusion":"success","createdAt":"2026-10-02T05:30:00Z","url":"https://x/runs/9","databaseId":9,"event":"push","headBranch":"feature"},{"conclusion":"cancelled","createdAt":"2026-10-02T05:00:00Z","url":"https://x/runs/8","databaseId":8,"event":"push","headBranch":"main"},{"conclusion":"success","createdAt":"2026-10-02T03:00:00Z","url":"https://x/runs/2","databaseId":2,"event":"schedule","headBranch":"main"}]' ;;
+  *"run list"*wf-old.yml*) echo '[{"conclusion":"success","createdAt":"2026-09-28T02:00:00Z","url":"https://x/runs/3","databaseId":3,"event":"schedule","headBranch":"main"}]' ;;
+  *"run list"*wf-failed.yml*) echo '[{"conclusion":"failure","createdAt":"2026-10-02T01:00:00Z","url":"https://x/runs/4","databaseId":4,"event":"schedule","headBranch":"main"}]' ;;
+  *"run list"*wf-empty.yml*) echo '[]' ;;
+  *"run list"*wf-error.yml*) echo "gh: HTTP 502" >&2; exit 1 ;;
+  *actions/runs/4/jobs*) echo "Run acceptance tests, Teardown" ;;
   *) echo "gh stub: unexpected call: $*" >&2; exit 1 ;;
 esac
 STUB
@@ -115,13 +122,14 @@ cat > "$TMP/acs.yml" << 'YML'
 YML
 
 # AC-STATUS-02: output matches the R3 shape. Fixture releases are "Alpha" and "AI 2.0".
-STATUS_ACS="$TMP/acs.yml" STATUS_ITEMS_FILE=scripts/testdata/suite-status-items.json \
+printf '[]\n' > "$TMP/no-live.yml"
+STATUS_ACS="$TMP/acs.yml" STATUS_LIVE="$TMP/no-live.yml" STATUS_ITEMS_FILE=scripts/testdata/suite-status-items.json \
   STATUS_OUT="$TMP/out.json" STATUS_NOW=2026-10-02T06:00:00Z bash scripts/suite-status.sh > /dev/null
 echo "R3 shape:"
-check "top-level keys" 'keys == ["burnup","generated_at","next_release","releases","run_url","stale_days"]' "$TMP/out.json"
+check "top-level keys" 'keys == ["burnup","generated_at","live","next_release","releases","run_url","stale_days"]' "$TMP/out.json"
 check "stale limit is 30 days" '.stale_days == 30' "$TMP/out.json"
 check "ac result carries freshness" '.releases[0].ac_results | all(has("verified_at","age_days"))' "$TMP/out.json"
-check "release keys" '.releases | all(has("name","order","acs","issues","blockers","routing","pace","ac_results"))' "$TMP/out.json"
+check "release keys" '.releases | all(has("name","order","live","acs","issues","blockers","routing","pace","ac_results"))' "$TMP/out.json"
 
 # AC-STATUS-03: a failing AC is a result, not a script error.
 echo "Results:"
@@ -146,6 +154,32 @@ check "counts: 3 pass (1 command + 2 evidence), 5 stale, 1 awaiting, 1 fail" '.r
 check "manual without evidence is pending" '.releases[1].ac_results[0].status=="manual"' "$TMP/out.json"
 check "next release is the first not fully passing" '.next_release=="Alpha"' "$TMP/out.json"
 
+# Live systems: the latest completed run on main of each named workflow.
+cat > "$TMP/live.yml" << 'YML'
+- {id: l-ok, repo: R, workflow: wf-ok.yml, release: Alpha, title: ok, max_age_hours: 72}
+- {id: l-old, repo: R, workflow: wf-old.yml, release: Alpha, title: old, max_age_hours: 72}
+- {id: l-failed, repo: R, workflow: wf-failed.yml, release: Alpha, title: failed, max_age_hours: 72}
+- {id: l-empty, repo: R, workflow: wf-empty.yml, release: Alpha, title: empty, max_age_hours: 72}
+- {id: l-error, repo: R, workflow: wf-error.yml, release: Alpha, title: error, max_age_hours: 72}
+- {id: l-none, repo: R, workflow: "", release: AI 2.0, title: none, issue: R#7}
+YML
+STATUS_ACS="$TMP/acs.yml" STATUS_LIVE="$TMP/live.yml" STATUS_ITEMS_FILE=scripts/testdata/suite-status-items.json \
+  STATUS_OUT="$TMP/outlive.json" STATUS_NOW=2026-10-02T06:00:00Z bash scripts/suite-status.sh > /dev/null
+echo "Live systems:"
+lv() { jq -e --arg id "$1" --arg st "$2" --arg d "$3" '.live | map(select(.id==$id))[0] | .status==$st and (.detail|test($d))' "$TMP/outlive.json" > /dev/null; }
+lvcheck() { if lv "$1" "$2" "$3"; then echo "  ok   $4"; else
+  echo "  FAIL $4"
+  fails=$((fails + 1))
+fi; }
+lvcheck l-ok pass "passed 3 h ago" "latest main success wins; a newer success on another branch and a cancelled run are ignored"
+lvcheck l-old stale "100 h ago \\(limit 72" "a success older than its limit is stale"
+lvcheck l-failed fail "failed at: Run acceptance tests, Teardown" "a failure names the steps that failed"
+lvcheck l-empty none "has not completed a run" "a workflow that never ran is none"
+lvcheck l-error stale "could not read" "a lookup that fails is stale, never pass"
+lvcheck l-none none "no live workflow yet \\(R#7\\)" "no workflow is none, with its issue"
+check "per-release live counts" '.releases[0].live == {"pass":1,"fail":1,"stale":2,"none":1,"total":5}' "$TMP/outlive.json"
+check "live list is in the document" '.live | length == 6' "$TMP/outlive.json"
+
 # Project data: use the fixture with matching release names.
 cat > "$TMP/acs2.yml" << 'YML'
 - id: AC-T-10
@@ -161,7 +195,7 @@ cat > "$TMP/acs2.yml" << 'YML'
   run: ""
   evidence: ""
 YML
-STATUS_ACS="$TMP/acs2.yml" STATUS_ITEMS_FILE=scripts/testdata/suite-status-items.json \
+STATUS_ACS="$TMP/acs2.yml" STATUS_LIVE="$TMP/no-live.yml" STATUS_ITEMS_FILE=scripts/testdata/suite-status-items.json \
   STATUS_OUT="$TMP/out2.json" STATUS_NOW=2026-10-02T06:00:00Z bash scripts/suite-status.sh > /dev/null
 echo "Project data:"
 check "issue counts" '.releases[0].issues == {"done":3,"in_progress":1,"todo":1,"total":5}' "$TMP/out2.json"
