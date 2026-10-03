@@ -5,7 +5,7 @@
 Small PRs, each mergeable alone. Measure first, because the stage budgets in
 the spec are guesses until we've timed the real hooks.
 
-**Progress:** A1–A3 done (full unit run 33 s → 14 s); A4 is spec revision 2; A1's first run is [`baseline.md`](baseline.md).
+**Progress:** A1–A3 done (full unit run 33 s → 14 s); A4 is spec revision 2; B1 done (`require-tool.sh`); A1's first run is [`baseline.md`](baseline.md).
 `unit-tests` is 60–80% of pre-commit in every repo, so before phase B:
 A2 runs only the test suites a commit affects (all of them in CI and at pre-push),
 A3 runs the suites in parallel, and A4 revises the spec from the baseline.
@@ -33,16 +33,15 @@ A3 runs the suites in parallel, and A4 revises the spec from the baseline.
 
 **Decisions needed before phase B** (each is a short issue, route G):
 
-1. **Semgrep and the network.** Vendor the ruleset file so the hook works
-   offline, or run semgrep online-only at pre-push. The spec leans towards
-   vendoring, so a commit on a train still works.
+1. ~~**Semgrep and the network.**~~ Settled (2026-10-03): run semgrep online
+   when the registry is reachable, and fall back to a vendored ruleset when it
+   isn't, so a commit offline still gets SAST.
 2. ~~**Stage budgets.**~~ Settled by A4 (spec revision 2): 10 seconds at
    pre-commit, 60 seconds at pre-push, each stage run once.
-3. **Where the `SessionStart` doctor lives.** In each repo's committed
-   `.claude/settings.json` (so every contributor and agent gets it), or in your
-   user settings (just you). The repo is the better default.
-4. **Type-check tools per repo.** Which repos have which language, and which
-   checker: mypy or pyright, `tsc`, `go vet` and staticcheck.
+3. ~~**Where the `SessionStart` doctor lives.**~~ Settled: each repo's
+   committed `.claude/settings.json`, as are the R9 `Stop` gate's hooks.
+4. ~~**Type-check tools per repo.**~~ Settled: one decision issue per repo
+   (phase F), the owner picking the checker in each.
 
 ## Verification Strategy
 
