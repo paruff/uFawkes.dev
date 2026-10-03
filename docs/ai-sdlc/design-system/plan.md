@@ -47,3 +47,13 @@
 | The interim flame is mistaken for the final mark                 | It is labelled interim in `DESIGN.md` and in the file's title                                       |
 | The token file drifts from the Fawkes design system's own tokens | `DESIGN.md` names the design system as the source for the indigo scale; a generator is a later step |
 | Owner disagrees with the proposed colour roles                   | They are in one file; changing a role changes the check, not the code                               |
+
+### Verification for the Flame primary button (decision D9)
+
+| Criterion                                                         | How it's proven                                                                                             | Test type   | Command / CI job                      |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ----------- | ------------------------------------- |
+| The new button pairs meet their floors                            | Label 5.62:1 and 5.05:1 on hover (light), 7.22:1 on hover (dark); fill against the page at least 3:1        | unit        | `bash scripts/check-design-tokens.sh` |
+| Rest, hover, focus and visited states use the Flame colours       | Force each state through the DevTools protocol and read the computed colours, in light and dark             | live-system | Playwright against a local build      |
+| The secondary button is unchanged (it also carries `.cta-button`) | Same run: Indigo label on a transparent background, with its own hover colours                              | live-system | Playwright against a local build      |
+| CSS stays append-only                                             | `git diff --numstat assets/css/main.css` shows no deleted lines                                             | unit        | `git diff --numstat`                  |
+| Not covered                                                       | Whether visitors read an orange button as a warning (a judgment call recorded in `DESIGN.md`, not measured) | -           | Revisit if feedback says so           |
