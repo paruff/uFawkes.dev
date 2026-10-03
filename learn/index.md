@@ -12,7 +12,7 @@ Start here for the web-first versions of the uFawkes education guides.
 ## Guides
 
 - [DORA primer]({{ '/learn/dora-primer.html' | relative_url }})\
-  A practical introduction to the four DORA metrics, what good looks like, and how to improve steadily.
+  A practical introduction to the five DORA metrics, what good looks like, and how to improve steadily.
 
 - [AI capabilities guide]({{ '/learn/ai-capabilities.html' | relative_url }})\
   How to map AI adoption from experimentation to measurable delivery outcomes.

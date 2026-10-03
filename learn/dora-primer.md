@@ -1,7 +1,7 @@
 ---
 layout: page
 title: DORA Primer for AI Delivery Teams
-description: Learn the four DORA metrics, common failure modes, and an action plan for improving delivery performance with AI-enabled teams.
+description: Learn the five DORA metrics, common failure modes, and an action plan for improving delivery performance with AI-enabled teams.
 og_title: DORA Primer for AI Delivery Teams
 og_description: A practical DORA primer with metric definitions, targets, and next actions.
 og_type: article
@@ -15,14 +15,15 @@ DORA gives teams a shared language for delivery performance. In AI-assisted deve
 {% assign share_url = page.url | absolute_url %}
 Share: [X](https://twitter.com/intent/tweet?text={{ page.title | uri_escape }}&url={{ share_url | uri_escape }}) · [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url={{ share_url | uri_escape }}) · [Email](mailto:?subject={{ page.title | uri_escape }}&body={{ share_url | uri_escape }})
 
-## The four DORA metrics
+## The five DORA metrics
 
 1. **Deployment frequency** — how often you ship to production.
-2. **Lead time for changes** — commit to production elapsed time.
-3. **Change failure rate** — percent of deployments causing incidents, rollbacks, or hotfixes.
-4. **Mean time to restore (MTTR)** — how quickly service recovers after failure.
+2. **Change lead time** — commit to production elapsed time.
+3. **Change fail rate** — percent of deployments causing incidents, rollbacks, or hotfixes.
+4. **Failed deployment recovery time** — how quickly service recovers after a failed deployment (earlier guides call this mean time to restore, or MTTR).
+5. **Deployment rework rate** — how much of your delivery work is rework: unplanned changes made to fix problems in work you already shipped. It is the earliest signal that output quality is slipping, which matters most when AI is writing more of the code.
 
-Together these show both speed and stability. Optimize all four; over-optimizing one metric usually creates hidden drag elsewhere.
+Together these show speed, stability and quality. Optimize all five; over-optimizing one metric usually creates hidden drag elsewhere.
 
 ## What good looks like
 
@@ -30,6 +31,7 @@ Together these show both speed and stability. Optimize all four; over-optimizing
 - Predictable lead time with fewer queue bottlenecks.
 - Low failure rate through tests, policy checks, and safe rollout patterns.
 - Fast recovery through clear alerts, runbooks, and ownership.
+- Low rework: few unplanned fixes to things you already shipped.
 
 ## AI-specific anti-patterns
 
@@ -39,7 +41,7 @@ Together these show both speed and stability. Optimize all four; over-optimizing
 
 ## 30-day improvement loop
 
-1. Baseline the four metrics weekly.
+1. Baseline the five metrics weekly.
 2. Pick one bottleneck (for example, review wait time).
 3. Ship one platform change (automation, guardrail, or dashboard).
 4. Compare DORA movement after two release cycles.
