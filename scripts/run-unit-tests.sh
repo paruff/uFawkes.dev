@@ -37,6 +37,7 @@ SUITES=(
   "test-check-design-tokens ^scripts/(test-)?check-design-tokens\.sh$|^design/tokens\.json$"
   "test-shift-left-audit ^scripts/(test-)?shift-left-audit\.sh$|^scripts/testdata/shift-left/"
   "test-run-unit-tests ^scripts/test-run-unit-tests\.sh$"
+  "test-require-tool ^scripts/(test-)?require-tool\.sh$"
 )
 
 selected=()
