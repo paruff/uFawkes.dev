@@ -352,3 +352,19 @@ repos:
         stages: [pre-push]
         always_run: true
         pass_filenames: false
+
+      # Stamp each stage with the tree it ran on, for scripts/doctor.sh (D5).
+      # Keep these last: a stamp says every hook above ran on that content.
+      - id: shift-left-stamp
+        name: Record that pre-commit hooks ran (doctor D5)
+        entry: scripts/shift-left-stamp.sh pre-commit
+        language: script
+        always_run: true
+        pass_filenames: false
+      - id: shift-left-stamp-pre-push
+        name: Record that pre-push hooks ran (doctor D5)
+        entry: scripts/shift-left-stamp.sh pre-push
+        language: script
+        always_run: true
+        pass_filenames: false
+        stages: [pre-push]

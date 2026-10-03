@@ -38,6 +38,7 @@ SUITES=(
   "test-shift-left-audit ^scripts/(test-)?shift-left-audit\.sh$|^scripts/testdata/shift-left/"
   "test-run-unit-tests ^scripts/test-run-unit-tests\.sh$"
   "test-require-tool ^scripts/(test-)?require-tool\.sh$"
+  "test-doctor ^scripts/(test-)?(doctor|shift-left-stamp|require-tool)\.sh$"
 )
 
 selected=()
