@@ -22,6 +22,7 @@ SUITES=(
   scripts/test-dojo-feedback-intent.sh
   scripts/test-suite-status.sh
   scripts/test-check-design-tokens.sh
+  scripts/test-shift-left-audit.sh
 )
 
 failed=0
