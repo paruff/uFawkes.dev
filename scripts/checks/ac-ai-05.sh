@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# AC-AI-05: no suite repo's devcontainer uses ufawkesai-devcontainer:latest.
+# AC-AI-05: no suite repo's devcontainer uses fawkes-space:latest.
 set -euo pipefail
 
 REPOS=(uFawkesAI uFawkesObs uFawkesPipe uFawkesDevX uFawkesDojo fawkes uFawkes.dev)
@@ -11,11 +11,11 @@ for repo in "${REPOS[@]}"; do
     bad=1
     continue
   fi
-  if grep -q 'ufawkesai-devcontainer:latest' <<< "$body"; then
+  if grep -q 'fawkes-space:latest' <<< "$body"; then
     echo "$repo: still uses :latest"
     bad=1
-  elif ! grep -qE 'ufawkesai-devcontainer(:2\.0\.0|@sha256:)' <<< "$body"; then
-    echo "$repo: does not pin ufawkesai-devcontainer to 2.0.0 or a digest"
+  elif ! grep -qE 'fawkes-space(:2\.0\.0|@sha256:)' <<< "$body"; then
+    echo "$repo: does not pin fawkes-space to 2.0.0 or a digest"
     bad=1
   fi
 done

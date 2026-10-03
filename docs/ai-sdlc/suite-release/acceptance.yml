@@ -71,7 +71,7 @@
   release: AI 2.0
   title: The devcontainer image can be pinned
   check: command
-  run: docker manifest inspect ghcr.io/paruff/ufawkesai-devcontainer:2.0.0
+  run: docker manifest inspect ghcr.io/paruff/fawkes-space:2.0.0
   evidence: ""
 
 - id: AC-AI-02

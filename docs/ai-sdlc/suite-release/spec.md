@@ -116,7 +116,10 @@ or simulated one.
 
 #### AC-AI-01: The devcontainer image can be pinned
 
-- **Expected:** A `v2.0.0` tag publishes `ghcr.io/paruff/ufawkesai-devcontainer:2.0.0`
+> Image renamed 2026-10-03 (owner decision, uFawkesAI `docs/ai-sdlc/v2.0.0/intent.md`):
+> `ufawkesai-devcontainer` → `fawkes-space`. Neither old name was ever publicly pullable.
+
+- **Expected:** A `v2.0.0` tag publishes `ghcr.io/paruff/fawkes-space:2.0.0`
   and `:2.0`, signed. Its digest is in the GitHub Release
 - **Verification:** `docker manifest inspect` succeeds from an
   unauthenticated machine, and `cosign verify` passes using the documented
@@ -158,7 +161,7 @@ or simulated one.
 
 - **Expected:** All seven repos' `.devcontainer/devcontainer.json` use
   `:2.0.0` or a digest, not `:latest`
-- **Verification:** `grep -r ufawkesai-devcontainer` across the suite shows
+- **Verification:** `bash scripts/checks/ac-ai-05.sh` (greps each repo for `fawkes-space`) shows
   no `:latest`
 - **Lands:** within one week after the release; it doesn't block the tag
 
