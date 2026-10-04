@@ -79,7 +79,8 @@
   title: The template works from "Use this template"
   check: manual
   run: ""
-  evidence: ""
+  evidence: https://github.com/paruff/uFawkesAI/issues/152#issuecomment-5972399730
+  evidence_date: 2026-10-03
 
 - id: AC-AI-03
   release: AI 2.0
@@ -93,7 +94,7 @@
   title: Capability claims match what ships
   check: manual
   run: ""
-  evidence: ""
+  evidence: https://github.com/paruff/uFawkesAI/pull/183
 
 - id: AC-AI-05
   release: AI 2.0
@@ -107,7 +108,7 @@
   title: Tests and evals both gate merges
   check: manual
   run: ""
-  evidence: ""
+  evidence: https://github.com/paruff/uFawkesAI/pull/174
 
 - id: AC-AI-09
   release: AI 2.0
@@ -121,14 +122,14 @@
   title: Delivery events reach uFawkesObs, or the claim goes
   check: manual
   run: ""
-  evidence: ""
+  evidence: https://github.com/paruff/uFawkesAI/pull/172
 
 - id: AC-AI-08
   release: AI 2.0
   title: The CDE's developer experience is measured, not asserted
   check: manual
   run: ""
-  evidence: ""
+  evidence: https://github.com/paruff/uFawkesAI/pull/164
 
 # --- Dojo 0.2 --------------------------------------------------------------
 - id: AC-DOJO-01
