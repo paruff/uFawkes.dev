@@ -55,12 +55,26 @@ jobs:
           SUITE_STATUS_TOKEN: ${{ secrets.SUITE_STATUS_TOKEN }}
         run: bash scripts/suite-status.sh
 
+      # Shift-left matrix (docs/ai-sdlc/shift-left/, phase D1): each suite
+      # repo's hook config, read through the API, as /status/'s matrix and
+      # /status/shift_left.json. Same rules as the suite status above.
+      - name: Shift-left audit
+        id: shift_left
+        continue-on-error: ${{ github.event_name == 'push' }}
+        env:
+          GH_TOKEN: ${{ secrets.SUITE_STATUS_TOKEN || github.token }}
+        run: bash scripts/shift-left-audit.sh --json _data/shift_left.json
+
       - name: Build with Jekyll
         run: bundle exec jekyll build
 
       - name: Warn if suite status failed
         if: steps.suite_status.outcome == 'failure'
         run: echo "::warning title=Suite status::scripts/suite-status.sh failed; /status/ shows no data until it passes. See the Suite status step."
+
+      - name: Warn if the shift-left audit failed
+        if: steps.shift_left.outcome == 'failure'
+        run: echo "::warning title=Shift-left audit::scripts/shift-left-audit.sh failed; /status/ shows no shift-left matrix until it passes. See the Shift-left audit step."
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5

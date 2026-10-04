@@ -11,6 +11,12 @@
 #   not-installed  present, but its stage is not in default_install_hook_types
 #   system         count of `language: system` hooks (each a silent-pass risk, R4)
 #
+# Hooks from uFawkesPipe's shared source take their stages from its
+# .pre-commit-hooks.yaml at the rev the repo pins.
+#
+# --json <path> also writes the matrix as JSON for /status/ (plan phase D1);
+# for _data/shift_left.json it is also copied to status/shift_left.json.
+#
 # --time also shallow-clones each repo and times every hook over all files,
 # summed per stage against the spec's budgets. All-files times are an upper
 # bound: a real commit runs hooks on changed files only.
@@ -28,7 +34,21 @@ cd "$(dirname "$0")/.."
 OWNER="${AUDIT_OWNER:-paruff}"
 read -r -a REPOS <<< "${AUDIT_REPOS:-uFawkes.dev uFawkesAI uFawkesObs uFawkesPipe uFawkesDevX uFawkesDojo fawkes}"
 TIME=0
-[[ "${1:-}" == "--time" ]] && TIME=1
+JSON=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --time) TIME=1 ;;
+    --json)
+      JSON="${2:?--json needs a path}"
+      shift
+      ;;
+    *)
+      echo "shift-left-audit: unknown argument: $1" >&2
+      exit 1
+      ;;
+  esac
+  shift
+done
 
 die() {
   echo "shift-left-audit: $*" >&2
@@ -44,6 +64,19 @@ trap 'rm -rf "$WORK"' EXIT
 for r in "${REPOS[@]}"; do
   if out="$(gh api "repos/$OWNER/$r/contents/.pre-commit-config.yaml" --jq .content 2>&1)"; then
     printf '%s' "$out" | base64 -d > "$WORK/$r.yaml" || die "$r: cannot decode config"
+    # A repo on uFawkesPipe's shared hooks: fetch the manifest at its pinned rev, once.
+    rev="$(python3 -c '
+import sys, yaml
+for r in (yaml.safe_load(open(sys.argv[1])) or {}).get("repos") or []:
+    if str(r.get("repo", "")).lower().rstrip("/").removesuffix(".git").endswith("paruff/ufawkespipe"):
+        print(r.get("rev", ""))
+        break
+' "$WORK/$r.yaml")" || die "$r: cannot parse config"
+    if [[ -n "$rev" && ! -f "$WORK/pipe-manifest-$rev.yaml" ]]; then
+      m="$(gh api "repos/paruff/uFawkesPipe/contents/.pre-commit-hooks.yaml?ref=$rev" --jq .content 2>&1)" \
+        || die "$r: cannot read uFawkesPipe's manifest at $rev: $m"
+      printf '%s' "$m" | base64 -d > "$WORK/pipe-manifest-$rev.yaml" || die "cannot decode uFawkesPipe's manifest at $rev"
+    fi
   elif [[ "$out" == *"HTTP 404"* ]]; then
     : > "$WORK/$r.missing"
   else
@@ -54,10 +87,10 @@ done
 # The R2 catalog: column -> (hook ids, the stage it belongs at).
 # ponytail: matched by hook id, so a renamed hook reads as missing; it then shows up
 # under "Unmapped hooks" and gets added here.
-python3 - "$WORK" "${REPOS[@]}" > "$WORK/report.txt" << 'PY' || die "cannot parse a hook config"
-import os, sys, yaml
+python3 - "$WORK" "$JSON" "${REPOS[@]}" > "$WORK/report.txt" << 'PY' || die "cannot parse a hook config"
+import datetime, json, os, sys, yaml
 
-work, repos = sys.argv[1], sys.argv[2:]
+work, json_out, repos = sys.argv[1], sys.argv[2], sys.argv[3:]
 CATALOG = [
     ("actionlint", {"actionlint", "actionlint-docker", "actionlint-system"}, "pre-commit"),
     ("schema", {"check-jsonschema", "check-dependabot", "check-github-workflows", "check-github-actions"}, "pre-commit"),
@@ -67,7 +100,13 @@ CATALOG = [
     ("dep-iac", {"trivy", "conftest", "kubeconform", "kubeval", "terraform_tfsec", "terraform_trivy", "checkov"}, "pre-push"),
     ("unit", {"unit-tests"}, "pre-push"),
     ("commit-msg", {"conventional-commit", "conventional-commit-msg", "commit-msg"}, "commit-msg"),
+    # Adoption of the shift-left tooling itself (plan phase C)
+    ("parity", {"shift-left-parity"}, "pre-commit"),
+    ("stamps", {"shift-left-stamp"}, "pre-commit"),
 ]
+LABELS = {"actionlint": "Actions lint", "schema": "Config schema", "sast": "SAST", "types": "Type check",
+          "dep-iac": "Dependency / IaC scan", "unit": "Unit tests", "commit-msg": "Commit message",
+          "parity": "CI parity", "stamps": "Doctor stamps"}
 # Hooks the catalog deliberately has no column for (format, lint, hygiene).
 KNOWN = {
     "trailing-whitespace", "end-of-file-fixer", "check-yaml", "check-json", "check-added-large-files",
@@ -90,7 +129,12 @@ for r in repos:
     default_stages = cfg.get("default_stages") or ["pre-commit"]
     hooks = {}  # id -> (stages, language)
     for repo in cfg.get("repos") or []:
+        manifest = {}
+        if str(repo.get("repo", "")).lower().rstrip("/").removesuffix(".git").endswith("paruff/ufawkespipe"):
+            path = f"{work}/pipe-manifest-{repo.get('rev', '')}.yaml"
+            manifest = {m["id"]: m for m in (yaml.safe_load(open(path)) or [])} if os.path.exists(path) else {}
         for h in repo.get("hooks") or []:
+            h = {**manifest.get(h["id"], {}), **h}  # the repo's config overrides the manifest
             hooks[h["id"]] = (h.get("stages") or default_stages, h.get("language", ""))
     row = [r]
     for _, ids, want in CATALOG:
@@ -119,8 +163,32 @@ for n in notes:
 if unmapped:
     print("\nUnmapped hooks (no catalog column yet):")
     print("\n".join(unmapped))
+
+if json_out:
+    now = os.environ.get("AUDIT_NOW") or datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    run = os.environ.get("GITHUB_RUN_ID")
+    data = {
+        "generated_at": now,
+        "run_url": f"{os.environ.get('GITHUB_SERVER_URL', 'https://github.com')}/{os.environ.get('GITHUB_REPOSITORY', '')}/actions/runs/{run}" if run else "",
+        "columns": [{"id": c, "label": LABELS[c], "stage": st} for c, _, st in CATALOG],
+        "repos": [],
+    }
+    notes_by_repo = {n.split(":", 1)[0]: n.split(": ", 1)[1] for n in notes}
+    for row in rows:
+        r = row[0]
+        data["repos"].append({
+            "repo": r,
+            "cells": dict(zip([c for c, _, _ in CATALOG], row[1:1 + len(CATALOG)])),
+            "system": row[-1],
+            "note": notes_by_repo.get(r, ""),
+        })
+    with open(json_out, "w") as f:
+        json.dump(data, f, indent=2)
+        f.write("\n")
 PY
 cat "$WORK/report.txt"
+# Also served as /status/shift_left.json (static file, copied as-is by Jekyll).
+[[ "$JSON" == "_data/shift_left.json" ]] && cp "$JSON" status/shift_left.json
 
 [[ "$TIME" == 1 ]] || exit 0
 
