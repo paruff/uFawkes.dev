@@ -42,14 +42,21 @@
     "release": "AI 2.0",
     "status": "In Progress",
     "number": 111,
-    "title": "Publish the image with SemVer tags",
+    "title": "goal: release uFawkesAI v2.0.0",
     "state": "OPEN",
     "url": "https://github.com/paruff/uFawkesAI/issues/111",
     "repo": "uFawkesAI",
     "createdAt": "2026-09-10T00:00:00Z",
     "closedAt": null,
     "assigned": true,
-    "labels": ["goal", "release-blocker"]
+    "labels": ["goal", "release-blocker"],
+    "merged_prs": [
+      {
+        "repo": "uFawkesAI",
+        "number": 502,
+        "url": "https://github.com/paruff/uFawkesAI/pull/502"
+      }
+    ]
   },
   {
     "release": "AI 2.0",
@@ -62,7 +69,14 @@
     "createdAt": "2026-09-10T00:00:00Z",
     "closedAt": null,
     "assigned": false,
-    "labels": ["model:nemotron-3-ultra"]
+    "labels": ["model:nemotron-3-ultra"],
+    "merged_prs": [
+      {
+        "repo": "uFawkesAI",
+        "number": 501,
+        "url": "https://github.com/paruff/uFawkesAI/pull/501"
+      }
+    ]
   },
   {
     "release": "Dojo 0.2",
