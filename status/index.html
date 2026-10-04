@@ -96,6 +96,16 @@ permalink: /status/
         {% for b in r.blockers %}
         <p class="status-card__blocker">Blocker: <a href="{{ b.url }}" rel="noopener noreferrer" target="_blank">{{ b.repo }}#{{ b.number }} {{ b.title }}</a></p>
         {% endfor %}
+        {% if r.likely_done.size > 0 %}
+        <details class="status-card__likely">
+          <summary>{{ r.likely_done.size }} open issue{% if r.likely_done.size == 1 %} has{% else %}s have{% endif %} merged PRs: done but not closed?</summary>
+          <ul class="status-card__likely-list">
+            {% for i in r.likely_done %}
+            <li><a href="{{ i.url }}" rel="noopener noreferrer" target="_blank">{{ i.repo }}#{{ i.number }} {{ i.title }}</a>, from {% for p in i.prs %}<a href="{{ p.url }}" rel="noopener noreferrer" target="_blank">{{ p.repo }}#{{ p.number }}</a>{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</li>
+            {% endfor %}
+          </ul>
+        </details>
+        {% endif %}
       </li>
       {% endfor %}
     </ol>

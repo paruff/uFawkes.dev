@@ -2545,3 +2545,19 @@ pre {
     font-weight: 600;
   }
 }
+
+/* Open issues with merged PRs: "done but not closed?" on /status/ */
+.status-card__likely {
+  font-size: 0.875rem;
+  margin-top: 8px;
+}
+
+.status-card__likely summary {
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.status-card__likely-list {
+  margin: 8px 0 0;
+  padding-left: 16px;
+}
