@@ -32,6 +32,8 @@ cat > "$TMP/bin/gh" << STUB
 #!/usr/bin/env bash
 # gh api repos/<owner>/<repo>/contents/.pre-commit-config.yaml --jq .content
 case "\$*" in
+  *repos/paruff/uFawkesPipe/contents/.pre-commit-hooks.yaml?ref=v1.11.0*) base64 < "$FIX/pipe-manifest.yaml" ;;
+  *repos/o/shared/contents/*) base64 < "$FIX/shared.yaml" ;;
   *repos/o/complete/contents/*) base64 < "$FIX/complete.yaml" ;;
   *repos/o/partial/contents/*) base64 < "$FIX/partial.yaml" ;;
   *repos/o/none/contents/*) echo "gh: Not Found (HTTP 404)" >&2; exit 1 ;;
@@ -62,6 +64,25 @@ is "system hooks counted (R4)" partial system 3
 says "unmapped hook ids listed" '^  partial: brand-new-check$'
 is "no config is a result, not a crash" none actionlint n/a
 says "no config explained" 'none: no .pre-commit-config.yaml on main'
+
+echo "Shared hooks (stages from uFawkesPipe's manifest at the pinned rev):"
+AUDIT_OWNER=o AUDIT_REPOS="shared complete none" bash scripts/shift-left-audit.sh --json "$TMP/sl.json" > "$TMP/out.txt"
+is "semgrep from Pipe counts as SAST at pre-push" shared sast ok
+is "trivy from Pipe counts as dep scan at pre-push" shared dep-iac ok
+is "the parity hook is adopted" shared parity ok
+is "the stamp hooks are adopted" shared stamps ok
+is "a repo without them shows missing" complete parity -
+
+echo "JSON for /status/:"
+jq_is() { # jq_is <description> <jq -e filter>
+  if jq -e "$2" "$TMP/sl.json" > /dev/null; then ok "$1"; else bad "$1"; fi
+}
+jq_is "top-level keys" 'keys == ["columns","generated_at","repos","run_url"]'
+jq_is "columns carry id, label and stage" '.columns | all(has("id","label","stage")) and (map(.id) | index("parity") != null)'
+jq_is "repos in the order audited" '[.repos[].repo] == ["shared","complete","none"]'
+jq_is "cells match the table" '.repos[0].cells.sast == "ok" and .repos[1].cells.parity == "-"'
+jq_is "no config is a note, cells n/a" '.repos[2].note != "" and (.repos[2].cells | all(.[]; . == "n/a"))'
+jq_is "generated_at is ISO 8601 UTC" '.generated_at | test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:]{8}Z$")'
 
 echo "Script errors:"
 if AUDIT_OWNER=o AUDIT_REPOS="broken" bash scripts/shift-left-audit.sh > /dev/null 2>&1; then
