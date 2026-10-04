@@ -8,6 +8,10 @@
 #   pre-push stamps the tree of the commit being pushed.
 # A stamp means the hooks ran on that content, not that they passed: a failed
 # run blocks the commit, and CI catches a --no-verify after one.
+#
+# Each stage's file is a set of trees (the last 500), not one: switching
+# branches, pushing another branch, or a run whose hooks failed must not make a
+# tree that did go through the hooks look as if it hadn't.
 set -euo pipefail
 
 stage="${1:?usage: shift-left-stamp.sh <pre-commit|pre-push>}"
@@ -21,4 +25,5 @@ case "$stage" in
 esac
 dir="$(git rev-parse --git-path shift-left)"
 mkdir -p "$dir"
-echo "$tree" > "$dir/$stage"
+echo "$tree" >> "$dir/$stage"
+tail -n 500 "$dir/$stage" > "$dir/$stage.tmp" && mv "$dir/$stage.tmp" "$dir/$stage"

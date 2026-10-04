@@ -44,10 +44,14 @@ git_q() { git -c user.email=t@example.invalid -c user.name=t "$@"; }
 # --- the healthy template ----------------------------------------------------
 T="$TMP/template"
 mkdir -p "$T/scripts" "$T/src"
-cp scripts/doctor.sh scripts/require-tool.sh scripts/shift-left-stamp.sh "$T/scripts/"
+cp scripts/doctor.sh scripts/require-tool.sh scripts/shift-left-stamp.sh scripts/check-shift-left-parity.sh "$T/scripts/"
 cat > "$T/scripts/lint.sh" << 'SH'
 #!/usr/bin/env bash
 exit 0
+SH
+cat > "$T/scripts/push-gate.sh" << 'SH'
+#!/usr/bin/env bash
+[[ ! -e .fail-push ]]
 SH
 chmod +x "$T/scripts/"*.sh
 echo "x = 1" > "$T/src/app.py"
@@ -72,6 +76,13 @@ repos:
         entry: scripts/require-tool.sh nosuchtool -- true
         language: script
         files: ^infra/
+      - id: push-gate
+        name: a pre-push hook that fails while .fail-push exists
+        entry: scripts/push-gate.sh
+        language: script
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
       - id: commit-msg
         name: commit msg
         entry: "true"
@@ -90,6 +101,22 @@ repos:
         always_run: true
         pass_filenames: false
         stages: [pre-push]
+YML
+mkdir -p "$T/.github/workflows"
+cat > "$T/.github/workflows/ci.yml" << 'YML'
+jobs:
+  hooks:
+    steps:
+      - run: pre-commit run --all-files
+      - run: pre-commit run --all-files --hook-stage pre-push
+      - run: pre-commit run --hook-stage commit-msg --commit-msg-filename "$f"
+YML
+cat > "$T/.shift-left.yml" << 'YML'
+local-only:
+  - id: shift-left-stamp
+    reason: records that hooks ran in this clone
+  - id: shift-left-stamp-pre-push
+    reason: as above, for pre-push
 YML
 (
   cd "$T"
@@ -208,16 +235,83 @@ s7() {
 }
 
 # The scenarios are independent: run them at once, print them in order.
-# A scenario that dies part-way (set -u, a failed git step) is a failure,
-# not a pass with fewer checks.
-SCENARIOS=(s1 s2 s3 s4 s5 s6 s7)
+s8() {
+  echo "D6 CI parity:"
+  scenario no-ci-pre-commit
+  sed -i.bak '/pre-commit run --all-files$/d' "$R/.github/workflows/ci.yml"
+  rm "$R/.github/workflows/ci.yml.bak"
+  doctor "$R"
+  check "CI no longer runs the pre-commit stage: D6 names the hook" says "FAIL +D6 .*hook lint .*pre-commit"
+  check "only D6 fails" fails_only D6
+}
+
+# Code-review findings: D5 must not cry wolf after normal git work.
+s9() {
+  echo "D5 after switching branches:"
+  scenario switch
+  (cd "$R" && echo 2 > src/app.py && git add -A && git_q commit -qm "feat: on main") > /dev/null 2>&1
+  (cd "$R" && git switch -qc other && echo 3 > src/app.py && git add -A && git_q commit -qm "feat: on other") > /dev/null 2>&1
+  git -C "$R" switch -q main
+  doctor "$R"
+  check "back on a branch whose commit had hooks: D5 passes" test "$rc" -eq 0
+}
+
+s10() {
+  echo "D5 after a rebase:"
+  scenario rebase
+  (cd "$R" && git switch -qc topic && echo t > src/t.py && git add -A && git_q commit -qm "feat: topic") > /dev/null 2>&1
+  (cd "$R" && git switch -q main && echo m > src/m.py && git add -A && git_q commit -qm "feat: main moves") > /dev/null 2>&1
+  (cd "$R" && git switch -q topic && git_q rebase -q main) > /dev/null 2>&1
+  doctor "$R"
+  check "a rebased branch (rebase runs no commit hooks): D5 passes" test "$rc" -eq 0
+  (cd "$R" && echo u > src/u.py && git add -A && git_q commit -q --no-verify -m "feat: skip") > /dev/null 2>&1
+  doctor "$R"
+  check "but a --no-verify commit on top still fails" says "FAIL +D5 .*pre-commit"
+}
+
+s11() {
+  echo "D5 after other pushes:"
+  scenario pushes
+  git init -q --bare "$TMP/remote-pushes.git"
+  git -C "$R" remote add origin "$TMP/remote-pushes.git"
+  git -C "$R" push -q origin main > /dev/null 2>&1
+  (cd "$R" && git switch -qc f1 && echo 1 > src/f1.py && git add -A && git_q commit -qm "feat: f1" && git push -q -u origin f1) > /dev/null 2>&1
+  (cd "$R" && git switch -qc f2 main && echo 2 > src/f2.py && git add -A && git_q commit -qm "feat: f2" && git push -q -u origin f2) > /dev/null 2>&1
+  git -C "$R" switch -q f1
+  doctor "$R"
+  check "f1 pushed with hooks, then f2 pushed: D5 still passes on f1" test "$rc" -eq 0
+  (cd "$R" && echo 3 > src/f1.py && git add -A && git_q commit -qm "feat: f1 more") > /dev/null 2>&1
+  touch "$R/.fail-push"
+  if (cd "$R" && git push -q) > /dev/null 2>&1; then
+    echo "  FAIL the push-gate hook should have blocked this push"
+    return 1
+  fi
+  rm "$R/.fail-push"
+  doctor "$R"
+  check "a push its hooks blocked doesn't turn the last good push into a failure" test "$rc" -eq 0
+}
+
+# A scenario that dies part-way (a failed git step, set -u) is a failure, not
+# a pass with fewer checks. The scenario runs under set -e and its exit status
+# goes to a file. Two shapes that look right and aren't: `( set -e; "$s" ) ||`
+# makes bash ignore set -e inside the scenario, and without the group's set +e
+# the script's own set -e ends the group before it records the status.
+SCENARIOS=(s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 s11)
 for s in "${SCENARIOS[@]}"; do
-  (
-    set -e
-    "$s"
-  ) > "$TMP/$s.log" 2>&1 || echo "  FAIL scenario $s stopped early (exit $?)" >> "$TMP/$s.log" &
+  {
+    set +e
+    (
+      set -e
+      "$s"
+    ) > "$TMP/$s.log" 2>&1
+    echo $? > "$TMP/$s.rc"
+  } &
 done
 wait
+for s in "${SCENARIOS[@]}"; do
+  rc="$(cat "$TMP/$s.rc")"
+  [[ "$rc" == 0 ]] || echo "  FAIL scenario $s stopped early (exit $rc)" >> "$TMP/$s.log"
+done
 for s in "${SCENARIOS[@]}"; do cat "$TMP/$s.log"; done
 fails="$(cat "$TMP"/s*.log | grep -c '^  FAIL' || true)"
 
