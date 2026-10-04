@@ -173,4 +173,30 @@ permalink: /status/
   {% else %}
   <p class="status-banner">No status data was built into this page. Run <code>make status</code> locally, or wait for the next scheduled deploy.</p>
   {% endif %}
+
+  {% assign sl = site.data.shift_left %}
+  {% if sl %}
+  <section class="status-matrix" aria-labelledby="status-shift-left">
+    <h2 id="status-shift-left">Shift-left checks by repo</h2>
+    <p class="status-matrix__lede">Which checks run before code leaves a laptop, in each suite repo, read from its hook config on <code>main</code>. Checked <time datetime="{{ sl.generated_at }}">{{ sl.generated_at | date: "%H:%M UTC, %-d %b %Y" }}</time>.</p>
+    <div class="status-matrix__scroll">
+      <table class="status-table status-matrix__table" aria-labelledby="status-shift-left">
+        <thead>
+          <tr><th scope="col">Repo</th>{% for c in sl.columns %}<th scope="col">{{ c.label }}</th>{% endfor %}</tr>
+        </thead>
+        <tbody>
+          {% for r in sl.repos %}
+          <tr class="status-table__row">
+            <th scope="row" class="status-matrix__repo">{{ r.repo }}</th>
+            {% for c in sl.columns %}{% assign v = r.cells[c.id] %}
+            <td data-label="{{ c.label }}">{% if v == "ok" %}<span class="status-badge status-badge--pass">✓ ok</span>{% elsif v == "-" %}<span class="status-badge status-badge--fail">✗ missing</span>{% elsif v == "n/a" %}<span class="status-badge status-badge--manual">… n/a</span>{% elsif v == "not-installed" %}<span class="status-badge status-badge--stale">⏱ not installed</span>{% else %}<span class="status-badge status-badge--stale">⏱ at {{ v }}</span>{% endif %}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="status-matrix__key">✓ ok: present at its stage. ⏱ at a stage: present, but somewhere other than the catalog's stage. ✗ missing. <a href="{{ '/status/shift_left.json' | relative_url }}">Data as JSON</a></p>
+  </section>
+  {% endif %}
 </div>
