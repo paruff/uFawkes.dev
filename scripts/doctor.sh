@@ -8,7 +8,9 @@
 #   D3  pre-commit is installed and meets minimum_pre_commit_version
 #   D4  the config validates and the remote hook environments are installed
 #   D5  the last local commit, and the last push of this branch, went through
-#       their hooks: the stage's stamp (scripts/shift-left-stamp.sh) matches its tree
+#       their hooks: its tree is in the stage's stamps (scripts/shift-left-stamp.sh).
+#       Only a commit `git commit` made is judged: rebase, merge, cherry-pick and
+#       revert run no commit hooks, and the commits they replay already did.
 #   D6  every hook runs in CI, or .shift-left.yml says why not
 #       (scripts/check-shift-left-parity.sh)
 # D7 (required checks) arrives with phase E1.
@@ -151,8 +153,11 @@ if ! has_hook shift-left-stamp; then
   fail D5 "no shift-left-stamp hook, so nothing records that hooks ran" "add the shift-left-stamp hooks from uFawkes.dev's $CONFIG"
   d5=1
 elif git rev-parse -q --verify HEAD > /dev/null && [[ -z "$(git branch -r --contains HEAD 2> /dev/null)" ]]; then
-  # Only a commit not yet on any remote: pushed commits had CI.
-  if [[ "$(cat "$stamps/pre-commit" 2> /dev/null)" != "$(git rev-parse 'HEAD^{tree}')" ]]; then
+  # Only a commit not yet on any remote (pushed commits had CI), and only one
+  # `git commit` made: the reflog's oldest entry for HEAD says what created it.
+  head="$(git rev-parse HEAD)"
+  made_by="$(git reflog --format='%H %gs' 2> /dev/null | awk -v h="$head" '$1 == h { s = $2 } END { print s }')"
+  if [[ "$made_by" == commit* ]] && ! grep -qxF "$(git rev-parse 'HEAD^{tree}')" "$stamps/pre-commit" 2> /dev/null; then
     fail D5 "the last commit ($(git log -1 --format='%h %s')) never went through the pre-commit hooks" "pre-commit run --all-files (re-checks it and re-stamps)"
     d5=1
   fi
@@ -162,7 +167,7 @@ if has_hook shift-left-stamp-pre-push && up="$(git rev-parse -q --abbrev-ref '@{
   base="$(git symbolic-ref -q --short "refs/remotes/$remote/HEAD" || echo "$remote/main")"
   # Only a pushed branch with its own commits; the default branch is merged by GitHub.
   if git rev-parse -q --verify "$base" > /dev/null && [[ "$(git rev-list --count "$base..$up")" -gt 0 ]] \
-    && [[ "$(cat "$stamps/pre-push" 2> /dev/null)" != "$(git rev-parse "$up^{tree}")" ]]; then
+    && ! grep -qxF "$(git rev-parse "$up^{tree}")" "$stamps/pre-push" 2> /dev/null; then
     fail D5 "the last push of $up didn't go through the pre-push hooks" "pre-commit run --hook-stage pre-push --all-files, then push again"
     d5=1
   fi
