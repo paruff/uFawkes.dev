@@ -81,6 +81,10 @@ else
             repository { name }
             assignees(first:1) { totalCount }
             labels(first:20) { nodes { name } }
+            timelineItems(first:20, itemTypes:[CROSS_REFERENCED_EVENT, CONNECTED_EVENT]) { nodes {
+              ... on CrossReferencedEvent { source { ... on PullRequest { number url merged repository { name } } } }
+              ... on ConnectedEvent { subject { ... on PullRequest { number url merged repository { name } } } }
+            } }
           } }
         }
       }
@@ -95,7 +99,10 @@ else
             url: .content.url, repo: .content.repository.name,
             createdAt: .content.createdAt, closedAt: .content.closedAt,
             assigned: (.content.assignees.totalCount > 0),
-            labels: [.content.labels.nodes[].name] } ]' "$WORK/raw.json" > "$WORK/items.json" \
+            labels: [.content.labels.nodes[].name],
+            merged_prs: ([.content.timelineItems.nodes[] | (.source // .subject // {})
+                          | select(.merged == true)
+                          | {repo: .repository.name, number, url}] | unique) } ]' "$WORK/raw.json" > "$WORK/items.json" \
     || die "cannot parse the Project #$PROJECT response"
 fi
 # The checks that look at the board (AC-SUITE-02, AC-OBS-02) read this file, so
@@ -248,6 +255,12 @@ jq -n --slurpfile acs "$WORK/results.jsonl" --slurpfile items "$WORK/items.json"
                     total: $total },
           blockers: ($open | map(select(.labels | index("release-blocker")))
                      | map({repo, number, title, url})),
+          # Open issues a merged PR references: probably done, just not closed.
+          # Release umbrellas ("goal: release ...") are left out: many PRs reference
+          # them, and shipping the release closes them. (The `goal` *label* is
+          # model routing, not an umbrella, so it does not count here.)
+          likely_done: ($open | map(select(((.merged_prs // []) | length > 0) and ((.title | test("^goal:")) | not)))
+                        | map({repo, number, title, url, prs: .merged_prs})),
           routing: { goal: ($is | map(select(route == "goal")) | length),
                      nemotron: ($is | map(select(route == "nemotron")) | length),
                      flash: ($is | map(select(route == "flash")) | length) },

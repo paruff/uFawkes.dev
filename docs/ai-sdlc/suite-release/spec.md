@@ -116,7 +116,8 @@ or simulated one.
 
 #### AC-AI-01: The devcontainer image can be pinned
 
-- **Expected:** A `v2.0.0` tag publishes `ghcr.io/paruff/ufawkesai-devcontainer:2.0.0`
+- **Expected:** A `v2.0.0` tag publishes `ghcr.io/paruff/fawkes-space:2.0.0` (the image was
+  `ufawkesai-devcontainer` until uFawkesAI renamed it)
   and `:2.0`, signed. Its digest is in the GitHub Release
 - **Verification:** `docker manifest inspect` succeeds from an
   unauthenticated machine, and `cosign verify` passes using the documented
@@ -156,10 +157,11 @@ or simulated one.
 
 #### AC-AI-05: Every suite repo pins the image
 
-- **Expected:** All seven repos' `.devcontainer/devcontainer.json` use
-  `:2.0.0` or a digest, not `:latest`
-- **Verification:** `grep -r ufawkesai-devcontainer` across the suite shows
-  no `:latest`
+- **Expected:** All seven repos' `.devcontainer/devcontainer.json` use the
+  released `fawkes-space:2.0.0` (optionally with its digest), not `:latest` or
+  a pre-release
+- **Verification:** `scripts/checks/ac-ai-05.sh` reads each repo's
+  devcontainer and names any that pins something else
 - **Lands:** within one week after the release; it doesn't block the tag
 
 #### AC-AI-07: Tests and evals both gate merges

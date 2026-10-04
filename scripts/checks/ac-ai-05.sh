@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# AC-AI-05: no suite repo's devcontainer uses ufawkesai-devcontainer:latest.
+# AC-AI-05: every suite repo's devcontainer pins the released image,
+# fawkes-space:2.0.0 (optionally with its digest): not :latest, and not a
+# pre-release such as 2.0.0-rc.3. The image was ufawkesai-devcontainer until
+# uFawkesAI renamed it.
 set -euo pipefail
 
 REPOS=(uFawkesAI uFawkesObs uFawkesPipe uFawkesDevX uFawkesDojo fawkes uFawkes.dev)
@@ -11,11 +14,12 @@ for repo in "${REPOS[@]}"; do
     bad=1
     continue
   fi
-  if grep -q 'ufawkesai-devcontainer:latest' <<< "$body"; then
-    echo "$repo: still uses :latest"
+  pinned="$(grep -oE 'fawkes-space:[^"@]+' <<< "$body" | head -1)"
+  if [[ -z "$pinned" ]]; then
+    echo "$repo: does not use ghcr.io/paruff/fawkes-space"
     bad=1
-  elif ! grep -qE 'ufawkesai-devcontainer(:2\.0\.0|@sha256:)' <<< "$body"; then
-    echo "$repo: does not pin ufawkesai-devcontainer to 2.0.0 or a digest"
+  elif [[ "$pinned" != "fawkes-space:2.0.0" ]]; then
+    echo "$repo: pins ${pinned}, not the released fawkes-space:2.0.0"
     bad=1
   fi
 done
