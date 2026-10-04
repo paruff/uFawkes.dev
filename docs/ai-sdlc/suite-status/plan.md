@@ -53,6 +53,22 @@ accurate data as possible", with 30 days as the stale limit.
 - **Not done:** per-scenario results from the acceptance suites (the page shows
   the suite's pass or fail, not each test).
 
+## Truth check (2026-10-04)
+
+Owner report: the page showed AI 2.0 and Dojo 0.2 well behind where the work
+was. The board matched GitHub exactly; the gaps were upstream of the page.
+
+- **Merged work, unclosed issues.** PRs referenced issues without a closing
+  keyword (or closed them from another repo), so the issues stayed open. Each
+  release now lists its open issues that a merged PR references as **"done but
+  not closed?"**, from the issues' cross-reference and connected-PR events.
+  Release umbrellas (`goal: release …` titles) are left out: many PRs reference
+  them and the release closes them. The `goal` _label_ is model routing, not an
+  umbrella. Verified by `scripts/test-suite-status.sh` and a live run.
+- **A renamed image.** AC-AI-01 and AC-AI-05 checked `ufawkesai-devcontainer`;
+  the image is now `fawkes-space`. AC-AI-05 requires the released
+  `fawkes-space:2.0.0` (not a pre-release), so it fails until 2.0.0 ships.
+
 ## Verification Strategy
 
 | Criterion    | How it's proven                                                | Test type   | Command / CI job                                         |
