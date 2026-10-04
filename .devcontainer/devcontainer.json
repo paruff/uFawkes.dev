@@ -23,7 +23,7 @@
   },
   "forwardPorts": [4000],
   "remoteUser": "dev",
-  "postCreateCommand": "echo 'uFawkes.dev devcontainer ready — all tools pre-installed'",
+  "postCreateCommand": "pre-commit install && pre-commit install-hooks && bash scripts/doctor.sh",
   "hostRequirements": {
     "cpus": 2,
     "memory": "4gb"
