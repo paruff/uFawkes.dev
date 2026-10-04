@@ -43,7 +43,7 @@ Rate each area from 1 (ad hoc) to 5 (reliable):
 
 Revisit the score monthly and prioritize the lowest scoring domain first.
 
-If you need the delivery baseline first, start with the [DORA primer]({{ '/learn/dora-primer.html' | relative_url }}). Then use the [observability primer]({{ '/learn/observability-primer.html' | relative_url }}) to improve signal quality.
+If you need the delivery baseline first, start with the [DORA primer]({{ '/learn/dora-primer.html' | relative_url }}). For the AI-Native SDLC mindset, start with [From Vibe Coding to Agentic Engineering]({{ '/learn/vibe-coding-to-agentic.html' | relative_url }}). Then use the [observability primer]({{ '/learn/observability-primer.html' | relative_url }}) to improve signal quality.
 
 Run this yourself: [uFawkesDevX (Backstage, Coder, golden paths)](https://github.com/paruff/uFawkesDevX)
 

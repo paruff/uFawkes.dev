@@ -10,7 +10,7 @@ next_guide_url: /learn/ai-capabilities.html
 next_guide_title: AI Capabilities Guide
 ---
 
-> **Part of the uFawkesDojo curriculum** — This guide aligns with [White Belt Module 2: DORA Metrics](https://dojo.ufawkes.dev/lesson.html?src=modules/white-belt/module-02-dora-metrics.md) and [Brown Belt Module 14: DORA Deep Dive](https://dojo.ufawkes.dev/lesson.html?src=modules/brown-belt/module-14-dora-deep-dive.md). For hands-on practice, run the [DORA Metrics Lab](https://dojo.ufawkes.dev/lesson.html?src=white-belt/module-02-dora-metrics/lab-01/instructions.md) against uFawkesObs.
+> **Part of the uFawkesDojo curriculum** — This guide aligns with [White Belt Module 2: DORA Metrics](https://dojo.ufawkes.dev/lesson.html?src=modules/white-belt/module-02-dora-metrics.md) and [Brown Belt Module 14: DORA Deep Dive](https://dojo.ufawkes.dev/lesson.html?src=modules/brown-belt/module-14-dora-deep-dive.md). For hands-on practice, run the [DORA Metrics Lab](https://dojo.ufawkes.dev/lesson.html?src=white-belt/module-02-dora-metrics/lab-01/instructions.md) against uFawkesObs. **Start here**: [From Vibe Coding to Agentic Engineering]({{ '/learn/vibe-coding-to-agentic.html' | relative_url }}) for the AI-Native SDLC mindset.
 
 DORA gives teams a shared language for delivery performance. In AI-assisted development, that matters even more: faster coding only helps when the platform keeps quality and flow stable.
 

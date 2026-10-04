@@ -13,6 +13,9 @@ Start here for the web-first versions of the uFawkes education guides.
 
 ## Guides
 
+- [From Vibe Coding to Agentic Engineering]({{ '/learn/vibe-coding-to-agentic.html' | relative_url }})\
+  A White Belt primer on moving from ad-hoc AI use to structured, measurable AI-native software delivery. Cites [The AI-Native SDLC Playbook](https://claude.com/blog/the-ai-native-sdlc-playbook). **Dojo: "Start here" lab (Dojo 0.2) · uFawkesAI template**
+
 - [DORA primer]({{ '/learn/dora-primer.html' | relative_url }})\
   A practical introduction to the five DORA metrics, what good looks like, and how to improve steadily. **Dojo: [White Belt Module 2](https://dojo.ufawkes.dev/lesson.html?src=modules/white-belt/module-02-dora-metrics.md) · [Brown Belt Module 14](https://dojo.ufawkes.dev/lesson.html?src=modules/brown-belt/module-14-dora-deep-dive.md) · [Lab](https://dojo.ufawkes.dev/lesson.html?src=white-belt/module-02-dora-metrics/lab-01/instructions.md)**
 

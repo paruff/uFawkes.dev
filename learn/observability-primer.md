@@ -48,7 +48,7 @@ Use weekly metric reviews to answer:
 - Which services drive change failures?
 - How fast does the team restore production health?
 
-Then close the loop with the [DORA primer]({{ '/learn/dora-primer.html' | relative_url }}) and capability planning in the [AI capabilities guide]({{ '/learn/ai-capabilities.html' | relative_url }}).
+Then close the loop with the [DORA primer]({{ '/learn/dora-primer.html' | relative_url }}), capability planning in the [AI capabilities guide]({{ '/learn/ai-capabilities.html' | relative_url }}), and the AI-Native SDLC mindset in [From Vibe Coding to Agentic Engineering]({{ '/learn/vibe-coding-to-agentic.html' | relative_url }}).
 
 Repos launching soon — [get notified](https://tally.so/embed/ODbbpR)
 
