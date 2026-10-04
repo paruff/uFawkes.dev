@@ -5,7 +5,7 @@
 Small PRs, each mergeable alone. Measure first, because the stage budgets in
 the spec are guesses until we've timed the real hooks.
 
-**Progress:** A1–A3 done (full unit run 33 s → 14 s); A4 is spec revision 2; B1 done (`require-tool.sh`); B2 done (`make doctor`, D1–D5); B3 done (pre-push 29 s worst case); B4 done (CI runs every stage; parity check); D6 in the doctor next; B5 done here (the image already has the tools; first create installs hook environments, 288 s, until AC-AI-09 bakes them in); A1's first run is [`baseline.md`](baseline.md).
+**Progress:** A1–A3 done (full unit run 33 s → 14 s); A4 is spec revision 2; B1 done (`require-tool.sh`); B2 done (`make doctor`, D1–D5); B3 done (pre-push 29 s worst case); B4 done (CI runs every stage; parity check); D6 in the doctor next; B5 done here (the image already has the tools; first create installs hook environments, 288 s, until AC-AI-09 bakes them in); B6 done (Stop-hook gate for Claude Code); A1's first run is [`baseline.md`](baseline.md).
 `unit-tests` is 60–80% of pre-commit in every repo, so before phase B:
 A2 runs only the test suites a commit affects (all of them in CI and at pre-push),
 A3 runs the suites in parallel, and A4 revises the spec from the baseline.
