@@ -10,6 +10,8 @@ next_guide_url: /learn/observability-primer.html
 next_guide_title: Observability Primer
 ---
 
+> **Part of the uFawkesDojo curriculum** — This guide aligns with the Dojo's AI-capability framing across belts: the 5th DORA metric (Rework Rate) in [White Belt Module 2](https://dojo.ufawkes.dev/lesson.html?src=modules/white-belt/module-02-dora-metrics.md) and [Brown Belt Module 14](https://dojo.ufawkes.dev/lesson.html?src=modules/brown-belt/module-14-dora-deep-dive.md); developer workflow automation in [White Belt Module 4](https://dojo.ufawkes.dev/lesson.html?src=modules/white-belt/module-04-first-deployment.md) (Backstage catalog, golden-path Cookiecutter); and the uFawkesDevX stack (Backstage, Coder, Score) as the Compose-tier platform for AI-assisted delivery.
+
 AI adoption is not one capability. It is a stack of capabilities that must mature together: development workflow, platform guardrails, observability, and team operating model.
 
 {% assign share_url = page.url | absolute_url %}
@@ -43,7 +45,7 @@ Revisit the score monthly and prioritize the lowest scoring domain first.
 
 If you need the delivery baseline first, start with the [DORA primer]({{ '/learn/dora-primer.html' | relative_url }}). Then use the [observability primer]({{ '/learn/observability-primer.html' | relative_url }}) to improve signal quality.
 
-Run this yourself: [GitHub repo link](https://github.com/paruff/uFawkesAI)
+Run this yourself: [uFawkesDevX (Backstage, Coder, golden paths)](https://github.com/paruff/uFawkesDevX)
 
 {% include guide-meta.html %}
 
