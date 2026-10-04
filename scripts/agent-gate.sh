@@ -67,7 +67,8 @@ fi
 echo "$sig" > "$state/agent-gate-last"
 {
   echo "agent gate: commit-stage hooks fail on your uncommitted changes. Fix them before finishing;"
-  echo "never with --no-verify, and never by weakening a hook or a test."
+  echo "never with --no-verify, and never by weakening a hook or a test. The shift-left-fix skill"
+  echo "(scripts/shift-left-triage.sh) says which failures are yours to fix and which go to a person."
   echo
   tail -60 <<< "$out"
 } >&2
