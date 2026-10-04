@@ -10,6 +10,8 @@ next_guide_url: /learn/dora-primer.html
 next_guide_title: DORA Primer
 ---
 
+> **Part of the uFawkesDojo curriculum** — This guide aligns with [Brown Belt Module 13: Observability](https://dojo.ufawkes.dev/lesson.html?src=modules/brown-belt/module-13-observability.md). The uFawkesObs stack (OTel, Prometheus, Loki, Tempo, Grafana) is the hands-on foundation.
+
 Modern delivery performance depends on fast feedback loops. Observability gives you those loops by turning runtime behavior into actionable signals.
 
 {% assign share_url = page.url | absolute_url %}
@@ -29,7 +31,7 @@ Share: [X](https://twitter.com/intent/tweet?text={{ page.title | uri_escape }}&u
 3. Alert rules tied to user-facing symptoms.
 4. A short incident runbook for top failure modes.
 
-This follows the same progression seen in uFawkes observability docs: get metrics and logs reliable first, then expand into trace instrumentation for deeper diagnostics.
+This follows the same progression seen in **uFawkesObs**: get metrics and logs reliable first, then expand into trace instrumentation for deeper diagnostics.
 
 ## Common implementation gaps
 
@@ -46,7 +48,7 @@ Use weekly metric reviews to answer:
 - Which services drive change failures?
 - How fast does the team restore production health?
 
-Then close the loop with the [DORA primer]({{ '/learn/dora-primer.html' | relative_url }}) and capability planning in the [AI capabilities guide]({{ '/learn/ai-capabilities.html' | relative_url }}).
+Then close the loop with the [DORA primer]({{ '/learn/dora-primer.html' | relative_url }}), capability planning in the [AI capabilities guide]({{ '/learn/ai-capabilities.html' | relative_url }}), and the AI-Native SDLC mindset in [From Vibe Coding to Agentic Engineering]({{ '/learn/vibe-coding-to-agentic.html' | relative_url }}).
 
 Repos launching soon — [get notified](https://tally.so/embed/ODbbpR)
 
