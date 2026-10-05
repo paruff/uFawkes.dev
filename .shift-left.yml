@@ -21,8 +21,8 @@
 # SOFTWARE.
 
 # Hooks that don't run in CI, and why (docs/ai-sdlc/shift-left/spec.md R3).
-# scripts/check-shift-left-parity.sh fails when a hook is neither run by CI
-# nor listed here; CI passes local-only ids to pre-commit as SKIP.
+# uFawkesPipe's parity check (shift-left-parity) fails when a hook is neither
+# run by CI nor listed here; CI passes local-only ids to pre-commit as SKIP.
 local-only:
   - id: shift-left-stamp
     reason: records that hooks ran in this clone, for the doctor; CI's own run is the record there
