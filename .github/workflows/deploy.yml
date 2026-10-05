@@ -22,6 +22,12 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # The workflow's permissions, plus issues: write for the shift-left drift step.
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+      issues: write
     steps:
       - name: DORA job start
         run: |
@@ -58,12 +64,28 @@ jobs:
       # Shift-left matrix (docs/ai-sdlc/shift-left/, phase D1): each suite
       # repo's hook config, read through the API, as /status/'s matrix and
       # /status/shift_left.json. Same rules as the suite status above.
+      # The matrix the last deploy published, to tell a regression (ok before,
+      # not now) from a gap that was always there. Missing is a baseline.
+      - name: Fetch the last published shift-left matrix
+        if: github.event_name != 'push'
+        continue-on-error: true
+        run: curl -fsSL --max-time 20 https://ufawkes.dev/status/shift_left.json -o "$RUNNER_TEMP/shift_left_prev.json"
+
       - name: Shift-left audit
         id: shift_left
         continue-on-error: ${{ github.event_name == 'push' }}
         env:
           GH_TOKEN: ${{ secrets.SUITE_STATUS_TOKEN || github.token }}
         run: bash scripts/shift-left-audit.sh --json _data/shift_left.json
+
+      # Phase D2: one issue per repo whose check regressed, closed on recovery.
+      # Scheduled and manual runs only: a push stays quiet.
+      - name: Open issues for shift-left regressions
+        if: github.event_name != 'push' && steps.shift_left.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DRIFT_REPO: ${{ github.repository }}
+        run: bash scripts/shift-left-drift.sh _data/shift_left.json "$RUNNER_TEMP/shift_left_prev.json"
 
       - name: Build with Jekyll
         run: bundle exec jekyll build

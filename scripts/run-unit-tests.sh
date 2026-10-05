@@ -33,6 +33,7 @@ SUITES=(
   "test-emit-dora-event ^scripts/(test-)?emit-dora-event\.sh$|^scripts/testdata/ufawkesobs-"
   "test-artifact-chain ^scripts/(test-)?check-artifact-chain\.sh$"
   "test-dojo-feedback-intent ^scripts/(test-)?dojo-feedback-intent\.sh$"
+  "test-shift-left-drift ^scripts/(test-)?shift-left-drift\.sh$"
   "test-suite-status ^scripts/(test-suite-status|suite-status|check-status-drift)\.sh$|^scripts/checks/|^scripts/testdata/suite-status"
   "test-check-design-tokens ^scripts/(test-)?check-design-tokens\.sh$|^design/tokens\.json$"
   "test-shift-left-audit ^scripts/(test-)?shift-left-audit\.sh$|^scripts/testdata/shift-left/"
