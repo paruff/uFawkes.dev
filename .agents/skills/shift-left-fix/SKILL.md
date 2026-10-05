@@ -20,7 +20,7 @@ not an obstacle. Fix what is mechanical; hand on what needs judgment.
 ## 2. Sort it
 
 ```bash
-bash scripts/shift-left-triage.sh /tmp/ci.log   # or pipe the local output in
+bash scripts/shift-left.sh shift-left-triage /tmp/ci.log   # or pipe the local output in
 ```
 
 Each line is `<class><TAB><hook id>`:
