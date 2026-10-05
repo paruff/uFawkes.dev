@@ -22,6 +22,12 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # The workflow's permissions, plus issues: write for the shift-left drift step.
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+      issues: write
     steps:
       - name: DORA job start
         run: |
@@ -31,13 +37,13 @@ jobs:
           echo "job:${{ github.job }}"
 
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Setup Pages
-        uses: actions/configure-pages@v6
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
 
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1
         with:
           ruby-version: "3.3"
           bundler-cache: true
@@ -55,6 +61,32 @@ jobs:
           SUITE_STATUS_TOKEN: ${{ secrets.SUITE_STATUS_TOKEN }}
         run: bash scripts/suite-status.sh
 
+      # Shift-left matrix (docs/ai-sdlc/shift-left/, phase D1): each suite
+      # repo's hook config, read through the API, as /status/'s matrix and
+      # /status/shift_left.json. Same rules as the suite status above.
+      # The matrix the last deploy published, to tell a regression (ok before,
+      # not now) from a gap that was always there. Missing is a baseline.
+      - name: Fetch the last published shift-left matrix
+        if: github.event_name != 'push'
+        continue-on-error: true
+        run: curl -fsSL --max-time 20 https://ufawkes.dev/status/shift_left.json -o "$RUNNER_TEMP/shift_left_prev.json"
+
+      - name: Shift-left audit
+        id: shift_left
+        continue-on-error: ${{ github.event_name == 'push' }}
+        env:
+          GH_TOKEN: ${{ secrets.SUITE_STATUS_TOKEN || github.token }}
+        run: bash scripts/shift-left-audit.sh --json _data/shift_left.json
+
+      # Phase D2: one issue per repo whose check regressed, closed on recovery.
+      # Scheduled and manual runs only: a push stays quiet.
+      - name: Open issues for shift-left regressions
+        if: github.event_name != 'push' && steps.shift_left.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DRIFT_REPO: ${{ github.repository }}
+        run: bash scripts/shift-left-drift.sh _data/shift_left.json "$RUNNER_TEMP/shift_left_prev.json"
+
       - name: Build with Jekyll
         run: bundle exec jekyll build
 
@@ -62,8 +94,12 @@ jobs:
         if: steps.suite_status.outcome == 'failure'
         run: echo "::warning title=Suite status::scripts/suite-status.sh failed; /status/ shows no data until it passes. See the Suite status step."
 
+      - name: Warn if the shift-left audit failed
+        if: steps.shift_left.outcome == 'failure'
+        run: echo "::warning title=Shift-left audit::scripts/shift-left-audit.sh failed; /status/ shows no shift-left matrix until it passes. See the Shift-left audit step."
+
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v5
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
 
       - name: DORA job finish
         if: always()
@@ -85,7 +121,7 @@ jobs:
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5
 
       - name: DORA job finish
         if: always()

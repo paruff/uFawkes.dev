@@ -2512,3 +2512,52 @@ pre {
     fill: #9ca3af;
   }
 }
+
+/* Shift-left matrix on /status/ (shift-left plan, phase D1) */
+.status-matrix {
+  margin-top: 48px;
+}
+
+.status-matrix__scroll {
+  overflow-x: auto;
+}
+
+.status-matrix__repo {
+  text-align: left;
+  white-space: nowrap;
+}
+
+.status-matrix__key {
+  color: #4b5563;
+  font-size: 0.875rem;
+  margin-top: 8px;
+}
+
+@media (max-width: 640px) {
+  .status-matrix__repo {
+    display: block;
+    font-weight: 700;
+    padding: 8px 0 4px;
+  }
+
+  .status-matrix__table td::before {
+    content: attr(data-label) ": ";
+    font-weight: 600;
+  }
+}
+
+/* Open issues with merged PRs: "done but not closed?" on /status/ */
+.status-card__likely {
+  font-size: 0.875rem;
+  margin-top: 8px;
+}
+
+.status-card__likely summary {
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.status-card__likely-list {
+  margin: 8px 0 0;
+  padding-left: 16px;
+}

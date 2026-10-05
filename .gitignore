@@ -7,3 +7,5 @@ _site/
 consolidate-agents.sh
 _data/suite_status.json
 status/suite_status.json
+_data/shift_left.json
+status/shift_left.json

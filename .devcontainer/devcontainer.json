@@ -1,6 +1,6 @@
 {
   "name": "uFawkes.dev Development",
-  "image": "ghcr.io/paruff/ufawkesai-devcontainer:latest",
+  "image": "ghcr.io/paruff/fawkes-space:2.0.0-rc.3@sha256:491546e9fdef2b473899e152e0631a94b8d68fadb6525d39fb72cdfab08c08e0",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -23,5 +23,9 @@
   },
   "forwardPorts": [4000],
   "remoteUser": "dev",
-  "postCreateCommand": "echo 'uFawkes.dev devcontainer ready — all tools pre-installed'"
+  "postCreateCommand": "pre-commit install && pre-commit install-hooks && bash scripts/doctor.sh",
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "4gb"
+  }
 }

@@ -38,3 +38,10 @@ status-check-drift: ## Fail if suite-release/spec.md and acceptance.yml disagree
 # Design tokens (DESIGN.md, design/tokens.json)
 design-check: ## Fail if a design token pair is below its contrast floor
 	@bash scripts/check-design-tokens.sh
+
+# Shift left (docs/ai-sdlc/shift-left/)
+shift-left-audit: ## Matrix of shift-left checks x suite repo (add --time via ARGS=--time)
+	@bash scripts/shift-left-audit.sh $(ARGS)
+
+doctor: ## Are this clone's checks actually running? (hooks installed, tools, stamps)
+	@bash scripts/doctor.sh

@@ -1,18 +1,31 @@
 # Spec: Shift the suite left, and know when it isn't
 
-**Traces to:** [`intent.md`](intent.md) | **Status:** Draft | **Revision:** 1
+**Traces to:** [`intent.md`](intent.md) | **Status:** Draft | **Revision:** 2 (budgets from the [baseline](baseline.md); R9, R10 added)
 
 ## Requirements
 
 **R1. Stages and budgets.** A check runs at the earliest stage whose budget
 it fits. A check that exceeds its budget moves one stage right, never off.
 
-| Stage      | Budget                                  | What runs                                                                                                                                                    |
-| ---------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| commit-msg | under 1 second                          | Conventional Commits: the subject's description is 1 to 72 characters, the same regex CI uses                                                                |
-| pre-commit | 10 seconds, on changed files only       | Format and lint, shellcheck, **actionlint**, yamllint, markdownlint, secrets (gitleaks), **config schemas** (dependabot, workflows, catalog), **type check** |
-| pre-push   | 3 minutes, on changed and affected code | **Unit tests**, **SAST** (semgrep), dependency and IaC scan (Trivy), policy tests (conftest)                                                                 |
-| CI         | no budget                               | The same hooks via the same command, plus what needs infrastructure: integration, container scan, end-to-end, CodeQL                                         |
+| Stage      | Budget                            | What runs                                                                                                                                                    |
+| ---------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| commit-msg | under 1 second                    | Conventional Commits: the subject's description is 1 to 72 characters, the same regex CI uses                                                                |
+| pre-commit | 10 seconds, on changed files only | Format and lint, shellcheck, **actionlint**, yamllint, markdownlint, secrets (gitleaks), **config schemas** (dependabot, workflows, catalog), **type check** |
+| pre-push   | 60 seconds, on the pushed commits | **Unit tests**, **SAST** (semgrep), dependency and IaC scan (Trivy), policy tests (conftest)                                                                 |
+| CI         | no budget                         | The same hooks via the same command, plus what needs infrastructure: integration, container scan, end-to-end, CodeQL                                         |
+
+**Budgets (revision 2, from the [baseline](baseline.md)).** Without unit
+tests, pre-commit took 6–12 seconds per repo over _all_ files, so 10 seconds
+holds for a changed-files commit. Pre-push drops from 3 minutes to 60 seconds:
+a gate long enough to walk away from gets bypassed, by people and by agents.
+The full unit run is 14 seconds since phase A3. Budgets are measured with
+`make shift-left-audit ARGS=--time`.
+
+**Each stage runs once.** At pre-commit, unit tests run only for the suites
+the staged files affect (phase A2). Pre-push runs the pre-push hooks on the
+pushed commits; it doesn't rerun the pre-commit stage over all files, as
+today's `pre-push-validation` hook does, doubling every push. Only CI runs
+everything over all files, which is also what catches a `--no-verify`.
 
 **R2. The catalog, and today's gaps.** Counted from each repo's hook config
 on 2026-10-02 (seven repos):
@@ -64,7 +77,7 @@ problems (so it can run unattended without noise).
 | D2  | Every local hook's `entry` resolves: the script exists and is executable, or the system tool is on `PATH` at its minimum version |
 | D3  | `pre-commit` is installed and meets `minimum_pre_commit_version`                                                                 |
 | D4  | The config validates and the hook environments are installed                                                                     |
-| D5  | Each stage has run since the last commit: a stamp file per stage, written by a tiny always-run hook                              |
+| D5  | Each stage has run on the current content: a stamp file per stage records the tree hash (`git write-tree`) it passed on          |
 | D6  | CI parity (R3): every hook ID is run by CI or listed in `.shift-left.yml`                                                        |
 | D7  | The CI jobs from R3 are required checks in the ruleset (skipped, with a note, when `gh` isn't authenticated)                     |
 
@@ -96,6 +109,24 @@ repo.
 human-readable table of HIGH and CRITICAL findings in the log. A red scan
 that can't be diagnosed from its log fails this requirement.
 
+**R9. The agent loop runs the same gate.** An agent's edits are checked by
+the commit stage's hooks, on the files it changed, before it reports a task
+done: a Claude Code `Stop` hook (and its equivalent in other harnesses) runs
+`pre-commit run --files <changed files>` and blocks on a failure. A gate the
+harness runs can't be talked past; an instruction to "run the checks" can.
+It is the same hook config as the commit stage and CI, so the three can't
+drift, and it stays inside the pre-commit budget.
+
+**R10. Remediation, with limits.** Safe fixes apply themselves: formatters
+and fixers run in write mode (ruff `--fix`, prettier `--write`, shfmt `-w`,
+end-of-file). For the rest, a `shift-left-fix` skill in `.agents/skills/`
+takes a failed hook's or CI job's log, sorts each failure into _mechanical_
+(lint, format, type, schema, a pinned-version bump) or _needs judgment_
+(a failing test, a security finding, a design rule), fixes the mechanical
+ones, and reruns the same hook to prove it. It never uses `--no-verify`, never
+edits a hook, a test or a ruleset to make it pass, and hands each
+needs-judgment failure to a person with its log excerpt.
+
 ## Acceptance criteria
 
 | ID          | Criterion                                                                                                                           | Verification                                                                        |
@@ -108,11 +139,16 @@ that can't be diagnosed from its log fails this requirement.
 | AC-SHIFT-06 | The fleet audit runs daily, publishes the matrix to `/status/`, and files one issue per regressed repo within 24 hours              | Two scheduled runs; a seeded regression opens one issue, fixing it closes it        |
 | AC-SHIFT-07 | A deliberately broken setup is detected: uninstalled stage, deleted hook script, missing tool, removed CI job, hook missing from CI | Fault-injection suite in a throwaway repo, run in CI                                |
 | AC-SHIFT-08 | A failing scanner shows its HIGH and CRITICAL findings in the log                                                                   | Seed a vulnerable dependency; the log table names it                                |
+| AC-SHIFT-09 | Each repo's pre-commit stage fits 10 seconds on a typical change and its pre-push stage fits 60 seconds                             | `make shift-left-audit ARGS=--time`, recorded per phase                             |
+| AC-SHIFT-10 | An agent can't report a task done while a commit-stage hook fails on its changes                                                    | Scenario: an agent edit that breaks a lint; the `Stop` hook blocks with the failure |
+| AC-SHIFT-11 | The fix skill fixes mechanical failures and hands off the rest, never by weakening a check                                          | Seeded lint + format + failing-test run: two fixed and rerun, the test handed off   |
 
 ## Concerns
 
-- **Speed.** The 3-minute pre-push budget is a guess. Measure first (Phase A)
-  and move anything over budget one stage right, with a note.
+- **Speed.** Measured in the [baseline](baseline.md): unit tests were 60–80%
+  of pre-commit, fixed by phases A2 and A3. The 60-second pre-push budget is
+  untested until semgrep and Trivy land (phase B3); a hook over budget moves
+  to CI with a note, never off.
 - **Tools on the laptop.** Semgrep, actionlint, Trivy, gitleaks and
   shellcheck must be installed. The devcontainer image should bake them
   (this extends AC-AI-09); outside it, the doctor prints install hints.
