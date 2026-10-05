@@ -13,7 +13,7 @@ release spec:
   release: AI 2.0 # matches a Project #7 "Release" option
   title: The devcontainer image can be pinned
   check: command # command | manual
-  run: docker manifest inspect ghcr.io/paruff/ufawkesai-devcontainer:2.0.0
+  run: docker manifest inspect ghcr.io/paruff/fawkes-space:2.0.0
   evidence: "" # manual ACs: link to the transcript, run or PR
   evidence_date: "" # YYYY-MM-DD; needed unless the evidence is a GitHub PR or issue
 ```

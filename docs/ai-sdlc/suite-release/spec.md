@@ -116,8 +116,10 @@ or simulated one.
 
 #### AC-AI-01: The devcontainer image can be pinned
 
-- **Expected:** A `v2.0.0` tag publishes `ghcr.io/paruff/fawkes-space:2.0.0` (the image was
-  `ufawkesai-devcontainer` until uFawkesAI renamed it)
+> Image renamed 2026-10-03 (owner decision, uFawkesAI `docs/ai-sdlc/v2.0.0/intent.md`):
+> `ufawkesai-devcontainer` → `fawkes-space`. Neither old name was ever publicly pullable.
+
+- **Expected:** A `v2.0.0` tag publishes `ghcr.io/paruff/fawkes-space:2.0.0`
   and `:2.0`, signed. Its digest is in the GitHub Release
 - **Verification:** `docker manifest inspect` succeeds from an
   unauthenticated machine, and `cosign verify` passes using the documented
@@ -157,11 +159,10 @@ or simulated one.
 
 #### AC-AI-05: Every suite repo pins the image
 
-- **Expected:** All seven repos' `.devcontainer/devcontainer.json` use the
-  released `fawkes-space:2.0.0` (optionally with its digest), not `:latest` or
-  a pre-release
-- **Verification:** `scripts/checks/ac-ai-05.sh` reads each repo's
-  devcontainer and names any that pins something else
+- **Expected:** All seven repos' `.devcontainer/devcontainer.json` use
+  `:2.0.0` or a digest, not `:latest`
+- **Verification:** `bash scripts/checks/ac-ai-05.sh` (greps each repo for `fawkes-space`) shows
+  no `:latest`
 - **Lands:** within one week after the release; it doesn't block the tag
 
 #### AC-AI-07: Tests and evals both gate merges
@@ -180,14 +181,16 @@ or simulated one.
 #### AC-AI-09: One hook gate, run the same way everywhere
 
 - **Expected:** `.pre-commit-config.yaml` is the only hook definition. It
-  runs locally (hooks pre-installed in the devcontainer image) and in the
+  runs locally (pre-commit and the baseline tools pre-installed in the
+  devcontainer image; remote hook environments download once, on first run) and in the
   Pre-flight workflow, which is a required check in every suite repo.
   pre-commit.ci is retired: it duplicated Pre-flight, its skip list drifted
   on template syncs, and it couldn't run the suite's own `jq`-based hooks.
   A monthly workflow opens a `pre-commit autoupdate` PR
 - **Verification:** no `ci:` block in any suite repo's config; branch
   protection lists Pre-flight; the devcontainer runs
-  `pre-commit run --all-files` offline on first open
+  `pre-commit run --all-files` as `dev` (offline-on-first-open dropped by the
+  owner on 2026-10-03: a one-time hook download is accepted)
 
 #### AC-AI-06: Delivery events reach uFawkesObs, or the claim goes
 
