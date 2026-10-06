@@ -87,6 +87,17 @@ jobs:
           DRIFT_REPO: ${{ github.repository }}
         run: bash scripts/shift-left-drift.sh _data/shift_left.json "$RUNNER_TEMP/shift_left_prev.json"
 
+      # Live checks (docs/ai-sdlc/suite-release/live-checks.yml, suite-status
+      # plan Tier 2): each scheduled workflow's latest run on main, as
+      # /status/'s live-checks section. Same rules as the suite status above:
+      # a broken script fails the run (softly on push); a red nightly does not.
+      - name: Live checks
+        id: live_checks
+        continue-on-error: ${{ github.event_name == 'push' }}
+        env:
+          GH_TOKEN: ${{ secrets.SUITE_STATUS_TOKEN || github.token }}
+        run: bash scripts/live-checks.sh --json _data/live_checks.json
+
       - name: Build with Jekyll
         run: bundle exec jekyll build
 
@@ -97,6 +108,10 @@ jobs:
       - name: Warn if the shift-left audit failed
         if: steps.shift_left.outcome == 'failure'
         run: echo "::warning title=Shift-left audit::scripts/shift-left-audit.sh failed; /status/ shows no shift-left matrix until it passes. See the Shift-left audit step."
+
+      - name: Warn if the live checks failed
+        if: steps.live_checks.outcome == 'failure'
+        run: echo "::warning title=Live checks::scripts/live-checks.sh failed; /status/ shows no live-checks section until it passes. See the Live checks step."
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
