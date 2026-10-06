@@ -1,0 +1,19 @@
+{
+  "jobs": [
+    {
+      "name": "test",
+      "steps": [
+        { "name": "Checkout", "conclusion": "success" },
+        { "name": "integration tests", "conclusion": "failure" },
+        { "name": "Package", "conclusion": "skipped" }
+      ]
+    },
+    {
+      "name": "publish",
+      "steps": [
+        { "name": "publish artifacts", "conclusion": "failure" },
+        { "name": "Cleanup", "conclusion": "success" }
+      ]
+    }
+  ]
+}

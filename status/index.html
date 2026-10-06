@@ -209,4 +209,37 @@ permalink: /status/
     <p class="status-matrix__key">✓ ok: present at its stage. ⏱ at a stage: present, but somewhere other than the catalog's stage. ✗ missing. <a href="{{ '/status/shift_left.json' | relative_url }}">Data as JSON</a></p>
   </section>
   {% endif %}
+
+  {% assign lc = site.data.live_checks %}
+  {% if lc %}
+  <section class="status-matrix" aria-labelledby="status-live">
+    <h2 id="status-live">Live checks by repo</h2>
+    <p class="status-matrix__lede">Every scheduled workflow in the suite and its latest run on <code>main</code> — pass, stale, fail with the failed steps, running or none. The list lives in <a href="https://github.com/paruff/uFawkes.dev/blob/main/docs/ai-sdlc/suite-release/live-checks.yml" rel="noopener noreferrer" target="_blank">live-checks.yml</a>. Checked <time datetime="{{ lc.generated_at }}">{{ lc.generated_at | date: "%H:%M UTC, %-d %b %Y" }}</time>.</p>
+    <div class="status-matrix__scroll">
+      <table class="status-table status-matrix__table" aria-labelledby="status-live">
+        <thead>
+          <tr><th scope="col">Repo</th><th scope="col">Workflow</th><th scope="col">Latest run on <code>main</code></th></tr>
+        </thead>
+        <tbody>
+          {% for c in lc.checks %}
+          <tr class="status-table__row">
+            <th scope="row" class="status-matrix__repo">{{ c.repo }}</th>
+            <td data-label="Workflow">{{ c.workflow }}<br>{{ c.purpose }}</td>
+            <td data-label="Latest run on main">
+              {% if c.state == "pass" %}<span class="status-badge status-badge--pass">✓ pass</span>
+              {% elsif c.state == "fail" %}<span class="status-badge status-badge--fail">✗ fail</span>
+              {% elsif c.state == "stale" %}<span class="status-badge status-badge--stale">⏱ stale</span>
+              {% elsif c.state == "running" %}<span class="status-badge status-badge--manual">… running</span>
+              {% else %}<span class="status-badge status-badge--manual">… none</span>{% endif %}
+              {% if c.last_run_at != empty %}{% if c.run_url != empty %}<a href="{{ c.run_url }}" rel="noopener noreferrer" target="_blank">{{ c.last_run_at | date: "%H:%M UTC, %-d %b %Y" }}</a>{% else %}{{ c.last_run_at | date: "%H:%M UTC, %-d %b %Y" }}{% endif %}{% endif %}
+              {% if c.failed_steps.size > 0 %}<br>{{ c.failed_steps | join: ", " }}{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="status-matrix__key">✓ pass: last run on main succeeded, inside its window. ⏱ stale: succeeded, but too old to prove anything (or it verified nothing). ✗ fail: failed — the failed steps show. … none: never ran on main. <a href="{{ '/status/live_checks.json' | relative_url }}">Data as JSON</a></p>
+  </section>
+  {% endif %}
 </div>

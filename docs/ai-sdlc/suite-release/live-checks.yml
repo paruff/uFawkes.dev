@@ -1,0 +1,113 @@
+# MIT License
+#
+# Copyright (c) 2026 Phil Ruff
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+# live-checks.yml — the suite's scheduled workflows, one entry per repo that
+# has any (`on: schedule:`; uFawkesPipe and uFawkesDevX have none today).
+# The Tier 2 list of docs/ai-sdlc/suite-status/plan.md: scripts/live-checks.sh
+# reads this file on every deploy and writes _data/live_checks.json, and
+# /status/ shows each entry's latest run on `main` — pass, stale, fail (with
+# the failed steps), running or none.
+#
+# Fields:
+#   repo              suite repo the workflow lives in
+#   workflow          its file under .github/workflows/
+#   purpose           what a run proves (shown on the page)
+#   starts_stack      true when the run boots a real stack or cluster
+#                     (the Tier 2 core; metadata for the release gates)
+#   stale_after_hours roughly 2x the cadence: a green run older than this
+#                     reads as stale, not pass
+checks:
+  - repo: uFawkes.dev
+    workflow: deploy.yml
+    purpose: Builds the site, regenerates /status/ data, deploys Pages
+    starts_stack: false
+    stale_after_hours: 30
+  - repo: uFawkesDojo
+    workflow: live-acceptance.yml
+    purpose: Boots the lab stack and runs every lab's validate.sh for real
+    starts_stack: true
+    stale_after_hours: 30
+  - repo: uFawkesObs
+    workflow: acceptance-full-health-guard.yml
+    purpose: Full-stack health guard across the acceptance suite
+    starts_stack: true
+    stale_after_hours: 3
+  - repo: uFawkesObs
+    workflow: agent-evals.yml
+    purpose: Guardrail evals — does an agent session keep AGENTS.md's hard rules
+    starts_stack: false
+    stale_after_hours: 192
+  - repo: uFawkesObs
+    workflow: ci-chaos-nightly.yml
+    purpose: Chaos resilience tests, nightly
+    starts_stack: true
+    stale_after_hours: 30
+  - repo: uFawkesObs
+    workflow: ci-quality.yml
+    purpose: Quality and security gates over the whole tree
+    starts_stack: false
+    stale_after_hours: 192
+  - repo: uFawkesAI
+    workflow: agent-config-ci.yml
+    purpose: Replays agent eval tasks against config changes, blocks on pass-rate drops
+    starts_stack: false
+    stale_after_hours: 192
+  - repo: uFawkesAI
+    workflow: build-devsecops-images.yml
+    purpose: Rebuilds and CVE-rescans the DevSecOps images and devcontainer
+    starts_stack: false
+    stale_after_hours: 192
+  - repo: uFawkesAI
+    workflow: dojo-feedback-intent.yml
+    purpose: Turns merged dojo-feedback files into intent issues
+    starts_stack: false
+    stale_after_hours: 30
+  - repo: uFawkesAI
+    workflow: image-lock-bump.yml
+    purpose: Bumps the image toolchain lock with re-verified checksums
+    starts_stack: false
+    stale_after_hours: 192
+  - repo: uFawkesAI
+    workflow: pre-commit-autoupdate.yml
+    purpose: Monthly pre-commit hook autoupdate PR
+    starts_stack: false
+    stale_after_hours: 792
+  - repo: fawkes
+    workflow: accessibility-testing.yml
+    purpose: Accessibility tests on the UI
+    starts_stack: false
+    stale_after_hours: 30
+  - repo: fawkes
+    workflow: golden-path-acceptance-tests.yml
+    purpose: Golden-path verification-plane scripts
+    starts_stack: true
+    stale_after_hours: 192
+  - repo: fawkes
+    workflow: golden-path-verification.yml
+    purpose: Golden-path E2E on a kind cluster
+    starts_stack: true
+    stale_after_hours: 30
+  - repo: fawkes
+    workflow: idp-e2e-tests.yml
+    purpose: IDP end-to-end tests on a kind cluster
+    starts_stack: true
+    stale_after_hours: 15

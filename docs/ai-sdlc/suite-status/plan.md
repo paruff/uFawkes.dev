@@ -42,11 +42,14 @@ accurate data as possible", with 30 days as the stale limit.
   else `stale`. A lookup that fails is `stale`, never `pass`. AC-SUITE-01, -02,
   -03, AC-DOJO-01 and AC-OBS-02 are fully machine-checkable, so they run as
   commands (`scripts/checks/`).
-- **Tier 2: live systems.** `live-checks.yml` names the workflows that start a
-  real stack; the page shows each one's latest run on `main` (pass, stale, fail
-  with the failed steps, or none). Obs's three acceptance workflows and fawkes's
-  kind-cluster E2E already existed; Pipe, DevX, Dojo and AI have none, tracked in
-  uFawkesPipe#125, uFawkesDevX#88, uFawkesDojo#55 and uFawkesAI#160.
+- **Tier 2: live systems.** `docs/ai-sdlc/suite-release/live-checks.yml`
+  names the suite's scheduled workflows and flags which ones start a real
+  stack; the page shows each one's latest run on `main` (pass, stale, fail
+  with the failed steps, running or none). Obs's three acceptance workflows and
+  fawkes's kind-cluster E2E already existed; Dojo's Live Acceptance (Nightly)
+  shipped in uFawkesDojo#55. Pipe and DevX still have no scheduled workflows
+  (uFawkesPipe#125, uFawkesDevX#88); an AI acceptance-stack workflow is
+  uFawkesAI#160.
 - **Still manual by nature:** the criteria that need a real run or a human
   judgment (16 today). They show "evidence pending" until evidence exists, and
   are then verified and aged like any other.

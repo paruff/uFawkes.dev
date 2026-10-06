@@ -1,0 +1,11 @@
+{
+  "workflow_runs": [
+    {
+      "id": 900,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-09-01T00:00:00Z",
+      "html_url": "https://github.com/o/wobble/actions/runs/900"
+    }
+  ]
+}

@@ -193,6 +193,13 @@ At 640px and below, the timeline stacks vertically, the cards go to one
 column, and the AC table becomes a list (status, id, title, then detail on
 its own line).
 
+Two sections sit below the frame: the shift-left matrix ("Shift-left checks
+by repo") and the live checks ("Live checks by repo"). The live checks read
+`docs/ai-sdlc/suite-release/live-checks.yml` (plan Tier 2): every scheduled
+workflow's latest run on `main` — pass, stale, fail with the failed steps,
+running or none. They report what happened; they never feed the "ready to
+ship" verdict, which stays on the acceptance criteria.
+
 ### Visual rules (from the site's visual-design skill)
 
 - **Cards:** white, `1px solid #e5e7eb`, 8px radius, 24px padding (16px on

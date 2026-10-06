@@ -37,6 +37,7 @@ SUITES=(
   "test-suite-status ^scripts/(test-suite-status|suite-status|check-status-drift)\.sh$|^scripts/checks/|^scripts/testdata/suite-status"
   "test-check-design-tokens ^scripts/(test-)?check-design-tokens\.sh$|^design/tokens\.json$"
   "test-shift-left-audit ^scripts/(test-)?shift-left-audit\.sh$|^scripts/testdata/shift-left/"
+  "test-live-checks ^scripts/(test-)?live-checks\.sh$|^scripts/testdata/live-checks/"
   "test-run-unit-tests ^scripts/test-run-unit-tests\.sh$"
 )
 
