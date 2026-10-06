@@ -44,4 +44,4 @@ shift-left-audit: ## Matrix of shift-left checks x suite repo (add --time via AR
 	@bash scripts/shift-left-audit.sh $(ARGS)
 
 doctor: ## Are this clone's checks actually running? (hooks installed, tools, stamps)
-	@bash scripts/doctor.sh
+	@bash scripts/shift-left.sh doctor

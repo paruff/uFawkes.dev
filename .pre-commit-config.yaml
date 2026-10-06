@@ -258,7 +258,7 @@ repos:
         files: ^(\.agents/|\.claude/|\.opencode/|\.cursor/|\.github/copilot-instructions\.md|GEMINI\.md|CLAUDE\.md|\.cursorrules)
         pass_filenames: false
 
-      # Tool-backed hooks run through scripts/require-tool.sh: a missing tool
+      # Tool-backed hooks run through scripts/shift-left.sh require-tool: a missing tool
       # fails the hook (or prints SKIPPED when SHIFT_LEFT_ALLOW_MISSING names
       # it) instead of warning and passing (shift-left spec R4).
 
@@ -266,7 +266,7 @@ repos:
       - id: kubeconform
         name: Validate Kubernetes manifests (kubeconform)
         entry: |
-          scripts/require-tool.sh kubeconform -- bash -c '
+          scripts/shift-left.sh require-tool kubeconform -- bash -c '
             EXCLUDE_PATTERN="values.*\.yaml|kustomization\.yaml|devfiles/|recording-rules\.yaml|scrape-configs\.yaml|aliases\.yaml|dora\.yml"
             find infra/kubernetes platform -name "*.yaml" -o -name "*.yml" 2>/dev/null | grep -vE "$EXCLUDE_PATTERN" | xargs -I {} kubeconform -strict -ignore-missing-schemas {}
           '
@@ -278,7 +278,7 @@ repos:
       - id: kustomize-validate
         name: Validate Kustomize builds
         entry: |
-          scripts/require-tool.sh kustomize -- bash -c '
+          scripts/shift-left.sh require-tool kustomize -- bash -c '
             for dir in $(find infra/kubernetes -name "kustomization.yaml" -exec dirname {} \;); do
               echo "Validating $dir"
               kustomize build "$dir" > /dev/null || exit 1
@@ -302,7 +302,7 @@ repos:
       - id: helm-lint
         name: Lint Helm charts
         entry: |
-          scripts/require-tool.sh helm -- bash -c '
+          scripts/shift-left.sh require-tool helm -- bash -c '
             for chart in infra/kubernetes/*/Chart.yaml; do
               dir=$(dirname "$chart")
               echo "Linting $dir"
@@ -336,7 +336,7 @@ repos:
           bash -c '
             [ -f mkdocs.yml ] || { echo "no mkdocs.yml: nothing to build"; exit 0; }
             out="$(mktemp -d)"
-            scripts/require-tool.sh mkdocs -- mkdocs build --verbose --site-dir "$out"
+            scripts/shift-left.sh require-tool mkdocs -- mkdocs build --verbose --site-dir "$out"
             rc=$?
             rm -rf "$out"
             exit $rc
@@ -363,66 +363,17 @@ repos:
         types: [text]
         files: '(requirements.*\.txt|requirements.*\.in)$'
 
-      # SAST: semgrep with the registry's p/ci ruleset, online when it can be,
-      # from the last fetched copy when not (scripts/semgrep-scan.sh).
-      - id: semgrep
-        name: SAST (semgrep p/ci)
-        entry: scripts/semgrep-scan.sh
-        language: python
-        additional_dependencies: ["semgrep==1.179.0"]
-        stages: [pre-push]
-        require_serial: true # one ruleset fetch; semgrep parallelises itself
-        types_or:
-          [
-            python,
-            shell,
-            javascript,
-            ts,
-            ruby,
-            go,
-            yaml,
-            json,
-            html,
-            dockerfile,
-            terraform,
-          ]
-
-      # Dependency scan of each changed lockfile: HIGH and CRITICAL, as a table
-      # in the log (spec R8). Only the files passed in, never untracked ones.
-      - id: trivy
-        name: Dependency scan (Trivy, HIGH and CRITICAL)
-        entry: |
-          scripts/require-tool.sh trivy -- bash -c '
-            rc=0
-            for f in "$@"; do
-              trivy fs --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --format table --quiet "$f" || rc=1
-            done
-            exit $rc
-          ' --
-        language: script
-        stages: [pre-push]
-        files: (^|/)(Gemfile\.lock|package-lock\.json|yarn\.lock|pnpm-lock\.yaml|requirements[^/]*\.txt|poetry\.lock|uv\.lock|go\.sum|Cargo\.lock)$
-
-      # Every hook runs in CI or .shift-left.yml says why not (spec R3, D6).
+  # ============================================================================
+  # Shared shift-left hooks from uFawkesPipe, pinned by tag (the suite's single
+  # source: hooks, doctor, agent gate, triage). Keep last: the stamps record
+  # that every hook above ran. The tools that aren't hooks run through
+  # scripts/shift-left.sh from the same pinned clone.
+  # ============================================================================
+  - repo: https://github.com/paruff/uFawkesPipe
+    rev: v1.11.1-beta.1
+    hooks:
       - id: shift-left-parity
-        name: CI parity (every hook runs in CI, or .shift-left.yml says why)
-        entry: scripts/check-shift-left-parity.sh
-        language: script
-        pass_filenames: false
-        files: ^(\.pre-commit-config\.yaml|\.shift-left\.yml|\.github/workflows/.*\.ya?ml|scripts/check-shift-left-parity\.sh)$
-
-      # Stamp each stage with the tree it ran on, for scripts/doctor.sh (D5).
-      # Keep these last: a stamp says every hook above ran on that content.
+      - id: semgrep
+      - id: trivy
       - id: shift-left-stamp
-        name: Record that pre-commit hooks ran (doctor D5)
-        entry: scripts/shift-left-stamp.sh pre-commit
-        language: script
-        always_run: true
-        pass_filenames: false
       - id: shift-left-stamp-pre-push
-        name: Record that pre-push hooks ran (doctor D5)
-        entry: scripts/shift-left-stamp.sh pre-push
-        language: script
-        always_run: true
-        pass_filenames: false
-        stages: [pre-push]

@@ -20,7 +20,7 @@ jobs:
   # ─── Stage 0: Pre-flight ──────────────────────────────────────────────────
   preflight:
     name: Pre-flight
-    uses: ./.github/workflows/reusable-preflight.yml
+    uses: paruff/uFawkesPipe/.github/workflows/reusable-preflight.yml@6b700db3d79fd7573296f4128cd09f7e8cf89cce # v1.11.1-beta.1
 
   # ─── Stage 1: Lint ───────────────────────────────────────────────────────
   lint:

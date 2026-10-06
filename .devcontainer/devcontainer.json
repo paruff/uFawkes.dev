@@ -23,7 +23,7 @@
   },
   "forwardPorts": [4000],
   "remoteUser": "dev",
-  "postCreateCommand": "pre-commit install && pre-commit install-hooks && bash scripts/doctor.sh",
+  "postCreateCommand": "pre-commit install && pre-commit install-hooks && bash scripts/shift-left.sh doctor",
   "hostRequirements": {
     "cpus": 2,
     "memory": "4gb"
