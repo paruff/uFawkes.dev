@@ -3,12 +3,13 @@
   "target": "branch",
   "enforcement": "active",
   "conditions": {
-    "ref_name": {
-      "include": ["refs/heads/main"],
-      "exclude": []
-    }
+    "ref_name": { "include": ["~DEFAULT_BRANCH"], "exclude": [] }
   },
+  "bypass_actors": [],
   "rules": [
+    { "type": "deletion" },
+    { "type": "non_fast_forward" },
+    { "type": "required_linear_history" },
     {
       "type": "pull_request",
       "parameters": {
@@ -22,16 +23,9 @@
     {
       "type": "required_status_checks",
       "parameters": {
-        "required_status_checks": [
-          {
-            "context": "Validate"
-          }
-        ],
-        "strict_required_status_checks_policy": false
+        "strict_required_status_checks_policy": false,
+        "required_status_checks": []
       }
-    },
-    {
-      "type": "non_fast_forward"
     }
   ]
 }
