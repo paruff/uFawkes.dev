@@ -60,6 +60,8 @@ delivery.
 
 ## Out of scope
 
-- Per-repo CI health dashboards (each repo's Actions tab covers that).
+- Per-repo CI health dashboards (each repo's Actions tab covers that). The
+  page carries only the suite's named scheduled checks (`live-checks.yml`),
+  not each repo's whole CI history.
 - The suite's own DORA metrics (uFawkesObs territory; a v2 candidate).
 - Editing issues or the board from the dashboard. It's read-only.
