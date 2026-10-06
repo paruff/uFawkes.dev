@@ -9,3 +9,5 @@ _data/suite_status.json
 status/suite_status.json
 _data/shift_left.json
 status/shift_left.json
+_data/live_checks.json
+status/live_checks.json

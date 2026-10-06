@@ -1,0 +1,49 @@
+# MIT License
+#
+# Copyright (c) 2026 Phil Ruff
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+# Fixture list for scripts/test-live-checks.sh (LC_FILE).
+checks:
+  - repo: pass-ok
+    workflow: pass.yml
+    purpose: proves a healthy nightly shows pass
+    starts_stack: true
+    stale_after_hours: 30
+  - repo: pass-ok
+    workflow: flaky.yml
+    purpose: a neutral run verifies nothing
+    stale_after_hours: 30
+  - repo: fail-steps
+    workflow: boom.yml
+    purpose: a red nightly reports its failed steps
+    stale_after_hours: 30
+  - repo: stale-old
+    workflow: old.yml
+    purpose: an old green run is stale, not pass
+    stale_after_hours: 6
+  - repo: none-yet
+    workflow: never.yml
+    purpose: a workflow that never ran shows none
+    stale_after_hours: 30
+  - repo: running-now
+    workflow: busy.yml
+    purpose: an in-flight run shows running
+    stale_after_hours: 30
