@@ -77,7 +77,12 @@ PY
 # The runs listing is eventually consistent and has been seen to serve an
 # older page (a Sep run where the newest was same-day): read it twice, use the
 # later read, and say so when the two disagree.
-fetch_runs() { # <repo> <workflow> -> tsv row on stdout, empty when no runs
+#
+# The row stays @tsv (jq escapes the values); the caller swaps the tab
+# delimiters for commas before read — a tab is IFS whitespace, so read would
+# collapse the empty conclusion of a queued or in-flight run and shift every
+# later field (the run's URL lands in last_run_at, its id in run_url).
+fetch_runs() { # <repo> <workflow> -> tab-separated row on stdout, empty when no runs
   local out
   if out="$(gh api "repos/$OWNER/$1/actions/workflows/$2/runs?branch=main&per_page=1" \
     --jq 'if (.workflow_runs | length) == 0 then "" else (.workflow_runs[0] | [.status, (.conclusion // ""), (.created_at // ""), (.html_url // ""), ((.id // 0) | tostring)] | @tsv) end' 2>&1)"; then
@@ -99,7 +104,13 @@ while IFS=$'\t' read -r repo wf stale_after; do
     printf '%s\t%s\t%s\t%s\t\t\t\t\n' "$repo" "$wf" "$stale_after" "none" >> "$WORK/facts.tsv"
     continue
   fi
-  IFS=$'\t' read -r status conclusion created url run_id <<< "$row"
+  # Swap tab delimiters for commas before read: tab is IFS whitespace and
+  # would collapse the empty conclusion of a queued/in-flight run, shifting
+  # every later field. Comma is not IFS whitespace, so the empty field
+  # survives (no value in this row — status, conclusion, date, URL, id —
+  # can contain one).
+  row="${row//$'\t'/,}"
+  IFS="," read -r status conclusion created url run_id <<< "$row"
   steps=""
   case "$conclusion" in
     failure | timed_out | cancelled | action_required)

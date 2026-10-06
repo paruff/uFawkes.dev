@@ -72,6 +72,11 @@ is "an in-flight run is running" running-now busy.yml running
 says "failed steps are printed" 'integration tests, publish artifacts'
 says "stale shows the age" '240h ago'
 says "neutral is explained" 'verified nothing'
+if [[ "$(cell running-now busy.yml 4)" == "2026-10-05T11:45:00Z" ]]; then
+  ok "running shows the run's start time, not its URL"
+else
+  bad "running shows the run's start time, not its URL (got '$(cell running-now busy.yml 4)')"
+fi
 
 echo "JSON for /status/:"
 jq_is() { # jq_is <description> <jq -e filter>
@@ -83,6 +88,7 @@ jq_is "purpose and starts_stack round-trip" '.checks[0].purpose == "proves a hea
 jq_is "failed steps round-trip" '.checks[2].failed_steps == ["integration tests","publish artifacts"]'
 jq_is "LC_NOW is the generated_at" '.generated_at == "2026-10-05T12:00:00Z"'
 jq_is "none has no run to link" '.checks[4].last_run_at == "" and .checks[4].run_url == ""'
+jq_is "a run with no conclusion keeps its fields" '.checks[5].last_run_at == "2026-10-05T11:45:00Z" and .checks[5].run_url == "https://github.com/o/running-now/actions/runs/333"'
 jq_is "per-entry stale window" '.checks[3].stale_after_hours == 6'
 jq_is "two entries in one repo stay distinct" '.checks[0].repo == .checks[1].repo and .checks[0].state == "pass" and .checks[1].state == "stale"'
 
