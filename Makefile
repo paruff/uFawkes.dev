@@ -35,6 +35,9 @@ status: ## Run the suite acceptance checks and write _data/suite_status.json
 status-check-drift: ## Fail if suite-release/spec.md and acceptance.yml disagree
 	@bash scripts/check-status-drift.sh
 
+live-checks: ## Latest run of every scheduled workflow in the suite (ARGS for flags)
+	@bash scripts/live-checks.sh $(ARGS)
+
 # Design tokens (DESIGN.md, design/tokens.json)
 design-check: ## Fail if a design token pair is below its contrast floor
 	@bash scripts/check-design-tokens.sh
