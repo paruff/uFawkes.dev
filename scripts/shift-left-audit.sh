@@ -77,6 +77,10 @@ for r in (yaml.safe_load(open(sys.argv[1])) or {}).get("repos") or []:
         || die "$r: cannot read uFawkesPipe's manifest at $rev: $m"
       printf '%s' "$m" | base64 -d > "$WORK/pipe-manifest-$rev.yaml" || die "cannot decode uFawkesPipe's manifest at $rev"
     fi
+    # Its tracked files, to know which languages it has (the Type check column).
+    # ponytail: the trees API truncates past 100k entries; no suite repo is near that.
+    gh api "repos/$OWNER/$r/git/trees/HEAD?recursive=1" --jq '.tree[] | select(.type == "blob") | .path' > "$WORK/$r.tree" \
+      || die "$r: cannot list its files"
   elif [[ "$out" == *"HTTP 404"* ]]; then
     : > "$WORK/$r.missing"
   else
@@ -95,8 +99,8 @@ CATALOG = [
     ("actionlint", {"actionlint", "actionlint-docker", "actionlint-system"}, "pre-commit"),
     ("schema", {"check-jsonschema", "check-dependabot", "check-github-workflows", "check-github-actions"}, "pre-commit"),
     ("sast", {"semgrep", "semgrep-ci"}, "pre-push"),
-    # golangci-lint v2 runs govet and staticcheck by default
-    ("types", {"mypy", "pyright", "tsc", "go-vet", "go-vet-mod", "staticcheck", "golangci-lint"}, "pre-commit"),
+    # Not matched by id alone: see LANGS. A checker counts only for a language the repo has.
+    ("types", set(), "pre-commit"),
     ("dep-iac", {"trivy", "conftest", "kubeconform", "kubeval", "terraform_tfsec", "terraform_trivy", "checkov"}, "pre-push"),
     ("unit", {"unit-tests"}, "pre-push"),
     ("commit-msg", {"conventional-commit", "conventional-commit-msg", "commit-msg"}, "commit-msg"),
@@ -107,6 +111,23 @@ CATALOG = [
 LABELS = {"actionlint": "Actions lint", "schema": "Config schema", "sast": "SAST", "types": "Type check",
           "dep-iac": "Dependency / IaC scan", "unit": "Unit tests", "commit-msg": "Commit message",
           "parity": "CI parity", "stamps": "Doctor stamps"}
+# Type check, per language the repo has in its own code (the template's
+# golangci-lint hook is in every config, so matching it alone said "ok" for repos with no Go).
+# golangci-lint v2 runs govet and staticcheck by default.
+LANGS = [
+    ("python", (".py",), {"mypy", "pyright"}),
+    ("js/ts", (".js", ".mjs", ".cjs", ".jsx", ".ts", ".tsx"), {"tsc"}),
+    ("go", (".go",), {"golangci-lint", "go-vet", "go-vet-mod", "staticcheck"}),
+]
+# Not the repo's own code: the template's agent framework and cookiecutter files, vendored
+# dependencies, and tests (checked by running them).
+NOT_CODE_PREFIXES = (".opencode/", ".agents/", "templates/", "node_modules/")
+def own_code(path):
+    parts = path.split("/")
+    base = parts[-1]
+    return not (path.startswith(NOT_CODE_PREFIXES) or "node_modules" in parts or "tests" in parts[:-1] or "test" in parts[:-1]
+                or base.startswith(("test_", "test-")) or base.endswith(("_test.go", ".test.js", ".test.ts", ".spec.js", ".spec.ts", ".d.ts")))
+
 # Hooks the catalog deliberately has no column for (format, lint, hygiene).
 KNOWN = {
     "trailing-whitespace", "end-of-file-fixer", "check-yaml", "check-json", "check-added-large-files",
@@ -137,7 +158,17 @@ for r in repos:
             h = {**manifest.get(h["id"], {}), **h}  # the repo's config overrides the manifest
             hooks[h["id"]] = (h.get("stages") or default_stages, h.get("language", ""))
     row = [r]
-    for _, ids, want in CATALOG:
+    tree = [x for x in open(f"{work}/{r}.tree").read().split("\n") if x and own_code(x)]
+    needed = [ids for _, exts, ids in LANGS if any(x.endswith(exts) for x in tree)]
+    for col, ids, want in CATALOG:
+        if col == "types":
+            if not needed:
+                row.append("n/a")
+                continue
+            if any(not (ids2 & hooks.keys()) for ids2 in needed):
+                row.append("-")
+                continue
+            ids = set().union(*needed)
         found = [hooks[i][0] for i in ids if i in hooks]
         if not found:
             row.append("-")
@@ -149,7 +180,7 @@ for r in repos:
             row.append("ok")
     row.append(str(sum(1 for _, lang in hooks.values() if lang == "system")))
     rows.append(row)
-    mapped = set().union(*(ids for _, ids, _ in CATALOG)) | KNOWN
+    mapped = set().union(*(ids for _, ids, _ in CATALOG)) | KNOWN | set().union(*(ids for _, _, ids in LANGS))
     extra = sorted(i for i in hooks if i not in mapped)
     if extra:
         unmapped.append(f"  {r}: {', '.join(extra)}")

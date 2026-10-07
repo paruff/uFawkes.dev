@@ -36,6 +36,17 @@ case "\$*" in
   *repos/o/shared/contents/*) base64 < "$FIX/shared.yaml" ;;
   *repos/o/complete/contents/*) base64 < "$FIX/complete.yaml" ;;
   *repos/o/partial/contents/*) base64 < "$FIX/partial.yaml" ;;
+  *repos/o/pyonly/contents/*|*repos/o/nolang/contents/*|*repos/o/ignored/contents/*) base64 < "$FIX/types-golangci.yaml" ;;
+  *repos/o/pymypy/contents/*|*repos/o/mixed/contents/*) base64 < "$FIX/types-mypy.yaml" ;;
+  *repos/o/tsok/contents/*) base64 < "$FIX/types-tsc.yaml" ;;
+  *repos/o/complete/git/trees/*) printf 'src/app.py\nREADME.md\n' ;;
+  *repos/o/partial/git/trees/*) printf 'cmd/main.go\nREADME.md\n' ;;
+  *repos/o/shared/git/trees/*) printf 'README.md\n' ;;
+  *repos/o/pyonly/git/trees/*|*repos/o/pymypy/git/trees/*) printf 'src/app.py\nsrc/util.py\n' ;;
+  *repos/o/nolang/git/trees/*) printf 'README.md\ndocs/guide.md\n' ;;
+  *repos/o/ignored/git/trees/*) printf '.opencode/plugins/hooks.ts\ntests/test_a.py\ntemplates/app/x.js\n.agents/y.py\nscripts/test-plugin.mjs\n' ;;
+  *repos/o/mixed/git/trees/*) printf 'src/app.py\nweb/ui.ts\n' ;;
+  *repos/o/tsok/git/trees/*) printf 'web/ui.ts\n' ;;
   *repos/o/none/contents/*) echo "gh: Not Found (HTTP 404)" >&2; exit 1 ;;
   *repos/o/broken/contents/*) echo "gh: Bad credentials (HTTP 401)" >&2; exit 1 ;;
   *) echo "gh stub: unexpected call: \$*" >&2; exit 1 ;;
@@ -64,6 +75,15 @@ is "system hooks counted (R4)" partial system 3
 says "unmapped hook ids listed" '^  partial: brand-new-check$'
 is "no config is a result, not a crash" none actionlint n/a
 says "no config explained" 'none: no .pre-commit-config.yaml on main'
+
+echo "Type check counts only for a language the repo has:"
+AUDIT_OWNER=o AUDIT_REPOS="pyonly pymypy nolang ignored mixed tsok" bash scripts/shift-left-audit.sh > "$TMP/out.txt"
+is "a Python repo whose only 'type check' is golangci-lint has none" pyonly types -
+is "a Python repo with mypy has one" pymypy types ok
+is "no Python, JS or Go: not applicable, whatever hooks it has" nolang types n/a
+is ".opencode/, .agents/, templates/ and tests/ don't make a language" ignored types n/a
+is "Python and TypeScript with only mypy is still missing tsc" mixed types -
+is "TypeScript with tsc has one" tsok types ok
 
 echo "Shared hooks (stages from uFawkesPipe's manifest at the pinned rev):"
 AUDIT_OWNER=o AUDIT_REPOS="shared complete none" bash scripts/shift-left-audit.sh --json "$TMP/sl.json" > "$TMP/out.txt"
