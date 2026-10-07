@@ -115,7 +115,8 @@
   title: One hook gate, run the same way everywhere
   check: manual
   run: ""
-  evidence: ""
+  evidence: https://github.com/paruff/uFawkesAI/issues/145#issuecomment-6035841896
+  evidence_date: 2026-10-07
 
 - id: AC-AI-06
   release: AI 2.0
