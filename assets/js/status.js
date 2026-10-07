@@ -6,7 +6,8 @@
   if (!stamp || !banner) {
     return;
   }
-  var generated = Date.parse(stamp.getAttribute("data-generated"));
+  // A missing attribute parses as NaN, so the banner stays hidden.
+  var generated = Date.parse(stamp.getAttribute("data-generated") || "");
   if (!isNaN(generated) && Date.now() - generated > 36 * 60 * 60 * 1000) {
     banner.hidden = false;
   }

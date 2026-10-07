@@ -83,6 +83,29 @@ repos:
         additional_dependencies: ["prettier@3.9.9"]
         types_or: [markdown, yaml, json, javascript, css, html]
 
+      # Type-check the site's JavaScript (shift-left spec R2, decided 2026-10-06).
+      # tsc runs from pre-commit's own node environment, like Prettier: this
+      # repo has no package.json and gets none. .opencode/ is the template's.
+      - id: tsc
+        name: Type-check JavaScript (tsc)
+        entry: tsc --noEmit --allowJs --checkJs --target es2022 --module esnext --lib dom,es2022
+        language: node
+        additional_dependencies: ["typescript@7.0.2"]
+        files: ^assets/js/.*\.js$
+
+  # ============================================================================
+  # Type-check the repo's Python (shift-left spec R2, decided 2026-10-06): mypy,
+  # non-strict, on the repo's own scripts. It runs without the project's
+  # dependencies, so missing imports are ignored.
+  # ============================================================================
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v2.4.0
+    hooks:
+      - id: mypy
+        name: Type-check Python (mypy)
+        args: ["--ignore-missing-imports"]
+        files: ^scripts/.*\.py$
+
   # ============================================================================
   # GitHub Actions and config schemas (shift-left spec R2): a workflow typo or
   # an invalid dependabot.yml fails here, not in a red run weeks later.
