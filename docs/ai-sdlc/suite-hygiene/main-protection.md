@@ -16,10 +16,31 @@ linear-history rule, and no repo has a check named `Validate`. Each repo got its
 checks as its CI grew. So the stated standard was never the real one. This replaces it,
 and `CLAUDE.md` §10 now points here.
 
+## Status, 2026-10-07: applied
+
+The owner decided (goal #151): **squash-only merging, linear history on, and repository-admin
+bypass kept** (on pull-request rules only, as uFawkes.dev already had it; the other six repos have none).
+Applied to all seven repos, verified against the API and by the doctor's D7:
+
+- repo settings: squash only, delete branch on merge (all seven);
+- one `main-protection` ruleset per repo on the default branch with `deletion`, `non_fast_forward`,
+  `required_linear_history`, `pull_request` and the check lists below; uFawkes.dev keeps the admin bypass;
+- deltas 1, 2, 3, 4, 8 and 9 are resolved. Delta 3 (delete branch on merge) and the Dojo rename and
+  AI merge were done by the owner first. Merging AI's two rulesets had dropped its `pull_request`
+  rule; it is back.
+
+**Still open, and why:**
+
+- Delta 5: delete uFawkesObs's classic branch protection, and delta 6: delete uFawkes.dev's two inert
+  rulesets (`Block force pushes`, `validate`). An agent's attempt to delete them was blocked by the
+  auto-mode safety check, so they are the owner's to do. Delete them in Settings → Rules and Settings → Branches.
+- Delta 10: single CODEOWNERS, in review as uFawkes.dev#156, fawkes#2225, uFawkesAI#195.
+
 ## The standard
 
 One ruleset per repo, named **`main-protection`**, targeting the default branch
-(`~DEFAULT_BRANCH`), enforcement `active`, **no bypass actors**:
+(`~DEFAULT_BRANCH`), enforcement `active`, **no bypass actors** (uFawkes.dev keeps a repository-admin
+bypass for pull requests, by decision):
 
 | Rule                      | Setting                                                                                       | Why                                                                |
 | ------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
@@ -102,13 +123,13 @@ Ordered by risk. "Settings" is the repo's Settings page; "Rules" is Settings →
 10. **Duplicate CODEOWNERS** (root and `.github/`) in uFawkes.dev, uFawkesAI and fawkes. _Resolve:_ delete the
     root copy after checking it matches `.github/CODEOWNERS`.
 
-### Decisions I need from you
+### Decisions (made 2026-10-07)
 
-1. **Merge method:** squash only (recommended; it's what the old standard intended), or keep merge commits.
+1. **Merge method: squash only.** (Recommended; it's what the old standard intended.)
    Squash makes `required_linear_history` true and removes the `Merge pull request` titles the commit-msg hook rejects.
-2. **Admin bypass on uFawkes.dev:** remove it (recommended; the other six have none), or keep it as your
-   emergency exit. Pre-flight already has an `emergency-bypass` input for a logged exception.
-3. **`required_linear_history`:** on with decision 1, or off.
+2. **Admin bypass: kept**, on uFawkes.dev only and for pull requests only, as the owner's emergency exit. (The
+   alternative was removing it; the other six have none.) Pre-flight already has an `emergency-bypass` input for a logged exception.
+3. **`required_linear_history`: on.**
 
 ## Applying a ruleset
 
