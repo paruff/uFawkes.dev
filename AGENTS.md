@@ -413,12 +413,11 @@ gh pr create
 
 ### Branch protection (via Rulesets API)
 
-All repos require:
-
-- PR to merge to main
-- Status check `Validate` must pass
-- No force pushes to main
-- Linear history enforced
+The standard, what each repo has today, and how to close the gaps:
+[`docs/ai-sdlc/suite-hygiene/main-protection.md`](docs/ai-sdlc/suite-hygiene/main-protection.md).
+In short: one `main-protection` ruleset per repo with a pull request, no force
+pushes or deletion, linear history, and the hook job plus `Artifact Chain` as
+required checks. Ruleset changes are the owner's; an agent never bypasses them.
 
 ### Deployment Lifecycle Gates
 
