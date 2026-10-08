@@ -17,7 +17,7 @@
 #
 # Environment:
 #   AUDIT_OWNER             GitHub owner (default paruff)
-#   AUDIT_REPOS             space-separated repos (default: the seven suite repos)
+#   AUDIT_REPOS             space-separated repos (default: the ten suite repos)
 #   PROTECTION_ALLOW_BYPASS repos allowed a repository-admin bypass for pull
 #                           requests (default: uFawkes.dev, the owner's decision
 #                           of 2026-10-07)
@@ -28,7 +28,7 @@ command -v gh > /dev/null || {
   exit 2
 }
 export AUDIT_OWNER="${AUDIT_OWNER:-paruff}"
-export AUDIT_REPOS="${AUDIT_REPOS:-uFawkes.dev uFawkesAI uFawkesObs uFawkesPipe uFawkesDevX uFawkesDojo fawkes}"
+export AUDIT_REPOS="${AUDIT_REPOS:-uFawkes.dev uFawkesAI uFawkesObs uFawkesPipe uFawkesDevX uFawkesDojo fawkes java-fawkes-path python-fawkes-path python-fawkes-path-gitops}"
 export PROTECTION_ALLOW_BYPASS="${PROTECTION_ALLOW_BYPASS:-uFawkes.dev}"
 
 python3 - << 'PY'
