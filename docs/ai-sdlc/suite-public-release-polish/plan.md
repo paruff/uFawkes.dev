@@ -10,6 +10,11 @@
 
 **Spec:** [spec.md](spec.md) — implements public release best practices from Johns Hopkins OSPO, Syracuse University, CNCF project templates.
 
+> **Scope note (2026-10-08):** `ufawkesdora` and `ufawkessec` are archived —
+> both were retired and merged into uFawkesObs and uFawkesPipe. They are
+> dropped from Phase 2, Task 4.2 and Phase 5 below. Nothing is released or
+> polished for them.
+
 ---
 
 ## Global Constraints
@@ -130,11 +135,11 @@ github: [paruff]
 
 ---
 
-## Phase 2: Release Automation (All 8 Repos — Parallelizable)
+## Phase 2: Release Automation (All 6 Repos — Parallelizable)
 
 ### Task 2.1: Standardize on release-please.yml
 
-**Current:** release-please in uFawkesObs, uFawkesPipe, uFawkesDevX (3); custom in ufawkesdora (1); none in fawkes, ufawkessec, uFawkesAI, uFawkes.dev (4)
+**Current:** release-please in uFawkesObs, uFawkesPipe, uFawkesDevX (3); none in fawkes, uFawkesAI, uFawkes.dev (3)
 
 **Files per repo:**
 
@@ -152,7 +157,7 @@ github: [paruff]
 cat /Users/philruff/projects/github/paruff/uFawkesPipe/.github/workflows/release-please.yml
 ```
 
-- [ ] **Step 2: Apply to ufawkesdora** (replace release.yml), fawkes, ufawkessec, uFawkesAI, uFawkes.dev
+- [ ] **Step 2: Apply to fawkes, uFawkesAI, uFawkes.dev**
       Adapt version file path per repo:
 - Node: `package.json`
 - Python: `pyproject.toml` or `setup.py`
@@ -260,7 +265,7 @@ cat /Users/philruff/projects/github/paruff/uFawkesPipe/.github/workflows/release
 
 ### Task 4.2: Cross-Repo AI Slop Removal & Placeholder Clarity
 
-**Repos:** fawkes, uFawkesObs, uFawkesPipe, uFawkesDevX, ufawkesdora, uFawkes.dev
+**Repos:** fawkes, uFawkesObs, uFawkesPipe, uFawkesDevX, uFawkes.dev
 
 - [ ] **Step 1: Run detection** across all README.md and key docs
 - [ ] **Step 2: Remove template artifacts** (generic "your project" language, non-repo badges)
@@ -276,7 +281,7 @@ cat /Users/philruff/projects/github/paruff/uFawkesPipe/.github/workflows/release
 - [ ] **Step 1: Run verification in each repo**
 
 ```bash
-for repo in fawkes uFawkesObs uFawkesPipe uFawkesDevX ufawkesdora ufawkessec uFawkesAI uFawkes.dev; do
+for repo in fawkes uFawkesObs uFawkesPipe uFawkesDevX uFawkesAI uFawkes.dev; do
   cd /Users/philruff/projects/github/paruff/$repo
   echo "=== $repo ==="
   [ -f package.json ] && npm run verify 2>/dev/null || true
@@ -298,8 +303,6 @@ done
   - uFawkesObs: next version
   - uFawkesPipe: next version
   - uFawkesDevX: next version
-  - ufawkesdora: next version
-  - ufawkessec: v1.0.0 (first release)
   - uFawkesAI: v2.1.0
   - uFawkes.dev: next version
 - [ ] **Step 3: Verify release-please creates GitHub Releases** in all repos
