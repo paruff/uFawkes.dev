@@ -242,13 +242,13 @@ cat /Users/philruff/projects/github/paruff/uFawkesPipe/.github/workflows/release
 
 **Files:** README.md, docs/PROMPT_LIBRARY.md, docs/AI_POLICY.md, docs/TEAM_ARCHETYPE.md, docs/VALUE_STREAM_MAP.md, docs/DEVEX_LOG.md, docs/RUNBOOKS.md
 
-- [ ] **Step 1: Write failing test** (no AI slop phrases)
+- [x] **Step 1: Write failing test** (no AI slop phrases)
 
 ```bash
 ! grep -r "As an AI\|I cannot\|I don't have\|Here is\|Below is\|This comprehensive\|In today's\|delve\|tapestry\|landscape" README.md docs/PROMPT_LIBRARY.md docs/AI_POLICY.md docs/TEAM_ARCHETYPE.md docs/VALUE_STREAM_MAP.md docs/DEVEX_LOG.md docs/RUNBOOKS.md 2>/dev/null
 ```
 
-- [ ] **Step 2: Clean each file per spec:**
+- [x] **Step 2: Clean each file per spec:** — done in `paruff/uFawkesAI#214`
   - **README.md:** Remove excessive badges (keep License, DORA AI, uFawkes Family, Works with). Tighten copy. Verify quick-start works.
   - **PROMPT_LIBRARY.md:** Verify prompts tested. Remove speculative. Clarify `{{PLACEHOLDERS}}` for consumers.
   - **AI_POLICY.md:** Add header: "This file is a template. When adopting uFawkesAI, replace all `[PLACEHOLDER]` markers with your project's actual policy."
@@ -257,9 +257,9 @@ cat /Users/philruff/projects/github/paruff/uFawkesPipe/.github/workflows/release
   - **DEVEX_LOG.md:** Remove placeholder row. Keep headers.
   - **RUNBOOKS.md:** Replace `[PLACEHOLDER]` with uFawkesAI examples (devcontainer release, tag-based publish).
 
-- [ ] **Step 3: Verify test passes**
+- [x] **Step 3: Verify test passes**
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit** — branch `docs/phase4-public-docs-cleanup`, 7 files / 206 lines; 23/23 checks green
 
 ---
 
@@ -267,10 +267,18 @@ cat /Users/philruff/projects/github/paruff/uFawkesPipe/.github/workflows/release
 
 **Repos:** fawkes, uFawkesObs, uFawkesPipe, uFawkesDevX, uFawkes.dev
 
-- [ ] **Step 1: Run detection** across all README.md and key docs
-- [ ] **Step 2: Remove template artifacts** (generic "your project" language, non-repo badges)
-- [ ] **Step 3: Verify quick-start works** on fresh clone for each repo
-- [ ] **Step 4: Commit per repo**
+- [x] **Step 1: Run detection** across all README.md and key docs — clean. Every phrase match is a
+      legitimate use, not slop: "CNCF landscape" / "competitive landscape" (fawkes), a persona quote
+      (fawkes), "I cannot confirm" as a spec sourcing caveat (uFawkesObs), and this plan's own grep
+      pattern (uFawkes.dev). No `[PLACEHOLDER]` / `[PROJECT NAME]` markers in public docs.
+- [x] **Step 2: Remove template artifacts** (generic "your project" language, non-repo badges) —
+      nothing to remove. No README renders a non-repo badge; the only `your-org/your-repo` strings sit
+      inside ```markdown fences as adopter copy-paste snippets. Every `make` target named in the five
+      READMEs exists in its Makefile, and every file the READMEs reference resolves.
+- [ ] **Step 3: Verify quick-start works** on fresh clone for each repo — **BLOCKED (agent
+      environment): no Docker available, and fawkes additionally needs a k3d cluster.** The static
+      substitute above passed; the live `make up` / `make dev-up` run remains an owner action.
+- [x] **Step 4: Commit per repo** — N/A, detection found no changes to make
 
 ---
 
