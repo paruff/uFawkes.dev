@@ -110,18 +110,18 @@
 
 ### Branch cleanup — 2026-10-08 (all seven repos)
 
-| Metric | Value |
-| ------ | ----- |
-| Remote branches before → after | 894 → 26 approved survivors (14 KEEP + 12 STRANDED) |
-| Remote branches deleted | 868 (864 AUTO + 4 JUNK), 0 push failures, 0 guard refusals |
-| Local branches deleted (this clone) | 53 (safe-mode `git branch -d`) |
-| Stranded preserved | 11 draft PRs opened (uFawkes.dev #164/#165, uFawkesAI #200/#201, uFawkesObs #626, uFawkesPipe #159, uFawkesDevX #106, fawkes #2232/#2233, uFawkesDojo #93/#94) |
-| Exception | fawkes `platform-status` — stranded, no draft PR possible (no history in common with main); branch kept |
-| Prevention | `delete_branch_on_merge=true` enabled on all 7 repos |
-| Evidence | `/tmp/opencode/branch-triage/` — `cleanup-log-2026-10-08.md`, per-repo TSV/table, `baseline.txt` |
-| Plan | `.opencode/plans/branch-cleanup-plan.md` |
-| Open follow-ups | 12 local branches remain: 9 squash-landed (`-D` candidates, evidence in TSV), 1 worktree-held (`feat/status-live-checks`), 2 genuinely unmerged (`docs/suite-hygiene-standard`, `sync-4-agents`) |
-| Note | uFawkesAI had parallel session activity during cleanup; post-triage branches were never in the delete set and were untouched |
+| Metric                              | Value                                                                                                                                                                                            |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Remote branches before → after      | 894 → 26 approved survivors (14 KEEP + 12 STRANDED)                                                                                                                                              |
+| Remote branches deleted             | 868 (864 AUTO + 4 JUNK), 0 push failures, 0 guard refusals                                                                                                                                       |
+| Local branches deleted (this clone) | 53 (safe-mode `git branch -d`)                                                                                                                                                                   |
+| Stranded preserved                  | 11 draft PRs opened (uFawkes.dev #164/#165, uFawkesAI #200/#201, uFawkesObs #626, uFawkesPipe #159, uFawkesDevX #106, fawkes #2232/#2233, uFawkesDojo #93/#94)                                   |
+| Exception                           | fawkes `platform-status` — stranded, no draft PR possible (no history in common with main); branch kept                                                                                          |
+| Prevention                          | `delete_branch_on_merge=true` enabled on all 7 repos                                                                                                                                             |
+| Evidence                            | `/tmp/opencode/branch-triage/` — `cleanup-log-2026-10-08.md`, per-repo TSV/table, `baseline.txt`                                                                                                 |
+| Plan                                | `.opencode/plans/branch-cleanup-plan.md`                                                                                                                                                         |
+| Open follow-ups                     | 12 local branches remain: 9 squash-landed (`-D` candidates, evidence in TSV), 1 worktree-held (`feat/status-live-checks`), 2 genuinely unmerged (`docs/suite-hygiene-standard`, `sync-4-agents`) |
+| Note                                | uFawkesAI had parallel session activity during cleanup; post-triage branches were never in the delete set and were untouched                                                                     |
 
 ---
 

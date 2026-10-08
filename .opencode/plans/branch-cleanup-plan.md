@@ -33,9 +33,11 @@
 ### Task 1: Preflight — write-auth probe and baseline snapshot
 
 **Files:**
+
 - Create: `/tmp/opencode/branch-triage/baseline.txt`
 
 **Interfaces:**
+
 - Produces: `baseline.txt` with one line per repo: `<repo> <head-count>` — consumed by Task 7 verification.
 
 - [ ] **Step 1: Create the workspace**
@@ -57,15 +59,18 @@ Expected: 7 counts written to `baseline.txt`; matches the triage-time heads (78/
 ### Task 2: Triage script
 
 **Files:**
+
 - Create: `/tmp/opencode/branch-triage/triage.py`
 
 **Interfaces:**
+
 - Consumes: `git ls-remote`, a blobless bare clone per repo at `/tmp/opencode/branch-triage/<repo>.git`, and the PR list fetched via the GitHub MCP/API.
 - Produces: `/tmp/opencode/branch-triage/<repo>.tsv` with columns `branch, last_commit, ahead, ancestor, patch_on_main, open_pr, merged_pr, verdict` and a per-repo markdown table `<repo>.md`.
 
 - [ ] **Step 1: Write the classification script**
 
 Exact rules, first match wins:
+
 1. `KEEP` — branch is the default branch, OR `open_pr=yes`, OR name matches `release*` / `release-please*` / `gh-pages`.
 2. `STRANDED` — `ancestor=no` AND `patch_on_main=no` AND `merged_pr=no` AND `open_pr=no`.
 3. `AUTO` — `merged_pr=yes` OR `ancestor=yes` OR `patch_on_main=yes`.
@@ -81,6 +86,7 @@ Expected: row count == 35; every row has exactly one verdict; `main` is KEEP; no
 ### Task 3: Run triage across all 7 repos
 
 **Files:**
+
 - Create: `/tmp/opencode/branch-triage/<repo>.tsv`, `<repo>.md`, `summary.md`
 
 - [ ] **Step 1: Run the script per repo**
@@ -106,6 +112,7 @@ Expected: owner approves, or moves rows to KEEP / reclassifies; no execution hap
 ### Task 5: Open draft PRs for confirmed STRANDED branches
 
 **Interfaces:**
+
 - Produces: draft PR URLs, one per confirmed STRANDED branch, via MCP `github_create_pull_request` (`draft: true`, `base: main`).
 
 - [ ] **Step 1: Create one draft PR per STRANDED branch**
@@ -116,9 +123,11 @@ Expected: PR created per row; count of created PRs == approved STRANDED count; f
 ### Task 6: Gated executor
 
 **Files:**
+
 - Create: `/tmp/opencode/branch-triage/execute.sh`, `/tmp/opencode/branch-triage/cleanup-log-<date>.md`
 
 **Interfaces:**
+
 - Consumes: the owner-approved TSV rows (AUTO + JUNK only).
 - Produces: `cleanup-log-<date>.md` lines: `repo, branch, verdict, evidence, timestamp, result`.
 
@@ -159,6 +168,7 @@ Expected: 7 successes. If `gh` is unauthenticated (it currently is), fall back t
 - [ ] **Step 1: Update `.opencode/plans/plan.md` handoff section**
 
 Record: before/after counts, deletion log path, stranded draft PR links, prevention-toggle status.
+
 - [ ] **Step 2: Commit via PR only if the owner asks**
 
 Branch `docs/branch-cleanup-handoff`, commit `docs(plans): record the suite branch cleanup outcome` — one PR, GitOps rules; never direct to main.
