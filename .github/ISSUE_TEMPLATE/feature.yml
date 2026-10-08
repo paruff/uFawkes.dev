@@ -2,7 +2,7 @@
 name: ✨ Feature Request
 description: Propose a new feature for uFawkes.dev
 title: "[Feature]: "
-labels: ["enhancement", "area:unknown"]
+labels: ["enhancement"]
 body:
   - type: markdown
     attributes:
