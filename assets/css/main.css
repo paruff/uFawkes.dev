@@ -2561,3 +2561,8 @@ pre {
   margin: 8px 0 0;
   padding-left: 16px;
 }
+
+/* minima paints blockquotes #828282 (3.84:1 on white, fails WCAG AA); use the textMuted token */
+blockquote {
+  color: #4b5563;
+}
