@@ -54,14 +54,43 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          # Full history, so Gitleaks scans every commit rather than a range
+          fetch-depth: 0
 
       # ─── Secret Scanning (Gitleaks) ─────────────────────────────────────
-      - name: Run secret scanning
+      # Runs the gitleaks CLI directly, not gitleaks/gitleaks-action. The
+      # action failed on every PR here ("failed to scan Git repository:
+      # stderr is not empty", exit 1) and `continue-on-error` hid it, so
+      # the secret scan had not been running (#132). Same pinned, checksum-
+      # verified binary as uFawkesPipe's reusable-security-scanning.yml.
+      - name: Install gitleaks
         if: inputs.scan-type == 'all' || inputs.scan-type == 'secrets'
-        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3
+        run: |
+          curl -sSLO https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz
+          echo "9991e0b2903da4c8f6122b5c3186448b927a5da4deef1fe45271c3793f4ee29c  gitleaks_8.24.3_linux_x64.tar.gz" | sha256sum -c -
+          tar -xzf gitleaks_8.24.3_linux_x64.tar.gz gitleaks
+          sudo install -m 755 gitleaks /usr/local/bin/gitleaks
+
+      - name: Run secret scanning
+        id: gitleaks
+        if: inputs.scan-type == 'all' || inputs.scan-type == 'secrets'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_ENABLE_SUMMARY: true
+          GITLEAKS_CONFIG: ${{ inputs.gitleaks-config }}
+        run: |
+          gitleaks detect \
+            --source . \
+            --config "${GITLEAKS_CONFIG}" \
+            --redact -v \
+            --report-format=sarif \
+            --report-path=gitleaks-results.sarif
+
+      - name: Upload Gitleaks results to GitHub Security
+        if: always() && inputs.upload-sarif && (inputs.scan-type == 'all' || inputs.scan-type == 'secrets')
+        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        with:
+          sarif_file: "gitleaks-results.sarif"
+          category: "gitleaks"
 
       # ─── Vulnerability Scanning (Trivy FS) ─────────────────────────────
       # A table of HIGH and CRITICAL findings in the log first (shift-left
