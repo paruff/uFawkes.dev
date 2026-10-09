@@ -34,7 +34,7 @@ jobs:
       db:
         image: postgres:16
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4 # nosemgrep: github-actions-mutable-action-tag
       - run: pre-commit run --all-files
       - name: Flaky
         continue-on-error: true
