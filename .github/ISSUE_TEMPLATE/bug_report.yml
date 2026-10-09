@@ -3,6 +3,7 @@ name: 🐛 Bug Report
 description: Report a bug in uFawkes.dev (Jekyll site, observability platform)
 title: "[Bug]: "
 labels: ["bug"]
+assignees: paruff
 body:
   - type: markdown
     attributes:
@@ -15,8 +16,8 @@ body:
       label: Bug Description
       description: A clear and concise description of what the bug is.
       placeholder: e.g., Jekyll build fails on new page
-      validations:
-        required: true
+    validations:
+      required: true
 
   - type: dropdown
     id: component
@@ -29,16 +30,16 @@ body:
         - Observability Primer
         - Learn Guides
         - Documentation
-      validations:
-        required: true
+    validations:
+      required: true
 
   - type: textarea
     id: steps
     attributes:
       label: Steps to Reproduce
       description: Steps to reproduce the behavior.
-      validations:
-        required: true
+    validations:
+      required: true
 
   - type: input
     id: version

@@ -3,6 +3,7 @@ name: ✨ Feature Request
 description: Propose a new feature for uFawkes.dev
 title: "[Feature]: "
 labels: ["enhancement"]
+assignees: paruff
 body:
   - type: markdown
     attributes:
@@ -14,15 +15,15 @@ body:
     attributes:
       label: Problem Statement
       description: What problem does this solve?
-      validations:
-        required: true
+    validations:
+      required: true
   - type: textarea
     id: solution
     attributes:
       label: Proposed Solution
       description: Describe your proposed solution or implementation approach.
-      validations:
-        required: true
+    validations:
+      required: true
   - type: dropdown
     id: component
     attributes:
@@ -34,8 +35,8 @@ body:
         - Observability Primer
         - Learn Guides
         - Documentation
-      validations:
-        required: true
+    validations:
+      required: true
   - type: checkboxes
     id: copilot
     attributes:
@@ -43,3 +44,17 @@ body:
       options:
         - label: Ready for Copilot agent (clear scope, tests defined)
           required: false
+
+  - type: checkboxes
+    id: dora
+    attributes:
+      label: DORA AI Capability
+      description: Which of the 7 DORA AI Capabilities does this support?
+      options:
+        - label: 1. Fast feedback loops
+        - label: 2. Reliable delivery flow
+        - label: 3. AI-ready observability
+        - label: 4. Secure-by-default controls
+        - label: 5. Outcome measurement
+        - label: 6. Golden path enablement
+        - label: 7. Continuous improvement
