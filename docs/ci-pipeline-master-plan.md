@@ -1,8 +1,28 @@
 # uFawkes CI Pipeline — Production-Ready Artifact Plan
 
-> **Created**: 2026-06-14 | **Status**: Ready for execution
-> **Goal**: Every pipeline completion produces a verified, production-ready artifact.
-> **Source repos**: All 8 uFawkes repos audited.
+> **Created**: 2026-06-14 | **Revised**: 2026-10-09 | **Status**: Ready for execution
+> **Goal**: Every pipeline completion produces a verified, production-ready artifact, and the same commit always gets the same verdict.
+> **Traces to**: [`ai-sdlc/ci-pipeline/spec.md`](ai-sdlc/ci-pipeline/spec.md) → [`intent.md`](ai-sdlc/ci-pipeline/intent.md)
+> **Source repos**: the seven suite repos (uFawkes.dev, uFawkesAI, uFawkesObs, uFawkesPipe, uFawkesDevX, uFawkesDojo, fawkes).
+
+**Revision 2026-10-09.** Where this plan and the spec disagree, the spec
+wins. What changed since June:
+
+- **Seven repos, not eight.** `ufawkesdora` and `ufawkessec` are archived and
+  out of scope; uFawkesDojo, which was missing, is in (type `site + labs`).
+- **uFawkesAI is an artifact.** It's the template every repo is made from,
+  and it publishes the CDE images (`fawkes-core`, `fawkes-space-ai`,
+  `fawkes-space`) every repo's devcontainer pins by digest. They are
+  development images; CI runs in uFawkesPipe's `ufawkes-ci`, built on the
+  same release's `fawkes-core` (spec R4).
+- **Gates 0 and 1 follow shift-left.** commit-msg, pre-commit and pre-push,
+  and CI's rerun of them, are specified in
+  [`ai-sdlc/shift-left/spec.md`](ai-sdlc/shift-left/spec.md). Section 10
+  below is the June picture; shift-left R1 and R3 replace it.
+- **Determinism is a requirement** (spec R2–R5, R8): every input pinned, one
+  uFawkesPipe release across the suite, no step that can't fail.
+- The per-repo sections below (5–7) are kept as the June design; read them
+  with the spec's R1 and R6 tables.
 
 ---
 
@@ -18,15 +38,17 @@ The pipeline answer depends on **what the repo produces**. There is no universal
 
 ---
 
-## 2. The 5 Repo Types
+## 2. The Repo Types
 
-| Type          | Repos                                | Artifact                    | Deploy Method       |
-| ------------- | ------------------------------------ | --------------------------- | ------------------- |
-| **stack**     | uFawkesObs, uFawkesPipe, uFawkesDevX | Docker Compose stack        | SSH GitOps / manual |
-| **core**      | fawkes                               | K8s platform (30+ services) | ArgoCD on AKS       |
-| **site**      | uFawkes.dev                          | Static Jekyll site          | GitHub Pages        |
-| **template**  | uFawkesAI                            | No artifact (config files)  | N/A                 |
-| **bootstrap** | ufawkesdora, ufawkessec              | Placeholder (empty)         | N/A                 |
+| Type                 | Repos                                | Artifact                                                                            | Deploy Method                         |
+| -------------------- | ------------------------------------ | ----------------------------------------------------------------------------------- | ------------------------------------- |
+| **stack**            | uFawkesObs, uFawkesPipe, uFawkesDevX | Docker Compose stack (Pipe also ships the suite's reusable workflows)               | SSH GitOps / manual                   |
+| **core**             | fawkes                               | K8s platform (30+ services)                                                         | ArgoCD on AKS                         |
+| **site**             | uFawkes.dev                          | Static Jekyll site                                                                  | GitHub Pages                          |
+| **site + labs**      | uFawkesDojo                          | Jekyll site and lab definitions                                                     | GitHub Pages; labs run against stacks |
+| **template + image** | uFawkesAI                            | The template, and the CDE images (`fawkes-core`, `fawkes-space-ai`, `fawkes-space`) | GHCR, multi-arch, consumed by digest  |
+
+`ufawkesdora` and `ufawkessec` are archived (the June "bootstrap" type is gone).
 
 ---
 
@@ -86,23 +108,27 @@ The pipeline answer depends on **what the repo produces**. There is no universal
 
 Which stages run for each repo type:
 
-| Stage                        | stack                                | core                               | site           | template    | bootstrap |
-| ---------------------------- | ------------------------------------ | ---------------------------------- | -------------- | ----------- | --------- |
-| **GATE 0: Preflight**        | ✅                                   | ✅                                 | ✅             | ✅          | ✅        |
-| **GATE 1: Lint**             | ✅                                   | ✅                                 | ✅             | ✅          | ✅        |
-| **GATE 1: SAST**             | ⚠️ Python                            | ✅ Py+TS+Go                        | ⚠️ if JS       | ⚠️ if Shell | —         |
-| **GATE 1: SCA**              | ✅                                   | ✅                                 | ✅             | ✅          | —         |
-| **GATE 1: Secrets**          | ✅                                   | ✅                                 | ✅             | ✅          | ✅        |
-| **GATE 2: Build**            | ✅ compose+Docker                    | ✅ Docker+Helm+TF                  | ✅ Jekyll      | —           | —         |
-| **GATE 2: Policy**           | ⚠️ Dockerfiles                       | ✅ K8s+Docker                      | —              | —           | —         |
-| **GATE 2: SBOM**             | ✅ SPDX+CycloneDX                    | ✅ SPDX+CycloneDX                  | ⚠️ sha256      | —           | —         |
-| **GATE 2: Image signing**    | ✅ cosign                            | ✅ cosign                          | —              | —           | —         |
-| **GATE 2: Container scan**   | ✅ Trivy image                       | ✅ Trivy image                     | —              | —           | —         |
-| **GATE 2: SLSA attestation** | ✅                                   | ✅                                 | —              | —           | —         |
-| **GATE 3: Tests**            | ✅ unit+integ+smoke+accept+load+perf | ✅ unit+integ+e2e+accept+load+perf | ✅ link+spell  | —           | —         |
-| **GATE 3: Accessibility**    | —                                    | ✅ axe-core                        | ✅ pa11y+axe   | —           | —         |
-| **GATE 4: Deploy readiness** | ✅ compose valid                     | ✅ Helm+ArgoCD                     | ✅ pages build | —           | —         |
-| **GATE 5: Deploy**           | ✅ SSH GitOps                        | ✅ ArgoCD sync                     | ✅ GH Pages    | —           | —         |
+Revised 2026-10-09: the "bootstrap" column is gone (archived repos), `site`
+covers uFawkesDojo too (plus lab acceptance in gate 3), and `template + image`
+is uFawkesAI, which builds and publishes the CDE images.
+
+| Stage                        | stack                                | core                               | site (+ labs)                       | template + image                                   |
+| ---------------------------- | ------------------------------------ | ---------------------------------- | ----------------------------------- | -------------------------------------------------- |
+| **GATE 0: Preflight**        | ✅                                   | ✅                                 | ✅                                  | ✅                                                 |
+| **GATE 1: Lint**             | ✅                                   | ✅                                 | ✅                                  | ✅                                                 |
+| **GATE 1: SAST**             | ⚠️ Python                            | ✅ Py+TS+Go                        | ⚠️ if JS                            | ✅ Shell+TS+Python                                 |
+| **GATE 1: SCA**              | ✅                                   | ✅                                 | ✅                                  | ✅                                                 |
+| **GATE 1: Secrets**          | ✅                                   | ✅                                 | ✅                                  | ✅                                                 |
+| **GATE 2: Build**            | ✅ compose+Docker                    | ✅ Docker+Helm+TF                  | ✅ Jekyll                           | ✅ CDE images, amd64+arm64                         |
+| **GATE 2: Policy**           | ⚠️ Dockerfiles                       | ✅ K8s+Docker                      | —                                   | ✅ Dockerfile (hadolint)                           |
+| **GATE 2: SBOM**             | ✅ SPDX+CycloneDX                    | ✅ SPDX+CycloneDX                  | ⚠️ sha256                           | ✅                                                 |
+| **GATE 2: Image signing**    | ✅ cosign                            | ✅ cosign                          | —                                   | ✅ cosign                                          |
+| **GATE 2: Container scan**   | ✅ Trivy image                       | ✅ Trivy image                     | —                                   | ✅ Trivy image                                     |
+| **GATE 2: SLSA attestation** | ✅                                   | ✅                                 | —                                   | ✅                                                 |
+| **GATE 3: Tests**            | ✅ unit+integ+smoke+accept+load+perf | ✅ unit+integ+e2e+accept+load+perf | ✅ link+spell; Dojo: lab acceptance | ✅ unit, evals, `verify-tools.sh`, start benchmark |
+| **GATE 3: Accessibility**    | —                                    | ✅ axe-core                        | ✅ pa11y+axe                        | —                                                  |
+| **GATE 4: Deploy readiness** | ✅ compose valid                     | ✅ Helm+ArgoCD                     | ✅ pages build                      | ✅ image manifest per arch                         |
+| **GATE 5: Deploy**           | ✅ SSH GitOps                        | ✅ ArgoCD sync                     | ✅ GH Pages                         | ✅ GHCR publish on release tag                     |
 
 **Legend**: ✅ = always runs | ⚠️ = conditional on repo contents | — = not applicable
 
@@ -351,12 +377,12 @@ FAIL if:
 
 ```yaml
 version: "2"
-repo-type: stack | core | site | template | bootstrap
+repo-type: stack | core | site | site-labs | template-image
 
 # What this repo produces
 artifact:
-  type: docker-compose | kubernetes | static-site | template | none
-  deploy-method: ssh-gitops | argocd | github-pages | manual | none
+  type: docker-compose | kubernetes | static-site | template+container-image
+  deploy-method: ssh-gitops | argocd | github-pages | ghcr-publish | manual
 
 # Emergency bypass
 emergency:
@@ -582,27 +608,33 @@ stages:
   deploy: { enabled: true, strategy: github-pages }
 ```
 
-### uFawkesAI (template)
+### uFawkesAI (template + image)
+
+Revised 2026-10-09: uFawkesAI builds and publishes the CDE images, so build,
+tests and deploy are on.
 
 ```yaml
 version: "2"
-repo-type: template
+repo-type: template-image
 artifact:
-  type: template
-  deploy-method: none
+  type: template+container-image
+  images: [fawkes-core, fawkes-space-ai, fawkes-space]
+  platforms: [linux/amd64, linux/arm64]
+  deploy-method: ghcr-publish
 
 stages:
   preflight: { enabled: true }
-  lint: { enabled: true, languages: [shell, yaml, markdown] }
-  sast: { enabled: false }
+  lint:
+    { enabled: true, languages: [shell, yaml, markdown, typescript, python] }
+  sast: { enabled: true }
   sca: { enabled: true }
   secrets: { enabled: true }
-  build: { enabled: false }
-  policy: { enabled: false }
-  tests: { enabled: false }
+  build: { enabled: true, sbom: true, sign: cosign, scan: trivy }
+  policy: { enabled: true, dockerfile: hadolint }
+  tests: { enabled: true, tiers: [unit, evals, verify-tools, benchmark] }
   quality: { enabled: false }
-  deploy-readiness: { enabled: false }
-  deploy: { enabled: false }
+  deploy-readiness: { enabled: true }
+  deploy: { enabled: true, on: release-tag }
 ```
 
 ---
@@ -618,23 +650,42 @@ stages:
 | 5    | Deploy readiness | Add `reusable-deploy-readiness.yml`                                       | uFawkesObs  | New workflow file       |
 | 6    | Schema           | Update `.pipeline.yml` to v2 with artifact metadata                       | uFawkesObs  | `.pipeline.yml`         |
 | 7    | Documentation    | Update `ci-pipeline-status.md` with full architecture                     | fawkes/docs | `ci-pipeline-status.md` |
-| 8    | Rollout          | Copy reusables + create `ci-pipeline.yml` for each repo                   | All 8       | Per-repo files          |
+| 8    | Rollout          | Copy reusables + create `ci-pipeline.yml` for each repo                   | All 7       | Per-repo files          |
 
 **Steps 1-6 are on branch `ci/phase2-build-security` (PR #109).**
 **Steps 7-8 are follow-up PRs.**
+
+**Revised 2026-10-09:** step 8 changes. Repos don't copy reusables; they call
+uFawkesPipe's at one suite release (spec R3), in the seven repos, not eight.
+The remaining work is tracked as issues under the CI pipeline goal in
+uFawkes.dev, sequenced as:
+
+1. **Measure.** The determinism audit and its `/status/` matrix (spec R10),
+   so every later step has a before and after.
+2. **Stop silent passes** (R5) in uFawkes.dev, uFawkesObs, uFawkesPipe and
+   fawkes.
+3. **Build `ufawkes-ci`, then release the pipeline once.** uFawkesPipe
+   builds its CI image (its `docs/ci-runner-image/plan.md`), tags its
+   reusables, and runs the hook stages in that image (R3, R4). Depends on
+   uFawkesAI's next CDE release (uFawkesAI#218).
+4. **Adopt it**, one repo per PR: call Pipe's release, delete local copies,
+   run CI's hook stages in `ufawkes-ci`, add `.pipeline.yml`
+   and `✅ Pipeline Complete` (R3, R4, R9).
+5. **Reproducible images.** uFawkesAI's scheduled rebuild-and-compare (R8).
 
 ---
 
 ## 9. What "Production Ready" Means (Per Repo)
 
-| Repo              | Production Ready =                                                                                                                                                                                                     |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **uFawkesObs**    | Pipeline verified: `docker compose up` → all 8 containers healthy → Prometheus scraping → Grafana dashboards loading → alerts firing. Supply chain: images signed, SBOM generated, SLSA attestation, no critical CVEs. |
-| **uFawkesPipe**   | Pipeline verified: `docker compose up` → Woodpecker + SonarQube + security scanners running → pipeline templates work. Supply chain: images signed, SBOM generated, SLSA attestation, no critical CVEs.                |
-| **fawkes**        | Pipeline verified: ArgoCD sync → all 30+ pods running → Terraform state clean → Helm charts deployed. Supply chain: images signed, SBOM generated, SLSA attestation, no critical CVEs, policy compliant.               |
-| **uFawkes.dev**   | Pipeline verified: `jekyll build` → `_site/` → GitHub Pages serves → all links work → WCAG 2.1 AA. Artifact: `_site/` hash verified.                                                                                   |
-| **uFawkesAI**     | Pipeline verified: Template files valid → pre-commit passes → documentation correct.                                                                                                                                   |
-| **dora/sec/devx** | Pipeline verified: Pre-commit passes → ready for content.                                                                                                                                                              |
+| Repo            | Production Ready =                                                                                                                                                                                                                                                                       |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **uFawkesObs**  | Pipeline verified: `docker compose up` → all 8 containers healthy → Prometheus scraping → Grafana dashboards loading → alerts firing. Supply chain: images signed, SBOM generated, SLSA attestation, no critical CVEs.                                                                   |
+| **uFawkesPipe** | Pipeline verified: `docker compose up` → Woodpecker + SonarQube + security scanners running → pipeline templates work. Supply chain: images signed, SBOM generated, SLSA attestation, no critical CVEs.                                                                                  |
+| **fawkes**      | Pipeline verified: ArgoCD sync → all 30+ pods running → Terraform state clean → Helm charts deployed. Supply chain: images signed, SBOM generated, SLSA attestation, no critical CVEs, policy compliant.                                                                                 |
+| **uFawkes.dev** | Pipeline verified: `jekyll build` → `_site/` → GitHub Pages serves → all links work → WCAG 2.1 AA. Artifact: `_site/` hash verified.                                                                                                                                                     |
+| **uFawkesAI**   | Pipeline verified: Template files valid → pre-commit passes → documentation correct. CDE images: built for amd64 and arm64 → `verify-tools.sh` passes → scanned → signed → SBOM → inside the start-time benchmark → published to GHCR and pinned by digest in every repo's devcontainer. |
+| **uFawkesDojo** | Pipeline verified: Jekyll site builds and deploys → links work → each runnable lab passes acceptance against the stack release it pins.                                                                                                                                                  |
+| **uFawkesDevX** | Pipeline verified: `docker compose up` on a clean runner → every service healthy. Supply chain: images pinned by digest, SBOM, no critical CVEs.                                                                                                                                         |
 
 ---
 
