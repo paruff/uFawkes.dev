@@ -134,7 +134,9 @@ jobs:
       - name: Install pa11y-ci
         run: npm install -g pa11y-ci
 
-      - name: Run axe-core accessibility audit
+      # Informational: reports violations in the summary and never fails (see
+      # .pipeline.yml). The blocking accessibility gate is the pa11y step below.
+      - name: Run axe-core accessibility audit (informational)
         run: |
           npx @axe-core/cli --EXIT --disable \
             color,scss Ignore,link[hreflang] \
@@ -182,15 +184,16 @@ jobs:
               --reporter json \
               --timeout 30000 \
               --chromeLaunchConfig '{"args":["--no-sandbox"]}' \
-              "$page" > "pa11y-results/${SLUG}.json" 2>&1 || true
+              "$page" > "pa11y-results/${SLUG}.json" 2>&1 \
+              || echo "  pa11y exited $? for $page (errors are counted from its report below)"
 
             ERROR_COUNT=$(python3 -c "
           import json, sys
           try:
               data = json.load(open('pa11y-results/${SLUG}.json'))
               print(sum(1 for r in data if r.get('type') == 'error'))
-          except: print(0)
-          " 2>/dev/null || echo "0")
+          except Exception: print(1)  # unreadable pa11y output = the scan failed
+          " 2>/dev/null || echo "1")
 
             echo "  Errors: $ERROR_COUNT"
             if [ "$ERROR_COUNT" -gt 0 ]; then
@@ -211,8 +214,8 @@ jobs:
           try:
               data = json.load(open('$f'))
               print(sum(1 for r in data if r.get('type') == 'error'))
-          except: print(0)
-          " 2>/dev/null || echo "0")
+          except Exception: print(1)
+          " 2>/dev/null || echo "1")
             echo "| $PAGE | $ERRORS |" >> $GITHUB_STEP_SUMMARY
           done
 

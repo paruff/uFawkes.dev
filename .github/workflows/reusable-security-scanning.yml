@@ -62,7 +62,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_ENABLE_SUMMARY: true
-        continue-on-error: true
 
       # ─── Vulnerability Scanning (Trivy FS) ─────────────────────────────
       # A table of HIGH and CRITICAL findings in the log first (shift-left
@@ -100,21 +99,19 @@ jobs:
       # ─── Dependency Scanning ────────────────────────────────────────────
       - name: Check Python dependencies
         if: (inputs.scan-type == 'all' || inputs.scan-type == 'dependencies')
-        continue-on-error: true
         run: |
           if [ -f "requirements.txt" ]; then
             echo "📦 Found requirements.txt — scanning dependencies..."
             pip install safety
-            safety check --file=requirements.txt || true
+            safety check --file=requirements.txt
           fi
 
       - name: Check Node dependencies
         if: (inputs.scan-type == 'all' || inputs.scan-type == 'dependencies')
-        continue-on-error: true
         run: |
           if [ -f "package.json" ]; then
             echo "📦 Found package.json — running npm audit..."
-            npm audit --audit-level=moderate || true
+            npm audit --audit-level=moderate
           fi
 
       # ─── Container Scanning ─────────────────────────────────────────────
