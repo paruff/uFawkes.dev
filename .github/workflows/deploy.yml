@@ -66,7 +66,7 @@ jobs:
       # /status/shift_left.json. Same rules as the suite status above.
       # The matrix the last deploy published, to tell a regression (ok before,
       # not now) from a gap that was always there. Missing is a baseline.
-      - name: Fetch the last published shift-left matrix
+      - name: Fetch the last published shift-left matrix (informational)
         if: github.event_name != 'push'
         continue-on-error: true
         run: curl -fsSL --max-time 20 https://ufawkes.dev/status/shift_left.json -o "$RUNNER_TEMP/shift_left_prev.json"

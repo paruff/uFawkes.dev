@@ -131,10 +131,15 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install pa11y-ci
-        run: npm install -g pa11y-ci
+      # `pa11y`, not `pa11y-ci`: the step below runs the `pa11y` command. The
+      # old install had pa11y-ci only, so every page failed with "command not
+      # found" and the gate counted that as zero errors.
+      - name: Install pa11y
+        run: npm install -g pa11y@10.0.0
 
-      - name: Run axe-core accessibility audit
+      # Informational: reports violations in the summary and never fails (see
+      # .pipeline.yml). The blocking accessibility gate is the pa11y step below.
+      - name: Run axe-core accessibility audit (informational)
         run: |
           npx @axe-core/cli --EXIT --disable \
             color,scss Ignore,link[hreflang] \
@@ -156,6 +161,9 @@ jobs:
       - name: Run pa11y on key pages
         run: |
           mkdir -p pa11y-results
+          # pa11y 10 has no --chromeLaunchConfig flag (it exits 1: unknown
+          # option); Chrome's launch args go in a config file.
+          echo '{"chromeLaunchConfig":{"args":["--no-sandbox"]}}' > pa11y.json
 
           PAGES=(
             "http://localhost:4000/"
@@ -178,19 +186,23 @@ jobs:
             SLUG=${SLUG:-index}
             echo "Testing: $page"
 
+            # Exit 0 = clean, 2 = issues found (counted from the report), 1 =
+            # pa11y itself failed (the report is then unreadable and counts as
+            # an error below). stderr stays out of the JSON report.
             pa11y --standard WCAG2AA \
               --reporter json \
               --timeout 30000 \
-              --chromeLaunchConfig '{"args":["--no-sandbox"]}' \
-              "$page" > "pa11y-results/${SLUG}.json" 2>&1 || true
+              --config pa11y.json \
+              "$page" > "pa11y-results/${SLUG}.json" 2> "pa11y-results/${SLUG}.err" \
+              || echo "  pa11y exited $? for $page (errors are counted from its report below)"
 
             ERROR_COUNT=$(python3 -c "
           import json, sys
           try:
               data = json.load(open('pa11y-results/${SLUG}.json'))
               print(sum(1 for r in data if r.get('type') == 'error'))
-          except: print(0)
-          " 2>/dev/null || echo "0")
+          except Exception: print(1)  # unreadable pa11y output = the scan failed
+          " 2>/dev/null || echo "1")
 
             echo "  Errors: $ERROR_COUNT"
             if [ "$ERROR_COUNT" -gt 0 ]; then
@@ -211,8 +223,8 @@ jobs:
           try:
               data = json.load(open('$f'))
               print(sum(1 for r in data if r.get('type') == 'error'))
-          except: print(0)
-          " 2>/dev/null || echo "0")
+          except Exception: print(1)
+          " 2>/dev/null || echo "1")
             echo "| $PAGE | $ERRORS |" >> $GITHUB_STEP_SUMMARY
           done
 
