@@ -44,8 +44,12 @@ different repo, and a green check can mean a step that never ran.
 2. **One pipeline, versioned once.** uFawkesPipe owns the reusable
    workflows. All seven repos call them at one suite release, and move to
    the next one together.
-3. **The CDE image is CI's toolchain.** CI's hook stages run in the same
-   uFawkesAI image, at the same digest, as the repo's devcontainer.
+3. **One CI image, usable without GitHub.** CI's hook stages run in
+   uFawkesPipe's `ufawkes-ci` image, pinned by digest, which also runs on
+   a laptop (`pipe-ci`, offline) when the local environment is limited or
+   GitHub is down. It's built on the `fawkes-core` of the same uFawkesAI
+   release the devcontainers use, so laptop and CI share one toolchain. The
+   CDE images themselves stay development images.
 4. **No silent passes.** A gate fails or passes; it never reports green
    without having run. Exceptions are written down with a reason.
 5. **Each repo type produces its artifact and its evidence.** A site, a lab
@@ -64,6 +68,13 @@ different repo, and a green check can mean a step that never ran.
   pipeline on top.
 - **Branch protection** follows
   [`suite-hygiene/main-protection.md`](../suite-hygiene/main-protection.md).
+- **The CI image is uFawkesPipe's `ufawkes-ci`**, per its approved spec
+  ([`ci-runner-image/spec.md`](https://github.com/paruff/uFawkesPipe/blob/main/docs/ci-runner-image/spec.md),
+  2026-10-06), not `fawkes-space` or `fawkes-core`.
+- **The next CDE release comes first.** The work that moves the
+  devcontainers to uFawkesAI's next `fawkes-space` (the AI-DLC release,
+  uFawkesAI#218) is a dependency: `ufawkes-ci` is built on that release's
+  `fawkes-core`.
 - **GitHub Actions** stays the CI system. Woodpecker is what uFawkesPipe
   ships for users, not what the suite runs on.
 

@@ -12,8 +12,9 @@ wins. What changed since June:
   out of scope; uFawkesDojo, which was missing, is in (type `site + labs`).
 - **uFawkesAI is an artifact.** It's the template every repo is made from,
   and it publishes the CDE images (`fawkes-core`, `fawkes-space-ai`,
-  `fawkes-space`) every repo's devcontainer pins by digest. Those images
-  are also CI's toolchain (spec R4).
+  `fawkes-space`) every repo's devcontainer pins by digest. They are
+  development images; CI runs in uFawkesPipe's `ufawkes-ci`, built on the
+  same release's `fawkes-core` (spec R4).
 - **Gates 0 and 1 follow shift-left.** commit-msg, pre-commit and pre-push,
   and CI's rerun of them, are specified in
   [`ai-sdlc/shift-left/spec.md`](ai-sdlc/shift-left/spec.md). Section 10
@@ -663,10 +664,12 @@ uFawkes.dev, sequenced as:
    so every later step has a before and after.
 2. **Stop silent passes** (R5) in uFawkes.dev, uFawkesObs, uFawkesPipe and
    fawkes.
-3. **Release the pipeline once.** uFawkesPipe tags its reusables and runs
-   the hook stages in the CDE image (R3, R4).
+3. **Build `ufawkes-ci`, then release the pipeline once.** uFawkesPipe
+   builds its CI image (its `docs/ci-runner-image/plan.md`), tags its
+   reusables, and runs the hook stages in that image (R3, R4). Depends on
+   uFawkesAI's next CDE release (uFawkesAI#218).
 4. **Adopt it**, one repo per PR: call Pipe's release, delete local copies,
-   run CI's hook stages at the devcontainer's digest, add `.pipeline.yml`
+   run CI's hook stages in `ufawkes-ci`, add `.pipeline.yml`
    and `✅ Pipeline Complete` (R3, R4, R9).
 5. **Reproducible images.** uFawkesAI's scheduled rebuild-and-compare (R8).
 
