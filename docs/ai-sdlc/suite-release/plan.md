@@ -92,7 +92,8 @@ basic checks.
 
 ## Phase 0 — Suite hygiene (gate: AC-SUITE-01 recheck, AC-SUITE-02, AC-SUITE-03)
 
-Phase 0 is complete. Status on 2026-10-02, verified against each repo's `main`:
+Phase 0 is complete (rechecked 2026-10-09, below). Status on 2026-10-02,
+verified against each repo's `main`:
 
 - **AC-SUITE-02: met.** All 96 open issues on Project #7 carry exactly one
   routing label.
@@ -107,6 +108,35 @@ Phase 0 is complete. Status on 2026-10-02, verified against each repo's `main`:
   lines still matching are labelled in context. The wider count (about 1,380
   lines across docs, tests and planning files) belongs to Phases 2 to 6 and is
   re-checked before each announcement.
+
+**Recheck, 2026-10-09 ([#176](https://github.com/paruff/uFawkes.dev/issues/176)).**
+The 10-02 result did not hold: the shift-left rollout added issues after it, and
+`/status/` showed AC-SUITE-02 failing. An audit of the board against GitHub found:
+
+- **AC-SUITE-02 failed.** uFawkes.dev#153 had no routing label (now `goal`; it
+  waits on the owner's sign-off, since it adds a plugin to the governed
+  `.opencode/plugins/`). fawkes#2222 was done but open: its two PRs (#2219,
+  #2223) are on `main`, and it is closed.
+- **The board disagreed with GitHub.** uFawkesDevX#55 was closed but _In
+  Progress_. uFawkesDojo#42–52 were open (reopened after the 2026-10-06
+  curriculum audit) but _Done_. Both are fixed. The status build counts a
+  _Done_ item as done whether or not it is open, which hid the Dojo drift.
+- **Eleven open release-blocker, security or P0 issues were not on the board**,
+  so no check could see them: uFawkes.dev#132 and #147, uFawkesDevX#98 and #102,
+  uFawkesObs#617 and #619, uFawkesPipe#145, uFawkesDojo#73, fawkes#684, #1569
+  and #1715. They are on it now, routed and given a release. Six stale May-era
+  issues (uFawkesAI#32 and #33, uFawkesPipe#6, uFawkesDevX#8 to #10) were closed
+  as not planned.
+- **Shift-left follow-ups moved to AI 2.0** so they don't hold this gate open:
+  uFawkesPipe#155, uFawkesDevX#99 and fawkes#2227. (The status page listed
+  uFawkesDevX#99 as likely done. It is not: the matched PR, #101, added `tsc`,
+  not mypy.)
+- **Result:** all four Suite hygiene ACs pass on the live board (a status build
+  run on 2026-10-09 against Project #7).
+- **Kept from recurring:** the status build now lists, in `suite_status.json`
+  under `hygiene`, items that are _Done_ but open, closed but not _Done_, and
+  open `release-blocker` or security issues that are not on the board, and
+  prints a warning for each. It flags and does not fail.
 
 The checklist:
 
