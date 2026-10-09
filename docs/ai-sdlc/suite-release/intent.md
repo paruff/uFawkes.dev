@@ -1,9 +1,16 @@
 # Intent: uFawkes Suite Release
 
-**Owner:** @paruff | **Created:** 2026-09-27 | **Revised:** 2026-10-01 |
-**Status:** Draft | **Revision:** 3
+**Owner:** @paruff | **Created:** 2026-09-27 | **Revised:** 2026-10-08 |
+**Status:** Draft | **Revision:** 4
 
-## The seven repos
+## The suite repos
+
+Revision 4 adds the three golden-path repos, so the suite is ten. Nothing in
+this document's goals or acceptance criteria has been widened yet — the
+criteria still describe the original seven, and the new repos meet none of
+AC-SUITE-03's conditions (root `INTENT.md`, artifact chain).
+
+### Original seven (as of 2026-10-01)
 
 | Repo                                                 | Role                                                                                                                                                           | Today (2026-10-01)                                                                  |
 | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
@@ -14,6 +21,19 @@
 | [uFawkesDevX](https://github.com/paruff/uFawkesDevX) | Small-team starter developer-experience plane (Coder, Backstage, Docker Compose)                                                                               | Unreleased; blocked on the uFawkesRes database decision (#57)                       |
 | [fawkes](https://github.com/paruff/fawkes)           | Full Kubernetes internal developer platform: multiple planes and golden paths that move a team through the DORA performance tiers. The graduation target       | `v0.3.154` pre-releases; Tracer Bullet Alpha (#1804) not yet passing                |
 | [uFawkesDojo](https://github.com/paruff/uFawkesDojo) | Learning platform for both the small-team stacks and the full platform                                                                                         | `0.1.0-alpha.1`; 19 of 20 modules have no runnable lab; Yellow Belt teaches Jenkins |
+
+### Golden-path repos (joined 2026-10-08)
+
+These exist to prove the fawkes pipeline against real, disposable services
+rather than to be installed by a user. Phase 1 governance (license, code of
+conduct, security policy, funding) landed in each repo's own PR on
+2026-10-08; this records them as suite members.
+
+| Repo                                                                             | Role                                                                                                                                                                      | Today (2026-10-08)                                                                                                                                 |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [java-fawkes-path](https://github.com/paruff/java-fawkes-path)                   | Java/Spring Boot golden path (fawkes#2032): proves the build, scan, sign, push and GitOps-promotion path for JVM services                                                 | Unreleased; no root `INTENT.md`; no ruleset on `main`; README still advertises a Jenkins pipeline while `.github/workflows/ci.yml` runs on Actions |
+| [python-fawkes-path](https://github.com/paruff/python-fawkes-path)               | Deliberately minimal FastAPI service — not a product feature. Exists so the fawkes CI/CD/observability machinery can be validated end to end against a real, tiny example | Unreleased; no root `INTENT.md`; no ruleset on `main`; `README.md` trips MD022 (headings without surrounding blank lines)                          |
+| [python-fawkes-path-gitops](https://github.com/paruff/python-fawkes-path-gitops) | ArgoCD-synced desired-state manifests for `python-fawkes-path`. The image tag is written by that repo's pipeline via PR, never by hand                                    | Unreleased; no root `INTENT.md`; no ruleset on `main`; no workflows of its own                                                                     |
 
 ## Problem
 

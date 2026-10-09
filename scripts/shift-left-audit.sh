@@ -26,13 +26,13 @@
 #
 # Environment:
 #   AUDIT_OWNER  GitHub owner (default paruff)
-#   AUDIT_REPOS  space-separated repo list (default: the seven suite repos)
+#   AUDIT_REPOS  space-separated repo list (default: the ten suite repos)
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
 OWNER="${AUDIT_OWNER:-paruff}"
-read -r -a REPOS <<< "${AUDIT_REPOS:-uFawkes.dev uFawkesAI uFawkesObs uFawkesPipe uFawkesDevX uFawkesDojo fawkes}"
+read -r -a REPOS <<< "${AUDIT_REPOS:-uFawkes.dev uFawkesAI uFawkesObs uFawkesPipe uFawkesDevX uFawkesDojo fawkes java-fawkes-path python-fawkes-path python-fawkes-path-gitops}"
 TIME=0
 JSON=""
 while [[ $# -gt 0 ]]; do

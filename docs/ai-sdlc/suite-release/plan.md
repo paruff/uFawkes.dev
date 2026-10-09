@@ -255,6 +255,23 @@ without the "partial".
 | AC-DEVX-01       | ADR plus clean-host transcript                    | DevX release notes        |
 | AC-FAWKES-01..04 | CI run, Grafana panels, closed security issues    | fawkes release notes      |
 
+### Suite membership (Revision 4, 2026-10-08)
+
+The suite is ten repos: the original seven plus `java-fawkes-path`,
+`python-fawkes-path` and `python-fawkes-path-gitops`, recorded in
+[`intent.md`](intent.md). Both read-only audits default to all ten, so
+membership is verified by running them:
+
+| Check            | Command                              | Expected                                                                                           |
+| ---------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| Shift-left hooks | `make shift-left-audit`              | exit 0; the original seven `ok` on every column, the three new repos `n/a` plus a "no config" note |
+| Main protection  | `scripts/check-branch-protection.sh` | exit 0; today exit 1 with nine departures, all three per new repo, which is the gap to close       |
+
+`AC-SUITE-01` and `AC-SUITE-03` still cover the original seven only — both
+need a root `INTENT.md` (and AC-SUITE-03 the artifact chain), which none of
+the three new repos has. They widen to ten in the same change that adds
+those files.
+
 ## Risks
 
 | Risk                                                                    | Mitigation                                                                                                            |
