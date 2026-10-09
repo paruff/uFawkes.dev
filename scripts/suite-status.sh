@@ -109,6 +109,19 @@ fi
 # they and the dashboard always see the same data.
 export STATUS_ITEMS_JSON="$WORK/items.json"
 
+# --- 1c. open issues in the suite repos (for the board-coverage flag) -------
+# The board only knows the issues on it, so an open release-blocker or security
+# issue nobody added is invisible to every check above. Public repos: no scope.
+if [[ -n "${STATUS_OPEN_ISSUES_FILE:-}" ]]; then
+  cp "$STATUS_OPEN_ISSUES_FILE" "$WORK/open.json"
+else
+  command -v gh > /dev/null || die "gh is required"
+  for r in uFawkes.dev uFawkesAI uFawkesObs uFawkesPipe uFawkesDevX uFawkesDojo fawkes; do
+    gh issue list -R "$OWNER/$r" --state open --limit 500 --json number,title,url,labels \
+      | jq --arg r "$r" '[.[] | {repo: $r, number, title, url, labels: [.labels[].name]}]'
+  done | jq -s 'add' > "$WORK/open.json" || die "cannot list the suite repos' open issues"
+fi
+
 : > "$WORK/results.jsonl"
 n="$(jq length "$WORK/acs.json")"
 # age_days <iso8601 | yyyy-mm-dd>: whole days between that moment and NOW.
@@ -223,7 +236,7 @@ if [[ -n "${GITHUB_RUN_ID:-}" ]]; then
 fi
 
 mkdir -p "$(dirname "$OUT")"
-jq -n --slurpfile acs "$WORK/results.jsonl" --slurpfile items "$WORK/items.json" \
+jq -n --slurpfile acs "$WORK/results.jsonl" --slurpfile items "$WORK/items.json" --slurpfile open "$WORK/open.json" \
   --arg now "$NOW" --arg run_url "$RUN_URL" --argjson stale_days "$STALE_DAYS" '
   def epoch: sub("Z$"; "") | strptime("%Y-%m-%dT%H:%M:%S") | mktime;
   def day: strftime("%Y-%m-%d");
@@ -279,6 +292,18 @@ jq -n --slurpfile acs "$WORK/results.jsonl" --slurpfile items "$WORK/items.json"
       stale_days: $stale_days,
       next_release: $next,
       releases: ($releases | map(if .name == $next then . else del(.ready) end)),
+      # Board vs GitHub. isdone() above counts "Done" or CLOSED, so these hide
+      # in every number on the page; list them instead.
+      hygiene: {
+        done_but_open: ($all | map(select(.state == "OPEN" and .status == "Done"))
+                        | map({repo, number, title, url})),
+        closed_not_done: ($all | map(select(.state == "CLOSED" and .status != "Done"))
+                          | map({repo, number, title, url})),
+        off_board: (($all | map("\(.repo)#\(.number)")) as $on
+                    | $open[0]
+                    | map(select(.labels | map(IN("release-blocker", "security", "type-security", "p0-critical")) | any))
+                    | map(select("\(.repo)#\(.number)" | IN($on[]) | not))
+                    | map({repo, number, title, url})) },
       burnup: ( [ range($start; $t; 7*86400), $t ] | unique
                 | map(. as $d | { date: ($d | day),
                     done: ($all | map(select(.closedAt != null and ((.closedAt | epoch) <= $d))) | length),
@@ -296,3 +321,10 @@ echo "Suite status as of $NOW  ->  $OUT"
 jq -r '
   "Next release: \(.next_release // "none (all acceptance checks pass)")",
   (.releases[] | "  \(.name): ACs \(.acs.pass)/\(.acs.total) pass (\(.acs.fail) fail, \(.acs.manual_pending) manual pending) | issues \(.issues.done)/\(.issues.total) done | \(.blockers | length) blocker(s)")' "$OUT"
+# Board drift is a flag, not a failure: the step stays green, the run shows a warning.
+jq -r '
+  {done_but_open: "Done on the board but still open",
+   closed_not_done: "Closed but not Done on the board",
+   off_board: "Open release-blocker or security issue not on the board"} as $why
+  | .hygiene | to_entries[] | select(.value | length > 0)
+  | "::warning title=Board drift::\($why[.key]): \(.value | map("\(.repo)#\(.number)") | join(", "))"' "$OUT"

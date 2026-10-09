@@ -1,6 +1,6 @@
 # Spec: Suite status dashboard
 
-**Traces to:** [`intent.md`](intent.md) | **Status:** Draft | **Revision:** 2
+**Traces to:** [`intent.md`](intent.md) | **Status:** Draft | **Revision:** 3
 
 ## Requirements
 
@@ -87,9 +87,24 @@ failing AC is a result, not a script error.
       ]
     }
   ],
-  "burnup": [{ "date": "2026-09-27", "done": 10, "total": 48 }]
+  "burnup": [{ "date": "2026-09-27", "done": 10, "total": 48 }],
+  "hygiene": {
+    "done_but_open": [
+      { "repo": "uFawkesDojo", "number": 42, "title": "...", "url": "..." }
+    ],
+    "closed_not_done": [],
+    "off_board": []
+  }
 }
 ```
+
+- **`hygiene`** (revision 3): where the board and GitHub disagree, which no
+  other number shows because `isdone` counts either _Done_ or closed.
+  `done_but_open` is _Done_ on the board but open on GitHub;
+  `closed_not_done` is closed but not _Done_; `off_board` is an open
+  `release-blocker`, `security`, `type-security` or `p0-critical` issue in a
+  suite repo that is not on Project #7. The build prints a `::warning` for
+  each non-empty list and does not fail.
 
 - **`ready`** (next release only): open issues with no assignee, with their
   routing (`goal`, `nemotron`, `flash`, or `unrouted`). It feeds the

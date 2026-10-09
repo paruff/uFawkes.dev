@@ -114,11 +114,15 @@ cat > "$TMP/acs.yml" << 'YML'
   evidence: ""
 YML
 
+# Open issues in the suite repos; none by default so no test reaches the API.
+echo '[]' > "$TMP/open-none.json"
+export STATUS_OPEN_ISSUES_FILE="$TMP/open-none.json"
+
 # AC-STATUS-02: output matches the R3 shape. Fixture releases are "Alpha" and "AI 2.0".
 STATUS_ACS="$TMP/acs.yml" STATUS_ITEMS_FILE=scripts/testdata/suite-status-items.json \
   STATUS_OUT="$TMP/out.json" STATUS_NOW=2026-10-02T06:00:00Z bash scripts/suite-status.sh > /dev/null
 echo "R3 shape:"
-check "top-level keys" 'keys == ["burnup","generated_at","next_release","releases","run_url","stale_days"]' "$TMP/out.json"
+check "top-level keys" 'keys == ["burnup","generated_at","hygiene","next_release","releases","run_url","stale_days"]' "$TMP/out.json"
 check "stale limit is 30 days" '.stale_days == 30' "$TMP/out.json"
 check "ac result carries freshness" '.releases[0].ac_results | all(has("verified_at","age_days"))' "$TMP/out.json"
 check "release keys" '.releases | all(has("name","order","acs","issues","blockers","routing","pace","ac_results"))' "$TMP/out.json"
@@ -175,6 +179,39 @@ check "likely done still counts as open, not done" '.releases[0].issues.done == 
 check "pace hidden with too little data" '.releases[1].pace.weeks_to_done_estimate == null' "$TMP/out2.json"
 check "ready list only on next release (Dojo 0.2 here)" '(.releases[1].ready | length) == 1 and (.releases[0] | has("ready") | not)' "$TMP/out2.json"
 check "burn-up ends at now with totals" '.burnup[-1] == {"date":"2026-10-02","done":3,"total":6}' "$TMP/out2.json"
+
+# Board drift: the board says Done but GitHub says open (and the reverse), and
+# open blocker/security issues the board has never seen.
+echo "Board drift:"
+cat > "$TMP/drift-items.json" << 'JSON'
+[
+  {"release":"R","status":"Done","number":1,"title":"done but open","state":"OPEN","url":"u/1","repo":"a","createdAt":"2026-09-01T00:00:00Z","closedAt":null,"assigned":false,"labels":[],"merged_prs":[]},
+  {"release":"R","status":"In Progress","number":2,"title":"closed not done","state":"CLOSED","url":"u/2","repo":"a","createdAt":"2026-09-01T00:00:00Z","closedAt":"2026-09-20T00:00:00Z","assigned":false,"labels":[],"merged_prs":[]},
+  {"release":"R","status":"Done","number":3,"title":"in sync","state":"CLOSED","url":"u/3","repo":"a","createdAt":"2026-09-01T00:00:00Z","closedAt":"2026-09-20T00:00:00Z","assigned":false,"labels":[],"merged_prs":[]},
+  {"release":"R","status":"Todo","number":4,"title":"open and honest","state":"OPEN","url":"u/4","repo":"a","createdAt":"2026-09-01T00:00:00Z","closedAt":null,"assigned":false,"labels":["security"],"merged_prs":[]}
+]
+JSON
+cat > "$TMP/drift-open.json" << 'JSON'
+[
+  {"repo":"a","number":1,"title":"done but open","url":"u/1","labels":[]},
+  {"repo":"a","number":4,"title":"open and honest","url":"u/4","labels":["security"]},
+  {"repo":"a","number":5,"title":"blocker nobody added","url":"u/5","labels":["release-blocker"]},
+  {"repo":"b","number":4,"title":"same number, other repo, security","url":"u/b4","labels":["type-security"]},
+  {"repo":"b","number":6,"title":"plain issue off the board","url":"u/6","labels":["bug"]}
+]
+JSON
+STATUS_ACS="$TMP/acs2.yml" STATUS_ITEMS_FILE="$TMP/drift-items.json" STATUS_OPEN_ISSUES_FILE="$TMP/drift-open.json" \
+  STATUS_OUT="$TMP/out-drift.json" STATUS_NOW=2026-10-02T06:00:00Z bash scripts/suite-status.sh > "$TMP/drift.log"
+check "an open issue the board calls Done is flagged" '.hygiene.done_but_open | map(.number) == [1]' "$TMP/out-drift.json"
+check "a closed issue the board doesn't call Done is flagged" '.hygiene.closed_not_done | map(.number) == [2]' "$TMP/out-drift.json"
+check "off-board blocker/security issues are flagged, matched on repo and number" '.hygiene.off_board | map("\(.repo)#\(.number)") == ["a#5","b#4"]' "$TMP/out-drift.json"
+check "an unlabelled off-board issue is not" '.hygiene.off_board | map(.number) | index(6) | not' "$TMP/out-drift.json"
+grep -q '^::warning title=Board drift::Done on the board but still open: a#1$' "$TMP/drift.log" \
+  && echo "  ok   drift prints an Actions warning" || {
+  echo "  FAIL drift should print an Actions warning"
+  fails=$((fails + 1))
+}
+check "no drift, no flags" '.hygiene == {"done_but_open":[],"closed_not_done":[],"off_board":[]}' "$TMP/out.json"
 
 # AC-STATUS-03: a broken script (bad YAML) exits non-zero.
 echo "Script errors:"
