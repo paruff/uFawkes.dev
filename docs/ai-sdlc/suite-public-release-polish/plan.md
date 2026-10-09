@@ -10,6 +10,11 @@
 
 **Spec:** [spec.md](spec.md) — implements public release best practices from Johns Hopkins OSPO, Syracuse University, CNCF project templates.
 
+> **Scope note (2026-10-08):** `ufawkesdora` and `ufawkessec` are archived —
+> both were retired and merged into uFawkesObs and uFawkesPipe. They are
+> dropped from Phase 2, Task 4.2 and Phase 5 below. Nothing is released or
+> polished for them.
+
 ---
 
 ## Global Constraints
@@ -130,11 +135,27 @@ github: [paruff]
 
 ---
 
-## Phase 2: Release Automation (All 8 Repos — Parallelizable)
+## Phase 2: Release Automation (All 7 Repos — Parallelizable)
 
 ### Task 2.1: Standardize on release-please.yml
 
-**Current:** release-please in uFawkesObs, uFawkesPipe, uFawkesDevX (3); custom in ufawkesdora (1); none in fawkes, ufawkessec, uFawkesAI, uFawkes.dev (4)
+**Current (verified 2026-10-08):** the earlier line here said "release-please in uFawkesObs,
+uFawkesPipe, uFawkesDevX (3); none in fawkes, uFawkesAI, uFawkes.dev" — **that was wrong on both
+counts**, and the real defect was different from what the plan assumed:
+
+- `.github/workflows/release-please.yml` is **present in all 7**, and is functionally identical to
+  the uFawkesPipe canonical in **fawkes, uFawkesAI, uFawkes.dev** (uFawkesObs diverges deliberately:
+  `workflow_run` gate on its post-merge acceptance run, plus source-tarball attach — documented in
+  the canonical file's own header comment). So Step 2's "apply the workflow" was already satisfied.
+- The actual gap was **`release-please-config.json`**: missing in **uFawkesAI, uFawkes.dev,
+  uFawkesDojo** (uFawkesDojo was also absent from every repo count in this section). release-please
+  action v5 always fetches both files, so every run failed with
+  `Missing required manifest config: release-please-config.json`.
+
+| State                | Repos                                                                 | Evidence                                                  |
+| -------------------- | --------------------------------------------------------------------- | --------------------------------------------------------- |
+| Working (green runs) | fawkes, uFawkesObs, uFawkesPipe, uFawkesDevX (4)                      | last 6 runs each `success`                                |
+| Failing every run    | uFawkesAI (4 fails), uFawkes.dev (5 fails), uFawkesDojo (2 fails) (3) | `release-please failed: Missing required manifest config` |
 
 **Files per repo:**
 
@@ -146,32 +167,46 @@ github: [paruff]
 - Consumes: package.json (or pyproject.toml/Cargo.toml/go.mod), CHANGELOG.md
 - Produces: Automated GitHub Release on version tag
 
-- [ ] **Step 1: Extract canonical release-please.yml from uFawkesPipe**
+- [x] **Step 1: Extract canonical release-please.yml from uFawkesPipe**
 
 ```bash
 cat /Users/philruff/projects/github/paruff/uFawkesPipe/.github/workflows/release-please.yml
 ```
 
-- [ ] **Step 2: Apply to ufawkesdora** (replace release.yml), fawkes, ufawkessec, uFawkesAI, uFawkes.dev
-      Adapt version file path per repo:
-- Node: `package.json`
-- Python: `pyproject.toml` or `setup.py`
-- Go: `go.mod`
-- Rust: `Cargo.toml`
+- [x] **Step 2: Add the missing `release-please-config.json` to uFawkesAI, uFawkes.dev, uFawkesDojo**
+      — this, not the workflow file, was the defect. All three already had a canonical workflow, so
+      no workflow change was needed. The added config is **byte-identical** to uFawkesDevX's
+      (`release-type: simple`, `prerelease: false`, `bump-minor-pre-major` /
+      `bump-patch-for-minor-pre-major: true`, suite-standard changelog-sections).
+      PRs: `uFawkesAI#215`, `uFawkes.dev#174`, `uFawkesDojo#100`.
 
-- [ ] **Step 3: Verify uFawkesObs, uFawkesPipe, uFawkesDevX configs are current**
+      The four working repos keep their deliberate policy differences — no change:
+      `fawkes` `prerelease: true, prerelease-type: alpha`; `uFawkesObs` `prerelease: true`;
+      `uFawkesPipe` `bump-*-pre-major: false`.
 
-- [ ] **Step 4: Test each repo** (dry-run with `release-please` CLI or push test tag to fork)
+- [x] **Step 3: Verify uFawkesObs, uFawkesPipe, uFawkesDevX configs are current** — all three have
+      config + manifest and their runs are green. uFawkesObs's `workflow_run` divergence is
+      intentional and documented in the canonical header. The only advisory difference: uFawkesDevX
+      omits Pipe's "Check for RELEASE_PLEASE_TOKEN" warning step — its `has_token` output is
+      referenced nowhere downstream in any of the 7 workflows, so it is cosmetic only.
 
-- [ ] **Step 5: Commit per repo**
+- [ ] **Step 4: Test each repo** (dry-run with `release-please` CLI or push test tag to fork) —
+      **not run; owner action.** The definitive test is the first post-merge workflow run per repo,
+      which is observable on Actions.
+
+- [x] **Step 5: Commit per repo** — the 4 working repos needed no commit; the 3 fixes are in the
+      PRs named in Step 2.
 
 ---
 
 ### Task 2.2: CHANGELOG.md Format Consistency
 
-**Repos:** All 8
+**Repos:** All 7
 
-- [ ] **Step 1: Audit all CHANGELOG.md** for Keep a Changelog + SemVer compliance
+- [x] **Step 1: Audit all CHANGELOG.md** for Keep a Changelog + SemVer compliance —
+      all 7 have `# Changelog` + Keep a Changelog/SemVer attribution + a SemVer version heading.
+      **Deviations found (Step 2 still open):** - `uFawkesPipe` — no `## [Unreleased]` section (the other 6 have one). - `uFawkes.dev` — newest heading `0.1.0` but manifest is `1.0.0`, and the repo has **0 tags**. - `uFawkesDojo` — newest heading `0.2.0` but manifest is `0.1.0`; its 2 tags are bare
+      (`0.1.0-alpha.1`, `0.2.0`), not `v`-prefixed like the rest of the suite.
 - [ ] **Step 2: Fix deviations** (Unreleased section, version headers, categories)
 - [ ] **Step 3: Commit per repo**
 
@@ -187,35 +222,46 @@ cat /Users/philruff/projects/github/paruff/uFawkesPipe/.github/workflows/release
 
 - Modify: `.github/PULL_REQUEST_TEMPLATE.md`
 
-- [ ] **Step 1: Write failing test**
+- [x] **Step 1: Write failing test** — already passes on `main` (verified 2026-10-08):
 
 ```bash
 ! grep -q "Firebase\|src/types/index.ts\|screens/\|components/" .github/PULL_REQUEST_TEMPLATE.md \
 && grep -q "AGENTS.md\|AI_STANCE.md\|artifact-chain\|ci-quality\|preflight\|verify" .github/PULL_REQUEST_TEMPLATE.md
 ```
 
-- [ ] **Step 2: Rewrite Architecture check section** with uFawkesAI checks:
-  - [ ] No secrets or credentials in changed files
-  - [ ] No modifications to AGENTS.md (edit source, not symlinks)
-  - [ ] No `--no-verify` or hook bypasses
-  - [ ] Changes to `docs/ai-sdlc/**/` include intent → spec → plan chain
-  - [ ] `npm run verify` passes locally before requesting review
-  - [ ] Symlinks (CLAUDE.md, .cursorrules, .github/copilot-instructions.md) still point to AGENTS.md
+- [x] **Step 2: Rewrite Architecture check section** with uFawkesAI checks:
+  - [x] No secrets or credentials in changed files
+  - [x] No modifications to AGENTS.md (edit source, not symlinks)
+  - [x] No `--no-verify` or hook bypasses
+  - [x] Changes to `docs/ai-sdlc/**/` include intent → spec → plan chain
+  - [x] `npm run verify` passes locally before requesting review
+  - [x] Symlinks (CLAUDE.md, .cursorrules, .github/copilot-instructions.md) still point to AGENTS.md
 
-- [ ] **Step 3: Verify test passes**
+- [x] **Step 3: Verify test passes** — passes (this repo has a root `package.json` **with** a
+      `verify` script, so the checklist line is runnable here; it is only unrunnable elsewhere —
+      see Task 3.2).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit** — landed earlier as `uFawkesAI#212`.
 
 ---
 
 ### Task 3.2: Audit & Fix PR Templates in Other Repos
 
-**Repos:** fawkes, uFawkesObs, uFawkesPipe, uFawkesDevX, uFawkes.dev
+**Repos:** fawkes, uFawkesObs, uFawkesPipe, uFawkesDevX, uFawkes.dev, uFawkesDojo
 
-- [ ] **Step 1: Inventory all PR templates and their architecture checks**
-- [ ] **Step 2: Replace template artifacts** with repo-specific checks
-- [ ] **Step 3: Add missing PR templates** (use uFawkesAI fixed template as base, adapt)
-- [ ] **Step 4: Commit per repo**
+- [x] **Step 1: Inventory all PR templates and their architecture checks** — all 7 repos have a
+      root `.github/PULL_REQUEST_TEMPLATE.md`. Cross-repo artifact scan (`npm run verify`,
+      `Firebase`, `src/types/index.ts`, `screens/`, `components/`) found exactly one offender:
+      **uFawkesDevX**.
+- [x] **Step 2: Replace template artifacts** with repo-specific checks — `uFawkesDevX` had two
+      `npm run verify` lines but **no root `package.json`** (only nested ones), so the command
+      failed with _"no such script"_; it had been copied from uFawkesAI, which does have it.
+      Replaced with `pre-commit run --all-files` (its `.pre-commit-config.yaml` runs yamllint,
+      markdownlint, ruff, gitleaks, shellcheck, terraform, actionlint and the artifact-chain hooks)
+      and `make test-unit` (its Makefile's offline target). PR: `uFawkesDevX#111`.
+- [x] **Step 3: Add missing PR templates** (use uFawkesAI fixed template as base, adapt) — none
+      missing; every repo already had one.
+- [x] **Step 4: Commit per repo** — only uFawkesDevX needed a commit.
 
 ---
 
@@ -223,9 +269,21 @@ cat /Users/philruff/projects/github/paruff/uFawkesPipe/.github/workflows/release
 
 **Standard set:** bug_report.yml, feature.yml, security.yml (or GitHub Security Advisories)
 
-- [ ] **Step 1: Inventory issue templates per repo**
-- [ ] **Step 2: Add missing templates** (base from uFawkesAI/.github/ISSUE_TEMPLATE/)
-- [ ] **Step 3: Commit per repo**
+- [x] **Step 1: Inventory issue templates per repo** — standard set now present in all 7. Deviations
+      found: **uFawkesObs** had no security template (fixed below); **needs-triage / security /
+      area:unknown / epic / planning / feature / priority:medium** and friends were declared in
+      templates but exist in **no** repo, so GitHub silently never applied them.
+- [x] **Step 2: Add missing templates** (base from uFawkesAI/.github/ISSUE_TEMPLATE/) —
+      added `uFawkesObs/.github/ISSUE_TEMPLATE/security.yml` (redirects to private reporting; declares
+      no labels, since no suite repo has a `security` label). Also removed every dangling label
+      reference across all 7 repos — **no functional change**, GitHub was already skipping them.
+      PRs: `fawkes#2237`, `uFawkesAI#215`, `uFawkesObs#629`, `uFawkesPipe#163`, `uFawkesDevX#111`,
+      `uFawkes.dev#174`, `uFawkesDojo#100`.
+- [x] **Step 3: Commit per repo**
+- [ ] **Follow-up (found, not yet fixed):** `uFawkesPipe` and `uFawkes.dev` each ship **both**
+      `bug_report.md` and `bug_report.yml`, so the issue chooser shows two competing "Bug Report"
+      entries. Also, 5 of 7 repos have no `.github/ISSUE_TEMPLATE/config.yml`, so blank issues stay
+      enabled. Both are outside the original task wording — flagged for a decision.
 
 ---
 
@@ -237,13 +295,13 @@ cat /Users/philruff/projects/github/paruff/uFawkesPipe/.github/workflows/release
 
 **Files:** README.md, docs/PROMPT_LIBRARY.md, docs/AI_POLICY.md, docs/TEAM_ARCHETYPE.md, docs/VALUE_STREAM_MAP.md, docs/DEVEX_LOG.md, docs/RUNBOOKS.md
 
-- [ ] **Step 1: Write failing test** (no AI slop phrases)
+- [x] **Step 1: Write failing test** (no AI slop phrases)
 
 ```bash
 ! grep -r "As an AI\|I cannot\|I don't have\|Here is\|Below is\|This comprehensive\|In today's\|delve\|tapestry\|landscape" README.md docs/PROMPT_LIBRARY.md docs/AI_POLICY.md docs/TEAM_ARCHETYPE.md docs/VALUE_STREAM_MAP.md docs/DEVEX_LOG.md docs/RUNBOOKS.md 2>/dev/null
 ```
 
-- [ ] **Step 2: Clean each file per spec:**
+- [x] **Step 2: Clean each file per spec:** — done in `paruff/uFawkesAI#214`
   - **README.md:** Remove excessive badges (keep License, DORA AI, uFawkes Family, Works with). Tighten copy. Verify quick-start works.
   - **PROMPT_LIBRARY.md:** Verify prompts tested. Remove speculative. Clarify `{{PLACEHOLDERS}}` for consumers.
   - **AI_POLICY.md:** Add header: "This file is a template. When adopting uFawkesAI, replace all `[PLACEHOLDER]` markers with your project's actual policy."
@@ -252,20 +310,30 @@ cat /Users/philruff/projects/github/paruff/uFawkesPipe/.github/workflows/release
   - **DEVEX_LOG.md:** Remove placeholder row. Keep headers.
   - **RUNBOOKS.md:** Replace `[PLACEHOLDER]` with uFawkesAI examples (devcontainer release, tag-based publish).
 
-- [ ] **Step 3: Verify test passes**
+- [x] **Step 3: Verify test passes**
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit** — branch `docs/phase4-public-docs-cleanup`, 7 files / 206 lines; 23/23 checks green
 
 ---
 
 ### Task 4.2: Cross-Repo AI Slop Removal & Placeholder Clarity
 
-**Repos:** fawkes, uFawkesObs, uFawkesPipe, uFawkesDevX, ufawkesdora, uFawkes.dev
+**Repos:** fawkes, uFawkesObs, uFawkesPipe, uFawkesDevX, uFawkes.dev, uFawkesDojo
 
-- [ ] **Step 1: Run detection** across all README.md and key docs
-- [ ] **Step 2: Remove template artifacts** (generic "your project" language, non-repo badges)
-- [ ] **Step 3: Verify quick-start works** on fresh clone for each repo
-- [ ] **Step 4: Commit per repo**
+- [x] **Step 1: Run detection** across all README.md and key docs — clean. Every phrase match is a
+      legitimate use, not slop: "CNCF landscape" / "competitive landscape" (fawkes), a persona quote
+      (fawkes), "I cannot confirm" as a spec sourcing caveat (uFawkesObs), and this plan's own grep
+      pattern (uFawkes.dev). No `[PLACEHOLDER]` / `[PROJECT NAME]` markers in public docs.
+      **uFawkesDojo added here** (it was omitted from the original list despite the Goal's "all 7"):
+      same detection run over its `README.md` + `docs/` — clean, no slop and no placeholder markers.
+- [x] **Step 2: Remove template artifacts** (generic "your project" language, non-repo badges) —
+      nothing to remove. No README renders a non-repo badge; the only `your-org/your-repo` strings sit
+      inside ```markdown fences as adopter copy-paste snippets. Every `make` target named in the five
+      READMEs exists in its Makefile, and every file the READMEs reference resolves.
+- [ ] **Step 3: Verify quick-start works** on fresh clone for each repo — **BLOCKED (agent
+      environment): no Docker available, and fawkes additionally needs a k3d cluster.** The static
+      substitute above passed; the live `make up` / `make dev-up` run remains an owner action.
+- [x] **Step 4: Commit per repo** — N/A, detection found no changes to make
 
 ---
 
@@ -276,7 +344,7 @@ cat /Users/philruff/projects/github/paruff/uFawkesPipe/.github/workflows/release
 - [ ] **Step 1: Run verification in each repo**
 
 ```bash
-for repo in fawkes uFawkesObs uFawkesPipe uFawkesDevX ufawkesdora ufawkessec uFawkesAI uFawkes.dev; do
+for repo in fawkes uFawkesObs uFawkesPipe uFawkesDevX uFawkesDojo uFawkesAI uFawkes.dev; do
   cd /Users/philruff/projects/github/paruff/$repo
   echo "=== $repo ==="
   [ -f package.json ] && npm run verify 2>/dev/null || true
@@ -285,6 +353,11 @@ for repo in fawkes uFawkesObs uFawkesPipe uFawkesDevX ufawkesdora ufawkessec uFa
   pre-commit run --all-files 2>/dev/null || true
 done
 ```
+
+> **Note (verified 2026-10-08):** `uFawkesDojo` was missing from this loop and from every repo
+> count below; added so the loop matches the Goal's "all 7". Also, `npm run verify` only exists in
+> **uFawkesAI** — the other 6 have no root `package.json`, so that line is a silent no-op there
+> (same defect that made the old `uFawkesDevX` PR template unrunnable, see Task 3.2).
 
 - [ ] **Step 2: Create test PR in each repo** → verify CI passes (`✅ CI Complete`)
 
@@ -298,10 +371,12 @@ done
   - uFawkesObs: next version
   - uFawkesPipe: next version
   - uFawkesDevX: next version
-  - ufawkesdora: next version
-  - ufawkessec: v1.0.0 (first release)
   - uFawkesAI: v2.1.0
-  - uFawkes.dev: next version
+  - uFawkes.dev: next version — **resolve first:** manifest is `1.0.0`, CHANGELOG's newest section is
+    `0.1.0`, and the repo has 0 tags (three different answers)
+  - uFawkesDojo: next version — **resolve first:** manifest is `0.1.0`, CHANGELOG's newest section is
+    `0.2.0`, and its 2 tags are bare (`0.1.0-alpha.1`, `0.2.0`) rather than `v`-prefixed like the
+    rest of the suite
 - [ ] **Step 3: Verify release-please creates GitHub Releases** in all repos
 - [ ] **Step 4: Update uFawkesAI/docs/CHANGELOG.md** with suite release note
 
