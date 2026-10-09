@@ -161,6 +161,9 @@ jobs:
       - name: Run pa11y on key pages
         run: |
           mkdir -p pa11y-results
+          # pa11y 10 has no --chromeLaunchConfig flag (it exits 1: unknown
+          # option); Chrome's launch args go in a config file.
+          echo '{"chromeLaunchConfig":{"args":["--no-sandbox"]}}' > pa11y.json
 
           PAGES=(
             "http://localhost:4000/"
@@ -183,11 +186,14 @@ jobs:
             SLUG=${SLUG:-index}
             echo "Testing: $page"
 
+            # Exit 0 = clean, 2 = issues found (counted from the report), 1 =
+            # pa11y itself failed (the report is then unreadable and counts as
+            # an error below). stderr stays out of the JSON report.
             pa11y --standard WCAG2AA \
               --reporter json \
               --timeout 30000 \
-              --chromeLaunchConfig '{"args":["--no-sandbox"]}' \
-              "$page" > "pa11y-results/${SLUG}.json" 2>&1 \
+              --config pa11y.json \
+              "$page" > "pa11y-results/${SLUG}.json" 2> "pa11y-results/${SLUG}.err" \
               || echo "  pa11y exited $? for $page (errors are counted from its report below)"
 
             ERROR_COUNT=$(python3 -c "
