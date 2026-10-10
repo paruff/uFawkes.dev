@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1](https://github.com/paruff/uFawkes.dev/compare/v1.1.0...v1.1.1) (2026-10-10)
+
+
+### Fixed
+
+* **ci:** stop Prettier and typos failing on the generated CHANGELOG ([#178](https://github.com/paruff/uFawkes.dev/issues/178)) ([#187](https://github.com/paruff/uFawkes.dev/issues/187)) ([73ed0de](https://github.com/paruff/uFawkes.dev/commit/73ed0deec4cb96d040fc76f197f358229bb24db0))
+
+
+### Chores
+
+* **main:** release 1.1.0 ([#185](https://github.com/paruff/uFawkes.dev/issues/185)) ([38c4f2b](https://github.com/paruff/uFawkes.dev/commit/38c4f2b009cc5b4ea026955c45bc31f6db083af6))
+
 ## [1.1.0](https://github.com/paruff/uFawkes.dev/compare/v1.0.0...v1.1.0) (2026-10-09)
 
 
