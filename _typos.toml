@@ -1,2 +1,7 @@
+[default]
+# release-please writes each commit as a link whose text is its 7-character
+# hash, e.g. [a5748ba]; typos reads fragments of it ("ba", "abd") as words.
+extend-ignore-re = ["\\[[0-9a-f]{7}\\]"]
+
 [default.extend-words]
 AKS = "AKS"
