@@ -37,10 +37,14 @@ jobs:
 
       - name: Validate external links (200, timeout, redirects)
         run: |
+          # The repo's own github.com links (nav, ai/, compatibility/) are
+          # self-referential: GitHub returns 503 to non-browser user agents,
+          # which flakes this check from CI (seen 2026-10-10). Ignored like
+          # the own-domain and sibling-repo URLs above.
           bundle exec htmlproofer ./_site \
             --checks "Links" \
             --ignore-empty-mailto \
-            --ignore-urls "/https:\/\/ufawkes\.dev\/.*/,/https:\/\/www\.linkedin\.com\/.*/,/https:\/\/github\.com\/paruff\/ufawkes(obs|pipe|dora|sec|devx)/" \
+            --ignore-urls "/https:\/\/ufawkes\.dev\/.*/,/https:\/\/www\.linkedin\.com\/.*/,/https:\/\/github\.com\/paruff\/ufawkes(obs|pipe|dora|sec|devx)/,/https:\/\/github\.com\/paruff\/uFawkes\.dev\/.*/" \
             --typhoeus '{"timeout":20,"followlocation":true}'
 
       - name: Spell check Markdown
