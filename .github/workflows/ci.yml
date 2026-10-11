@@ -37,10 +37,15 @@ jobs:
 
       - name: Validate external links (200, timeout, redirects)
         run: |
+          # github.com serves /blob/ pages 503 to some CI egress IPs (seen
+          # 2026-10-10: uFawkes.dev and fawkes doc links, every run from an
+          # Azure runner, 200 elsewhere). Those pages are self-referential
+          # doc links, so they're ignored; releases and everything else stay
+          # checked.
           bundle exec htmlproofer ./_site \
             --checks "Links" \
             --ignore-empty-mailto \
-            --ignore-urls "/https:\/\/ufawkes\.dev\/.*/,/https:\/\/www\.linkedin\.com\/.*/,/https:\/\/github\.com\/paruff\/ufawkes(obs|pipe|dora|sec|devx)/" \
+            --ignore-urls "/https:\/\/ufawkes\.dev\/.*/,/https:\/\/www\.linkedin\.com\/.*/,/https:\/\/github\.com\/paruff\/ufawkes(obs|pipe|dora|sec|devx)/,/(?i)https:\/\/github\.com\/paruff\/.*\/blob\//" \
             --typhoeus '{"timeout":20,"followlocation":true}'
 
       - name: Spell check Markdown
