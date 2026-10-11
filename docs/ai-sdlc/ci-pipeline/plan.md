@@ -43,14 +43,17 @@ that reports and must not block is named `(informational)` and listed in
 
 ## Verification Strategy
 
-| Check                  | How it is proven                                                                                                      | Command / CI job                                                              |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| Gates fail             | Each repo's PR CI is green with the gates live, or red for a real finding that the PR fixes                           | `gh pr checks` on #184, uFawkesPipe#167, uFawkesObs#631, fawkes#2239          |
-| Secret scan runs       | The job log shows gitleaks scanning history, not an action error                                                      | uFawkes.dev `Security Scanning / Security Scanning`                           |
-| pa11y works both ways  | A clean page exits 0 with 0 errors; a page with a missing alt and low contrast exits 2 with 4                         | Run locally with `pa11y@10.0.0 --config pa11y.json`, before and after the fix |
-| Contrast fixed         | `/learn/` reports 0 pa11y errors after the CSS change                                                                 | Local `jekyll build` + pa11y; CI `Accessibility Testing`                      |
-| No silent pass remains | A scan of each repo's workflows finds no `continue-on-error: true` or gate-ending `\|\| true` outside the lists above | The determinism audit (uFawkes.dev#179), or `grep` until it exists            |
-| Lint                   | Workflows parse and lint                                                                                              | `actionlint`; `pre-commit run --all-files`                                    |
+| Check                  | How it is proven                                                                                                                                                            | Command / CI job                                                              |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Gates fail             | Each repo's PR CI is green with the gates live, or red for a real finding that the PR fixes                                                                                 | `gh pr checks` on #184, uFawkesPipe#167, uFawkesObs#631, fawkes#2239          |
+| Secret scan runs       | The job log shows gitleaks scanning history, not an action error                                                                                                            | uFawkes.dev `Security Scanning / Security Scanning`                           |
+| pa11y works both ways  | A clean page exits 0 with 0 errors; a page with a missing alt and low contrast exits 2 with 4                                                                               | Run locally with `pa11y@10.0.0 --config pa11y.json`, before and after the fix |
+| Contrast fixed         | `/learn/` reports 0 pa11y errors after the CSS change                                                                                                                       | Local `jekyll build` + pa11y; CI `Accessibility Testing`                      |
+| No silent pass remains | A scan of each repo's workflows finds no `continue-on-error: true` or gate-ending `\|\| true` outside the lists above                                                       | The determinism audit (uFawkes.dev#179), or `grep` until it exists            |
+| Audit logic            | An offline test with fixture workflows covers each column (Pipe refs, local copies, CI image, release match, unpinned, silent), the `informational:` exemption and the JSON | `bash scripts/test-ci-determinism-audit.sh` (also in `run-unit-tests.sh`)     |
+| Audit matches reality  | A live run against the seven repos reproduces the 2026-10-09 `continue-on-error` counts (Obs 2, Pipe 4, fawkes 9), or explains each difference                              | `bash scripts/ci-determinism-audit.sh`                                        |
+| Matrix is published    | The deploy builds and `/status/` renders the CI determinism section and `ci_determinism.json`                                                                               | `make build`; the `CI determinism audit` step in `deploy.yml`                 |
+| Lint                   | Workflows parse and lint                                                                                                                                                    | `actionlint`; `pre-commit run --all-files`                                    |
 
 ## Risks
 

@@ -210,6 +210,32 @@ permalink: /status/
   </section>
   {% endif %}
 
+  {% assign cd = site.data.ci_determinism %}
+  {% if cd %}
+  <section class="status-matrix" aria-labelledby="status-ci-determinism">
+    <h2 id="status-ci-determinism">CI determinism by repo</h2>
+    <p class="status-matrix__lede">Whether each suite repo's CI is the same pipeline: one uFawkesPipe release, no local copies, hook stages in the CI image, everything pinned, no step that cannot fail. Read from its workflows on <code>main</code>. Checked <time datetime="{{ cd.generated_at }}">{{ cd.generated_at | date: "%H:%M UTC, %-d %b %Y" }}</time>.</p>
+    <div class="status-matrix__scroll">
+      <table class="status-table status-matrix__table" aria-labelledby="status-ci-determinism">
+        <thead>
+          <tr><th scope="col">Repo</th>{% for c in cd.columns %}<th scope="col">{{ c.label }}</th>{% endfor %}</tr>
+        </thead>
+        <tbody>
+          {% for r in cd.repos %}
+          <tr class="status-table__row">
+            <th scope="row" class="status-matrix__repo">{{ r.repo }}</th>
+            {% for c in cd.columns %}{% assign v = r.cells[c.id] %}
+            <td data-label="{{ c.label }}">{% if v == "ok" %}<span class="status-badge status-badge--pass">✓ ok</span>{% elsif v == "n/a" %}<span class="status-badge status-badge--manual">… n/a</span>{% else %}<span class="status-badge status-badge--fail">✗ {{ v }}</span>{% endif %}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="status-matrix__key">✓ ok: deterministic. ✗ a count of findings (Pipe release: distinct SHAs), or what the check found instead. Every finding is in the data. <a href="{{ '/status/ci_determinism.json' | relative_url }}">Data as JSON</a></p>
+  </section>
+  {% endif %}
+
   {% assign lc = site.data.live_checks %}
   {% if lc %}
   <section class="status-matrix" aria-labelledby="status-live">
