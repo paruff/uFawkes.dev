@@ -20,13 +20,16 @@ jobs:
   # ─── Stage 0: Pre-flight ──────────────────────────────────────────────────
   preflight:
     name: Pre-flight
-    uses: paruff/uFawkesPipe/.github/workflows/reusable-preflight.yml@6b700db3d79fd7573296f4128cd09f7e8cf89cce # v1.11.1-beta.1
+    uses: paruff/uFawkesPipe/.github/workflows/reusable-preflight.yml@41f3e92d6fb63b3779595bed3e44333c67d37028 # v1.15.0-beta.1
+    with:
+      # CI's hook stages run in the suite's CI image (ci-pipeline spec R4).
+      ci-image: ghcr.io/paruff/ufawkes-ci@sha256:e85db8b3554da7c3362303d0e1e9681997d78093269b641e3535989f9c66f4da
 
   # ─── Stage 1: Lint ───────────────────────────────────────────────────────
   lint:
     name: Lint
     needs: [preflight]
-    uses: ./.github/workflows/reusable-lint.yml
+    uses: paruff/uFawkesPipe/.github/workflows/reusable-lint.yml@41f3e92d6fb63b3779595bed3e44333c67d37028 # v1.15.0-beta.1
 
   # ─── Stage 2: Build & Validate ───────────────────────────────────────────
   build:
@@ -91,7 +94,7 @@ jobs:
   security:
     name: Security Scanning
     needs: [build]
-    uses: ./.github/workflows/reusable-security-scanning.yml
+    uses: paruff/uFawkesPipe/.github/workflows/reusable-security-scanning.yml@41f3e92d6fb63b3779595bed3e44333c67d37028 # v1.15.0-beta.1
     with:
       scan-type: all
       severity-threshold: MEDIUM
@@ -103,7 +106,7 @@ jobs:
     name: Dependency Review
     needs: [build]
     if: github.event_name == 'pull_request'
-    uses: ./.github/workflows/reusable-dependency-review.yml
+    uses: paruff/uFawkesPipe/.github/workflows/reusable-dependency-review.yml@41f3e92d6fb63b3779595bed3e44333c67d37028 # v1.15.0-beta.1
     with:
       fail-on-severity: high
 
