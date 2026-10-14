@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0](https://github.com/paruff/uFawkes.dev/compare/v1.1.0...v1.2.0) (2026-10-14)
+
+
+### Added
+
+* **infra:** CI determinism audit and /status/ matrix ([#179](https://github.com/paruff/uFawkes.dev/issues/179)) ([#186](https://github.com/paruff/uFawkes.dev/issues/186)) ([be7670e](https://github.com/paruff/uFawkes.dev/commit/be7670ecc946592cf73b67997639b43d3079a444))
+
+
+### Fixed
+
+* **ci:** stop htmlproofer flaking on the repo's own github.com links ([#189](https://github.com/paruff/uFawkes.dev/issues/189)) ([d2df360](https://github.com/paruff/uFawkes.dev/commit/d2df360daa547cdcb8c8cb194265095f600202ec))
+* **ci:** stop Prettier and typos failing on the generated CHANGELOG ([#178](https://github.com/paruff/uFawkes.dev/issues/178)) ([#187](https://github.com/paruff/uFawkes.dev/issues/187)) ([73ed0de](https://github.com/paruff/uFawkes.dev/commit/73ed0deec4cb96d040fc76f197f358229bb24db0))
+
+
+### Chores
+
+* **ci:** adopt Pipe v1.15.0-beta.1, drop local copies ([#181](https://github.com/paruff/uFawkes.dev/issues/181)) ([#190](https://github.com/paruff/uFawkes.dev/issues/190)) ([b7070f7](https://github.com/paruff/uFawkes.dev/commit/b7070f766332a5f75de0c2da9fa2ce164313fbaa))
+* **infra:** adopt the OpenCode shift-left plugin ([#153](https://github.com/paruff/uFawkes.dev/issues/153)) ([#191](https://github.com/paruff/uFawkes.dev/issues/191)) ([e5e0f9d](https://github.com/paruff/uFawkes.dev/commit/e5e0f9ddd2be262f20a2eaabe2970433827647a4))
+* **main:** release 1.1.0 ([#185](https://github.com/paruff/uFawkes.dev/issues/185)) ([38c4f2b](https://github.com/paruff/uFawkes.dev/commit/38c4f2b009cc5b4ea026955c45bc31f6db083af6))
+
 ## [1.1.0](https://github.com/paruff/uFawkes.dev/compare/v1.0.0...v1.1.0) (2026-10-09)
 
 
