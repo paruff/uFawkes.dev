@@ -170,7 +170,9 @@ def audit(repo):
                     silent(fn, get(node, "run"), label, "|| true")
                 if text(get(node, "continue-on-error")) == "true":
                     silent(fn, get(node, "continue-on-error"), label, "continue-on-error")
-            if hook_job and not declared:
+            # A repo may have several hook jobs (fawkes: an always-run Base plus conditional
+            # language/tool jobs); one in the CI image is the one that counts.
+            if hook_job and not declared and not CI_IMAGE.match(res["ci_image"]):
                 res["ci_image"] = image or "none"
     if declared:
         res["ci_image"] = declared

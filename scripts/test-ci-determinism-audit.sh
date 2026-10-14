@@ -37,6 +37,8 @@ case "\$*" in
   *repos/o/clean/contents/.github/workflows\ *) echo ci.yml ;;
   *repos/o/viainput/contents/.github/workflows\ *) echo ci.yml ;;
   *repos/o/viainput/contents/.github/workflows/ci.yml*) base64 < "$FIX/viainput/ci.yml" ;;
+  *repos/o/twojobs/contents/.github/workflows\ *) echo ci.yml ;;
+  *repos/o/twojobs/contents/.github/workflows/ci.yml*) base64 < "$FIX/twojobs/ci.yml" ;;
   *repos/o/bydigest/contents/.github/workflows\ *) echo ci.yml ;;
   *repos/o/bydigest/contents/.github/workflows/ci.yml*) base64 < "$FIX/bydigest/ci.yml" ;;
   *repos/o/bydigest/contents/.devcontainer/devcontainer.json*) base64 < "$FIX/bydigest/devcontainer.json" ;;
@@ -63,7 +65,7 @@ chmod +x "$TMP/bin/gh"
 export PATH="$TMP/bin:$PATH"
 
 echo "Matrix:"
-AUDIT_OWNER=o AUDIT_REPOS="clean messy bare viainput bydigest bydiff" bash scripts/ci-determinism-audit.sh --json "$TMP/ci.json" > "$TMP/out.txt"
+AUDIT_OWNER=o AUDIT_REPOS="clean messy bare viainput bydigest bydiff twojobs" bash scripts/ci-determinism-audit.sh --json "$TMP/ci.json" > "$TMP/out.txt"
 is "one Pipe SHA is ok" clean pipe_refs ok
 is "two Pipe SHAs, matched case-insensitively" messy pipe_refs 2
 is "no workflows: not applicable" bare pipe_refs n/a
@@ -71,6 +73,7 @@ is "no local copies" clean local_copies ok
 is "a local copy of a Pipe reusable" messy local_copies 1
 is "hook job in ufawkes-ci at a digest" clean ci_image ok
 is "hook job in some other image" messy ci_image ubuntu:latest
+is "a later hook job on a stock runner does not hide one in the image" twojobs ci_image ok
 is "no workflows: CI image n/a" bare ci_image n/a
 is "ci-image passed to the Pre-flight reusable counts" viainput ci_image ok
 is "release behind the image matches the devcontainer" clean release_match ok
@@ -93,7 +96,7 @@ jq_is() { # jq_is <description> <jq -e filter>
 }
 jq_is "top-level keys" 'keys == ["columns","generated_at","repos","run_url"]'
 jq_is "columns carry id and label" '.columns | all(has("id","label"))'
-jq_is "repos in the order audited" '[.repos[].repo] == ["clean","messy","bare","viainput","bydigest","bydiff"]'
+jq_is "repos in the order audited" '[.repos[].repo] == ["clean","messy","bare","viainput","bydigest","bydiff","twojobs"]'
 jq_is "cells match the table" '.repos[1].cells.silent == "2" and .repos[0].cells.pipe_refs == "ok"'
 jq_is "findings carry the detail" '(.repos[1].findings.pipe_refs | length) == 2 and (.repos[1].findings.silent | length) == 2'
 jq_is "generated_at is ISO 8601 UTC" '.generated_at | test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:]{8}Z$")'
