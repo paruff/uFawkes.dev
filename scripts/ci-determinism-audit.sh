@@ -185,16 +185,38 @@ def pinned_release(path):
     return m.group(1) if m else ""
 
 
-def image_release(sha):
-    """The uFawkesAI release behind uFawkesPipe's images/ci/Dockerfile FROM at `sha`, or ''."""
+def core_tags(digest):
+    """The tags uFawkesAI's registry gives fawkes-core at `digest` (a FROM that names no tag)."""
+    p = subprocess.run(["gh", "api", "--paginate", f"users/{owner}/packages/container/fawkes-core/versions?per_page=100"],
+                       capture_output=True, text=True)
+    if p.returncode != 0:
+        if "HTTP 404" in p.stderr + p.stdout:
+            return []
+        sys.exit(f"fawkes-core versions: {p.stderr or p.stdout}")
+    dec, i, out = json.JSONDecoder(), 0, p.stdout  # --paginate prints one JSON array per page
+    while i < len(out):
+        if out[i].isspace():
+            i += 1
+            continue
+        page, i = dec.raw_decode(out, i)
+        for v in page:
+            if v.get("name") == digest:
+                return v.get("metadata", {}).get("container", {}).get("tags") or []
+    return []
+
+
+def image_releases(sha):
+    """The uFawkesAI releases behind uFawkesPipe's images/ci/Dockerfile FROM at `sha` (tags), or []."""
     p = subprocess.run(["gh", "api", f"repos/{owner}/uFawkesPipe/contents/images/ci/Dockerfile?ref={sha}", "--jq", ".content"],
                        capture_output=True, text=True)
     if p.returncode != 0:
         if "HTTP 404" in p.stderr + p.stdout:
-            return ""
+            return []
         sys.exit(f"uFawkesPipe: images/ci/Dockerfile at {sha}: {p.stderr or p.stdout}")
-    m = re.search(r"^FROM\s+\S*fawkes-core:([0-9][^\s@]*)", base64.b64decode(p.stdout).decode(), re.M)
-    return m.group(1) if m else ""
+    m = re.search(r"^FROM\s+\S*fawkes-core(?::([0-9][^\s@]*))?(?:@(sha256:[0-9a-f]{64}))?", base64.b64decode(p.stdout).decode(), re.M)
+    if not m:
+        return []
+    return [m.group(1)] if m.group(1) else core_tags(m.group(2)) if m.group(2) else []
 
 
 results = {r: audit(r) for r in repos}
@@ -207,7 +229,8 @@ for r in repos:
     x["pipe_refs"] = refs = sorted(set(x["pipe_refs"]))
     img = x["ci_image"]
     dev = pinned_release(f"{work}/{r}/devcontainer.json")
-    built = image_release(refs[0]) if len(refs) == 1 else ""
+    tags = image_releases(refs[0]) if len(refs) == 1 else []
+    built = dev if dev in tags else next((t for t in tags if re.match(r"^[0-9]", t)), "")
     x["devcontainer_release"], x["image_release"] = dev, built
     if not x["has_workflows"]:
         ci = "n/a"

@@ -37,6 +37,15 @@ case "\$*" in
   *repos/o/clean/contents/.github/workflows\ *) echo ci.yml ;;
   *repos/o/viainput/contents/.github/workflows\ *) echo ci.yml ;;
   *repos/o/viainput/contents/.github/workflows/ci.yml*) base64 < "$FIX/viainput/ci.yml" ;;
+  *repos/o/bydigest/contents/.github/workflows\ *) echo ci.yml ;;
+  *repos/o/bydigest/contents/.github/workflows/ci.yml*) base64 < "$FIX/bydigest/ci.yml" ;;
+  *repos/o/bydigest/contents/.devcontainer/devcontainer.json*) base64 < "$FIX/bydigest/devcontainer.json" ;;
+  *repos/o/bydiff/contents/.github/workflows\ *) echo ci.yml ;;
+  *repos/o/bydiff/contents/.github/workflows/ci.yml*) base64 < "$FIX/bydiff/ci.yml" ;;
+  *repos/o/bydiff/contents/.devcontainer/devcontainer.json*) base64 < "$FIX/bydiff/devcontainer.json" ;;
+  *repos/o/uFawkesPipe/contents/images/ci/Dockerfile?ref=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb*) base64 < "$FIX/bydigest/Dockerfile" ;;
+  *repos/o/uFawkesPipe/contents/images/ci/Dockerfile?ref=ffffffffffffffffffffffffffffffffffffffff*) base64 < "$FIX/bydiff/Dockerfile" ;;
+  *users/o/packages/container/fawkes-core/versions*) cat "$FIX/versions.json" ;;
   *repos/o/messy/contents/.github/workflows\ *) printf 'ci.yml\nreusable-lint.yml\n' ;;
   *repos/o/clean/contents/.github/workflows/ci.yml*) base64 < "$FIX/clean/ci.yml" ;;
   *repos/o/messy/contents/.github/workflows/ci.yml*) base64 < "$FIX/messy/ci.yml" ;;
@@ -54,7 +63,7 @@ chmod +x "$TMP/bin/gh"
 export PATH="$TMP/bin:$PATH"
 
 echo "Matrix:"
-AUDIT_OWNER=o AUDIT_REPOS="clean messy bare viainput" bash scripts/ci-determinism-audit.sh --json "$TMP/ci.json" > "$TMP/out.txt"
+AUDIT_OWNER=o AUDIT_REPOS="clean messy bare viainput bydigest bydiff" bash scripts/ci-determinism-audit.sh --json "$TMP/ci.json" > "$TMP/out.txt"
 is "one Pipe SHA is ok" clean pipe_refs ok
 is "two Pipe SHAs, matched case-insensitively" messy pipe_refs 2
 is "no workflows: not applicable" bare pipe_refs n/a
@@ -65,6 +74,8 @@ is "hook job in some other image" messy ci_image ubuntu:latest
 is "no workflows: CI image n/a" bare ci_image n/a
 is "ci-image passed to the Pre-flight reusable counts" viainput ci_image ok
 is "release behind the image matches the devcontainer" clean release_match ok
+is "an image built FROM a digest resolves to its release tags" bydigest release_match ok
+is "a digest that is another release differs" bydiff release_match differs
 is "an unreadable side is n/a, not a failure" messy release_match n/a
 is "everything pinned" clean unpinned ok
 is "unpinned action, container and service image" messy unpinned 3
@@ -82,7 +93,7 @@ jq_is() { # jq_is <description> <jq -e filter>
 }
 jq_is "top-level keys" 'keys == ["columns","generated_at","repos","run_url"]'
 jq_is "columns carry id and label" '.columns | all(has("id","label"))'
-jq_is "repos in the order audited" '[.repos[].repo] == ["clean","messy","bare","viainput"]'
+jq_is "repos in the order audited" '[.repos[].repo] == ["clean","messy","bare","viainput","bydigest","bydiff"]'
 jq_is "cells match the table" '.repos[1].cells.silent == "2" and .repos[0].cells.pipe_refs == "ok"'
 jq_is "findings carry the detail" '(.repos[1].findings.pipe_refs | length) == 2 and (.repos[1].findings.silent | length) == 2'
 jq_is "generated_at is ISO 8601 UTC" '.generated_at | test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:]{8}Z$")'
