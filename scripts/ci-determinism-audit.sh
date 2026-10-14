@@ -128,6 +128,7 @@ def audit(repo):
     listed = informational(f"{d}/pipeline.yml")
     files = sorted(os.listdir(f"{d}/wf"))
     res["has_workflows"] = bool(files)
+    declared = ""  # the ci-image a Pre-flight call is given: it wins over any job container
 
     def silent(fn, flag, label, kind):
         if label not in listed and f"{fn}:{label}" not in listed:
@@ -156,6 +157,10 @@ def audit(repo):
                     m = PIPE.match(uses)
                     if m:
                         res["pipe_refs"].append(m.group(1))
+                        # Pipe's Pre-flight runs the hook stages in the image it is given.
+                        ci_input = text(get(get(node, "with"), "ci-image"))
+                        if "reusable-preflight" in uses and ci_input:
+                            declared = ci_input
                     if not uses.startswith(("./", "docker://")) and not SHA.match(uses.rpartition("@")[2]):
                         res["unpinned"].append(f"{fn}:{get(node, 'uses').start_mark.line + 1} {uses}")
                 run = text(get(node, "run"))
@@ -165,8 +170,10 @@ def audit(repo):
                     silent(fn, get(node, "run"), label, "|| true")
                 if text(get(node, "continue-on-error")) == "true":
                     silent(fn, get(node, "continue-on-error"), label, "continue-on-error")
-            if hook_job:
+            if hook_job and not declared:
                 res["ci_image"] = image or "none"
+    if declared:
+        res["ci_image"] = declared
     return res
 
 
