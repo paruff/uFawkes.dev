@@ -1,0 +1,1 @@
+FROM ghcr.io/paruff/fawkes-core@sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee

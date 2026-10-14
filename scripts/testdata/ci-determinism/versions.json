@@ -1,0 +1,10 @@
+[
+  {
+    "name": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "metadata": { "container": { "tags": ["2.0.0", "latest"] } }
+  },
+  {
+    "name": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "metadata": { "container": { "tags": ["2.1.0-rc.1"] } }
+  }
+]
