@@ -116,9 +116,29 @@ is uFawkes's own judgment, not DORA's.
 
 ---
 
+## Review cadence
+
+This library is reviewed **quarterly**. Each review re-checks every link under
+[Sources](#sources), looks for newer editions (DORA, CNCF, SPACE/DevEx), moves
+a row out of _unverified_ once its primary source is checked, and confirms the
+stack READMEs (uFawkesObs, uFawkesPipe, uFawkesDevX, uFawkesAI) still cite
+what this file supports. Record each review here.
+
+| Review       | Date          | Outcome                                                            |
+| ------------ | ------------- | ------------------------------------------------------------------ |
+| Baseline     | 2026-10-01    | Sources verified against primary documents; unverified rows marked |
+| First (next) | by 2027-01-04 | Due                                                                |
+
+Stack READMEs cite this file under "Research basis" (added 2026-10-15, #65).
+
+---
+
 ## Sources
 
 Verified 2026-10-01 against the primary document (PDF where available).
+CNCF added 2026-10-15 (link checked, HTTP 200).
+
+- CNCF TAG App Delivery, _Platforms White Paper_ (2023): https://tag-app-delivery.cncf.io/whitepapers/platforms/
 
 - DORA, _2025 State of AI-assisted Software Development_: [PDF](https://services.google.com/fh/files/misc/2025_state_of_ai_assisted_software_development.pdf) · [page](https://dora.dev/research/2025/dora-report/)
 - DORA, _AI Capabilities Model_ (2025-11-25): [PDF](https://services.google.com/fh/files/misc/2025_dora_ai_capabilities_model.pdf) · [page](https://dora.dev/ai/capabilities-model/report/)
