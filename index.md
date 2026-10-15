@@ -124,6 +124,15 @@ title: ""
       <a href="{{ '/obs/' | relative_url }}" class="badge badge--live">Obs</a>
     </div>
   </article>
+  <article class="capability-map__row">
+    <div class="capability-map__capability">
+      <h3>Graduation path: Fawkes platform</h3>
+      <p>The internal delivery platform (orchestration, Tekton CI, GitOps) that the composable stacks build on. Run locally on k3d; Alpha ships via tracer-bullet release.</p>
+    </div>
+    <div class="capability-map__stacks">
+      <a href="{{ '/fawkes/' | relative_url }}" class="badge badge--live">Fawkes</a>
+    </div>
+  </article>
 </section>
 
 <section class="email-capture" aria-labelledby="notify-title">
