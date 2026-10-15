@@ -13,3 +13,4 @@ _data/ci_determinism.json
 status/ci_determinism.json
 _data/live_checks.json
 status/live_checks.json
+suite-measurements/
