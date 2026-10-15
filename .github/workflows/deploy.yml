@@ -28,6 +28,7 @@ jobs:
       pages: write
       id-token: write
       issues: write
+      packages: read
     steps:
       - name: DORA job start
         run: |
@@ -94,7 +95,7 @@ jobs:
         id: ci_determinism
         continue-on-error: ${{ github.event_name == 'push' }}
         env:
-          GH_TOKEN: ${{ secrets.SUITE_STATUS_TOKEN || github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: bash scripts/ci-determinism-audit.sh --json _data/ci_determinism.json
 
       # Live checks (docs/ai-sdlc/suite-release/live-checks.yml, suite-status
