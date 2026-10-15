@@ -124,10 +124,10 @@ a row out of _unverified_ once its primary source is checked, and confirms the
 stack READMEs (uFawkesObs, uFawkesPipe, uFawkesDevX, uFawkesAI) still cite
 what this file supports. Record each review here.
 
-| Review       | Date          | Outcome                                                            |
-| ------------ | ------------- | ------------------------------------------------------------------ |
-| Baseline     | 2026-10-01    | Sources verified against primary documents; unverified rows marked |
-| First (next) | by 2027-01-04 | Due                                                                |
+| Review       | Date       | Outcome                                                            |
+| ------------ | ---------- | ------------------------------------------------------------------ |
+| Baseline     | 2026-10-01 | Sources verified against primary documents; unverified rows marked |
+| First review | 2027-01-04 | Scheduled (quarterly after the 2026-10-01 baseline)                |
 
 Stack READMEs cite this file under "Research basis" (added 2026-10-15, #65).
 
