@@ -10,12 +10,12 @@ coming_soon: false
 repo_url: https://github.com/paruff/fawkes
 repo_name: paruff/fawkes
 features:
-  - Internal delivery platform: orchestration, Tekton CI, GitOps on Kubernetes
-  - Local evaluation on k3d in ~20 minutes with `make dev-up`
-  - Five core components: GitOps controller, Tekton pipelines, platform services, ingress, observability
-  - DORA metrics pipeline feeding uFawkesObs dashboards
-  - Secure-by-default platform with policy-as-code and supply-chain scanning
-  - Education layer explaining platform concepts for team adoption
+  - "Internal delivery platform: orchestration, Tekton CI, GitOps on Kubernetes"
+  - "Local evaluation on k3d in ~20 minutes with `make dev-up`"
+  - "Five core components: GitOps controller, Tekton pipelines, platform services, ingress, observability"
+  - "DORA metrics pipeline feeding uFawkesObs dashboards"
+  - "Secure-by-default platform with policy-as-code and supply-chain scanning"
+  - "Education layer explaining platform concepts for team adoption"
 quick_start:
   - git clone https://github.com/paruff/fawkes.git
   - cd fawkes
