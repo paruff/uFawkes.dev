@@ -30,4 +30,4 @@ compose_with:
 
 ## Where this stands
 
-The v1.0.0 template works today. The v2.0.0 milestone adds a devcontainer image you can pin by version, a template flow that's tested from a clean checkout, and a published start-time benchmark. Progress is tracked in the [suite release plan](https://github.com/paruff/uFawkes.dev/blob/main/docs/ai-sdlc/suite-release/plan.md).
+v2.0.0 is released. It adds a devcontainer image you can pin by version (`fawkes-space:2.0.0`) and a template flow that's tested from a clean checkout. See the [v2.0.0 release](https://github.com/paruff/uFawkesAI/releases/tag/v2.0.0) and the [suite release plan](https://github.com/paruff/uFawkes.dev/blob/main/docs/ai-sdlc/suite-release/plan.md).
