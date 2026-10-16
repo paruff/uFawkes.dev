@@ -5,7 +5,7 @@ stack_name: uFawkesAI
 stack_color: green
 description: "uFawkesAI — an AI-SDLC template for Claude Code, Copilot, Cursor and Codex. One AGENTS.md, DORA AI Capabilities built in."
 hero: Make your AI agent work the way DORA research says high performers work.
-summary: A GitHub template with one AGENTS.md every agent reads, agent profiles for each pipeline stage, and CI guardrails. v1.0.0 is usable today; v2.0.0 (a pinned devcontainer image and a tested template flow) is in progress.
+summary: A GitHub template with one AGENTS.md every agent reads, agent profiles for each pipeline stage, and CI guardrails. v2.0.0 adds a pinned devcontainer image (fawkes-space:2.0.0) and a tested "Use this template" flow.
 coming_soon: false
 repo_url: https://github.com/paruff/uFawkesAI
 repo_name: paruff/uFawkesAI

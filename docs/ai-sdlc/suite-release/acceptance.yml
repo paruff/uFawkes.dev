@@ -145,14 +145,15 @@
   title: The "Start here" lab is real
   check: manual
   run: ""
-  evidence: ""
+  evidence: https://github.com/paruff/uFawkesDojo/pull/89
 
 - id: AC-DOJO-03
   release: Dojo 0.2
   title: The authoring guide covers the evidence for self-paced learning
   check: manual
   run: ""
-  evidence: ""
+  evidence: https://github.com/paruff/uFawkesDojo/releases/tag/0.2.0
+  evidence_date: 2026-10-07
 
 - id: AC-DOJO-04
   release: Dojo 0.2
