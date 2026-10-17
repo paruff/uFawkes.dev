@@ -155,13 +155,6 @@
   evidence: https://github.com/paruff/uFawkesDojo/releases/tag/0.2.0
   evidence_date: 2026-10-07
 
-- id: AC-DOJO-04
-  release: Dojo 0.2
-  title: Each later release ships its lab, built from its plan
-  check: manual
-  run: ""
-  evidence: ""
-
 # --- Obs 1.0 ---------------------------------------------------------------
 - id: AC-OBS-01
   release: Obs 1.0
@@ -199,9 +192,9 @@
   run: ""
   evidence: ""
 
-# --- DevX 0.1 --------------------------------------------------------------
+# --- DevX stable (first verified stable 1.x) ------------------------------
 - id: AC-DEVX-01
-  release: DevX 0.1
+  release: DevX stable
   title: Runs without uFawkesRes
   check: manual
   run: ""
@@ -232,6 +225,16 @@
 - id: AC-FAWKES-04
   release: fawkes Alpha
   title: Public claims are scoped to Alpha
+  check: manual
+  run: ""
+  evidence: ""
+
+# --- Dojo labs -------------------------------------------------------------
+# Rolling: met release by release as each stack ships its lab. Kept last so
+# it never holds "Next release" (it was under Dojo 0.2 until 2026-10-17).
+- id: AC-DOJO-04
+  release: Dojo labs
+  title: Each later release ships its lab, built from its plan
   check: manual
   run: ""
   evidence: ""
