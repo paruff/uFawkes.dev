@@ -29,8 +29,11 @@ clean: ## Remove Jekyll build output, agent tooling caches, and generated report
 	@echo "Cleaned Jekyll build output and agent tooling artifacts"
 
 # Suite status dashboard (docs/ai-sdlc/suite-status/)
+# status/ is a directory too: without .PHONY, make sees the target as up to date.
+.PHONY: build serve pre-commit-setup pre-commit-run validate clean status status-check-drift live-checks design-check ci-determinism-audit shift-left-audit doctor
+
 status: ## Run the suite acceptance checks and write _data/suite_status.json
-	@bash scripts/suite-status.sh
+	@GH_TOKEN="$${GH_TOKEN:-$$(gh auth token 2>/dev/null)}" bash scripts/suite-status.sh
 
 status-check-drift: ## Fail if suite-release/spec.md and acceptance.yml disagree
 	@bash scripts/check-status-drift.sh
