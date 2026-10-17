@@ -1,13 +1,117 @@
 # Plan: uFawkes Suite Release
 
 **Traces to:** [`spec.md`](spec.md) → [`intent.md`](intent.md) |
-**Status:** Draft | **Revision:** 3
+**Status:** Draft | **Revision:** 4 (status as of 2026-10-17)
 
 The plan is gate-driven, not date-driven. Each release starts its tag when
 the previous release's gate passes, but work for later releases can run
 earlier whenever it doesn't depend on an unreleased version. Releases follow
 uFawkesAI's weekly cadence: if an increment is shippable on Thursday, ship
 it.
+
+## Status, 2026-10-17
+
+Collected from `scripts/suite-status.sh` against Project #7,
+`make live-checks`, `scripts/check-branch-protection.sh`, each repo's GitHub
+Releases, and live probes of a running uFawkesObs and uFawkesDevX on a macOS
+Docker Desktop host (4 vCPU, 8 GB).
+
+### Where each release stands
+
+| #   | Release                           | Tagged                                    | Gate on the board                     | Real state                                                                                                                                                                                                                       |
+| --- | --------------------------------- | ----------------------------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0   | Suite hygiene                     | n/a                                       | 4/4 ACs pass, 37/37 issues            | Done. Board drift fixed 2026-10-17                                                                                                                                                                                               |
+| 1   | uFawkesAI `v2.0.0`                | `v2.0.0`, 2026-10-14                      | 9/9 ACs pass                          | **Shipped.** All seven repos pin `fawkes-space:2.0.0@sha256:def9302d…`, and the pin issues are closed. `v2.1.0` is in a Release Please PR (#216). Left on the board: shift-left follow-ups uFawkesPipe#145, #155 and fawkes#2227 |
+| 2   | uFawkesDojo `0.2`                 | `0.2.0`, 2026-10-07                       | 3/3 ACs pass, 11/11 issues            | **Shipped.** Rolling AC-DOJO-04 now sits under `Dojo labs`                                                                                                                                                                       |
+| 3   | uFawkesObs `v1.0.0`               | `v1.0.0`, 2026-10-14                      | 2/4 ACs pass (AC-OBS-01, -04 pending) | **Next release. Tagged before its gate passed.** No clean-host transcript, goal #600 open, and a default install isn't clean (uFawkesObs#670, #671). Finish as `v1.0.1`                                                          |
+| 4   | uFawkesPipe `v2.0.0`              | latest `v1.16.0-beta.1`                   | 0/1 AC                                | Release-defining work not started: #121, #122, #123, #125 open                                                                                                                                                                   |
+| 5   | uFawkesDevX first verified stable | `v1.0.0`…`v1.2.0` stable since 2026-10-03 | 0/1 AC (`DevX stable`)                | **1.x accepted 2026-10-17.** #57 decided (ADR-0001, PR #119), and the stack runs with no database service. Needs a clean-host transcript (AC-DEVX-01)                                                                            |
+| 6   | fawkes Tracer Bullet α            | latest `v0.3.163`, 2026-10-07             | 1 AC fail (AC-FAWKES-03), 1/15 issues | No movement since 10-07. P0 security issues fawkes#2004 and #1797 are open                                                                                                                                                       |
+
+### Live findings (what a real run showed)
+
+1. **A default uFawkesObs install raises about 27 alerts on a healthy stack.**
+   A stack running for 17 hours from `main` (`ba2bfc7`, 12 commits after
+   `v1.0.0`) had every container at `RestartCount=0`, yet:
+   - `UFawkesObsContainerRestarting` fires for all eight services.
+     `process_start_time_seconds` wobbles by ±1 s under the Docker Desktop VM
+     clock, and `changes()` counts each wobble as a restart.
+   - `ServiceDown{job="dora-api"}` fires because `prometheus.yaml` always
+     scrapes `dora-api:8088`, even though its own comment says "dora profile
+     only". That down target also drives `SLOBurnRateFast/Medium/Slow`.
+   - About 15 `*Absent` rules fire with no data, including
+     `PrometheusStorageAlmostFullAbsent`, which is an `absent()` over
+     `prometheus_tsdb_retention_limit_bytes`. That metric isn't exported unless a
+     size retention is set.
+   - Loki and Tempo `/ready` return 503 ("Ingester not ready") after 17 hours,
+     while both still answer queries.
+
+   The `dora-api` scrape and the `absent()` rules are in the `v1.0.0` tag.
+   This contradicts the "installs cleanly" bar (AC-OBS-01).
+
+2. **uFawkesObs `ci-chaos-nightly` has failed every night since 2026-10-10**
+   (before the `v1.0.0` tag). The failure is
+   `test_obschaos002`: "Expected all 11 targets UP, got 10". This is probably
+   the same always-scraped `dora-api` target. Not yet confirmed.
+3. **uFawkesDevX runs without uFawkesRes.** Gateway, Backstage, Coder and
+   score-service are all healthy, with no database service in `compose.yaml`.
+   This is partial evidence for AC-DEVX-01. It is not a clean-host transcript,
+   because the run is from a working clone on a feature branch.
+4. **ufawkes.dev contradicts itself (AC-SUITE-01).** `/compatibility/` lists
+   uFawkesDevX as "None yet, heading to v0.1.0", while `/devx/` says `v1.2.0`. It
+   also lists fawkes on `fawkes-space:2.0.0-rc.3`, while fawkes pins `2.0.0`.
+5. **Scheduled checks:** 12 of 15 are green. The three that aren't: Obs
+   chaos nightly (above); fawkes `golden-path-acceptance-tests`, which is red
+   weekly since at least 2026-09-21 with "No cluster configured", a setup gap
+   rather than a test failure; and uFawkesAI `pre-commit-autoupdate`, which
+   has never run (it is monthly).
+6. **Main protection:** the original seven pass. The three golden-path repos
+   still have all three departures each (no ruleset, not squash-only, delete
+   branch on merge off). uFawkesAI also has classic protection on top of its
+   ruleset.
+7. **Suite mode (#70) has started but has not been measured.** Only
+   `obs-alone-idle.csv` (2026-10-15) exists, and uFawkesPipe isn't running.
+
+### Done on 2026-10-17
+
+- **DevX version line decided (owner): accept 1.x.** The `DevX 0.1` release
+  is renamed `DevX stable` in `acceptance.yml`, `spec.md` and the Project #7
+  `Release` field (option id kept, so all 13 items stay assigned). The first 1.x
+  release that passes AC-DEVX-01 is the "first verified stable" one.
+  `/compatibility/` now shows DevX `v1.2.0` as "released, not yet verified on a
+  clean host", and fawkes on `fawkes-space:2.0.0`.
+- **Status model:** the rolling AC-DOJO-04 moved to the `Dojo labs` release, at
+  the end of `acceptance.yml`. "Next release" now reads **Obs 1.0**, and Dojo
+  0.2 shows 3/3.
+- **`make status` runs.** `.PHONY` stops the `status/` directory from making the
+  target look up to date, and the target falls back to `gh auth token`.
+- **Board sweep:** closed uFawkesObs#599, uFawkesPipe#119, uFawkesDevX#80,
+  fawkes#2187 and uFawkesDevX#84, each with its evidence. Set uFawkes.dev#61,
+  uFawkes.dev#94 and uFawkesDevX#98 to _Done_. Filed
+  [uFawkesObs#670](https://github.com/paruff/uFawkesObs/issues/670) (alert
+  noise) and [uFawkesObs#671](https://github.com/paruff/uFawkesObs/issues/671)
+  (chaos nightly) as `release-blocker` items on Obs 1.0.
+
+### Next steps, in order
+
+1. **Close Obs `v1.0.0` properly as `v1.0.1`** (`goal`, Claude Code). Fix
+   uFawkesObs#670, one PR per rule group. Confirm the chaos nightly goes green
+   (uFawkesObs#671). Run the clean-host transcripts on Linux and macOS
+   (AC-OBS-01), announce (AC-OBS-04), and close #600.
+2. **uFawkesPipe `v2.0.0`** (Phase 4). Decide #122 (`build-image`) first.
+   Then do the real pipeline run, #123, against Obs `v1.0.1` and not `v1.0.0`.
+3. **uFawkesDevX first verified stable:** produce a clean-host transcript of
+   the latest 1.x (AC-DEVX-01), record it as evidence in `acceptance.yml`, and
+   change the `/compatibility/` status to "Verified".
+4. **fawkes:** fawkes#2004 and #1797 (P0, Claude Code only) are the only items
+   that move AC-FAWKES-03. Separately, either give
+   `golden-path-acceptance-tests` a cluster or remove it from its schedule, so
+   the red is real.
+5. **Suite mode (#70):** run the full procedure once Pipe is running alongside
+   Obs and DevX.
+6. **Golden-path repos:** apply the `main-protection` ruleset and squash-only
+   merges (an owner action, per the main-protection standard), then add root
+   `INTENT.md` files so that AC-SUITE-01 and AC-SUITE-03 widen to ten.
 
 ## Where this plan lives, and how it syncs with GitHub
 
@@ -168,6 +272,8 @@ The checklist:
 
 ## Phase 1 — uFawkesAI `v2.0.0` (gate: AC-AI-01..04, AC-AI-06..09, AC-SITE-01)
 
+**Shipped 2026-10-14.** All ACs pass and all seven repos pin the image (step 8).
+
 1. Write `uFawkesAI/docs/ai-sdlc/v2.0.0/{intent,spec,plan}.md`. Settle the
    contract (`intent.md`, Still open #1).
 2. Fix the image publish path (#111). Retire the `image-v*` and
@@ -193,7 +299,8 @@ The checklist:
 
 ## Phase 2 — uFawkesDojo `0.2` (gate: AC-DOJO-01..03)
 
-Accuracy work (steps 1–2) can start now. Step 3 needs uFawkesAI `v2.0.0`.
+**Shipped 2026-10-07 as `0.2.0`.** AC-DOJO-01..03 pass. Steps 4–5 (learn-guide
+alignment, the "now learn it" post) are not verified here.
 
 1. The accuracy pass: five metrics (#19), Jenkins labeling, and removing or
    labeling unbuilt labs, videos and links.
@@ -205,6 +312,10 @@ Accuracy work (steps 1–2) can start now. Step 3 needs uFawkesAI `v2.0.0`.
    it".
 
 ## Phase 3 — uFawkesObs `v1.0.0` + Dojo `0.3` (gate: AC-OBS-01..04, AC-DOJO-04)
+
+**Tagged 2026-10-14 with steps 2–3 undone.** No clean-host transcript yet,
+Brown Belt 13–16 (uFawkesDojo#42–45) are still open, and a default install raises
+false alerts (see Status). Finish this phase as `v1.0.1`.
 
 1. Fix #534 (blocker). Cut a fresh rc.
 2. Run clean-host tests on Linux and macOS against the rc.
@@ -223,7 +334,14 @@ Accuracy work (steps 1–2) can start now. Step 3 needs uFawkesAI `v2.0.0`.
    the Jenkins content.
 5. Release and announce.
 
-## Phase 5 — uFawkesDevX `v0.1.0` + Dojo `0.5` (gate: AC-DEVX-01)
+## Phase 5 — uFawkesDevX first verified stable (1.x) + Dojo `0.5` (gate: AC-DEVX-01)
+
+**Steps 1–2 done** (#57 closed 2026-10-16, ADR-0001, PR #119). **Version line
+decided 2026-10-17: accept 1.x.** Release Please has published stable
+`v1.0.0`–`v1.2.0`, so this phase's release is the first 1.x release that passes
+AC-DEVX-01 (the "first verified stable", the `DevX stable` release on the
+board). Step 3 moves the docs into `docs/ai-sdlc/<that version>/`, and step 4 no
+longer says "release as a beta".
 
 1. Decide #57 and record an ADR. The issue proposes SQLite for
    `score-service` and Backstage, and Coder's built-in Postgres.

@@ -274,6 +274,9 @@ learning:
 
 #### AC-DOJO-04: Each later release ships its lab, built from its plan
 
+Rolling, tracked under the `Dojo labs` release (moved off `Dojo 0.2` on
+2026-10-17 so it no longer holds "Next release" after `0.2.0` shipped).
+
 - **Expected:** Dojo `0.3`–`0.6` each add the lab for the stack released
   alongside it, pinned to that tag (`git clone --branch vX.Y.Z`). The
   stack's announcement links to it. Each lab follows uFawkesAI's
@@ -323,7 +326,12 @@ learning:
 - **Verification:** A real pipeline run on a sample repo. The `notify-obs`
   step is verified against a released Obs version, recorded in the matrix
 
-### Release 5 — uFawkesDevX `v0.1.0`
+### Release 5 — uFawkesDevX first verified stable (1.x)
+
+Decided 2026-10-17: Release Please has published stable `v1.0.0`–`v1.2.0`
+since 2026-10-03, so the planned `v0.1.0` beta is dropped and the 1.x line is
+accepted. The first 1.x release that passes AC-DEVX-01 is the "first
+verified stable" one; until then, public pages call DevX unverified.
 
 #### AC-DEVX-01: Runs without uFawkesRes
 
