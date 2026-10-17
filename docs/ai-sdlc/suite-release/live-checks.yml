@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 # live-checks.yml — the suite's scheduled workflows, one entry per repo that
-# has any (`on: schedule:`; uFawkesPipe and uFawkesDevX have none today).
+# has any (`on: schedule:`; uFawkesPipe has none today).
 # The Tier 2 list of docs/ai-sdlc/suite-status/plan.md: scripts/live-checks.sh
 # reads this file on every deploy and writes _data/live_checks.json, and
 # /status/ shows each entry's latest run on `main` — pass, stale, fail (with
@@ -44,6 +44,11 @@ checks:
   - repo: uFawkesDojo
     workflow: live-acceptance.yml
     purpose: Boots the lab stack and runs every lab's validate.sh for real
+    starts_stack: true
+    stale_after_hours: 30
+  - repo: uFawkesDevX
+    workflow: live-acceptance.yml
+    purpose: Runs make up on a clean runner and checks Backstage, Coder, Score, Plugin Manager and the gateway answer
     starts_stack: true
     stale_after_hours: 30
   - repo: uFawkesObs
