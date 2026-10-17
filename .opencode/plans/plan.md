@@ -1,7 +1,6 @@
 # uFawkes.dev — Plan
 
 > Project identity, stack, and conventions: see `AGENTS.md`
-> Current branch: `main`
 
 ---
 
@@ -95,17 +94,20 @@
 
 ## Handoff
 
+Suite release work is tracked in `docs/ai-sdlc/suite-release/plan.md` (Status
+section) and on [Project #7](https://github.com/users/paruff/projects/7); this
+file only tracks site PRs. `docs/roadmap.md` is retired (a pointer).
+
 ```
-[ ] Current branch: main
-[ ] Last completed: PR 6 — Product Suite Roadmap & Research Integration
-[ ] In progress: CI Pipeline (PR #109 on ci/phase2-build-security)
-[ ] Blockers: none
-[ ] Next task: Commit reordered pipeline + new reusable workflows to PR #109
-[ ] PR 4 plan: .opencode/plans/pr4-plan.md
-[ ] Product roadmap: docs/roadmap.md
-[ ] GitOps plan: .opencode/plans/gitops-migration.md
-[ ] CI Pipeline plan: fawkes/docs/ci-pipeline-master-plan.md (5-gate architecture)
-[ ] CI Pipeline status: fawkes/docs/ci-pipeline-status.md
+[x] Last completed: suite status sweep + plan Revision 4 (2026-10-17)
+[x] Shipped since 10-08: uFawkesAI v2.0.0, uFawkesObs v1.0.0, uFawkesDojo 0.2.0, uFawkes.dev v1.2.0
+[ ] Next release: Obs 1.0 -> finish as v1.0.1 (uFawkesObs#670, #671, AC-OBS-01, #600)
+[ ] Then: Pipe v2.0.0 (#122 decision first), DevX first verified stable (AC-DEVX-01)
+[ ] Blockers: fawkes P0 security (fawkes#2004, #1797) hold AC-FAWKES-03
+[ ] Site follow-ups: suite mode numbers (#70), opencode GitOps agent (#64)
+[ ] Status page: make status (local) / deploy.yml (daily) -> /status/
+[ ] Stale tables above: PR 5 and PR 7 rows predate the suite plan; superseded by
+    docs/ai-sdlc/suite-hygiene/ and Project #7, not re-verified row by row
 ```
 
 ### Branch cleanup — 2026-10-08 (all seven repos)
@@ -125,4 +127,4 @@
 
 ---
 
-_Last updated: 2026-10-08_
+_Last updated: 2026-10-17_
