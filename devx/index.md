@@ -7,6 +7,8 @@ description: "Golden paths, developer experience workflows, and IDP templates fo
 hero: Golden paths for platform adoption.
 summary: Templates, paved roads, and platform enablement workflows for faster developer onboarding.
 coming_soon: false
+latest_version: v1.1.1
+release_date: 2026-10-17
 repo_url: https://github.com/paruff/ufawkesdevx
 repo_name: paruff/ufawkesdevx
 features:
@@ -18,7 +20,7 @@ features:
 quick_start:
   - git clone https://github.com/paruff/ufawkesdevx.git
   - cd ufawkesdevx
-  - docker compose up -d
+  - make network build up
 compose_with:
   - name: uFawkesObs
     url: /obs/
