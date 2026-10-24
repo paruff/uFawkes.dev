@@ -83,7 +83,7 @@ Deleted: `tailwind-tokens` (contradicts vanilla CSS), `astro-components`
 4. build      → implement ONE file → run make build → report
 5. @review    → approve or block with exact finding
 6. build      → commit: fix(scope): description (#N)
-7. @planning  → mark ✅ in `.opencode/plans/plan.md`, update Handoff
+7. build      → move the issue to "Needs human", Gate "PR review" (AGENTS.md §8)
 ```
 
 ---
@@ -314,16 +314,12 @@ gemini
 
 ## 13. What to do next
 
-```
-[ ] Current branch: main
-[ ] Last completed: PR 7 — GitOps Migration (Phases 0-2 + branch protection)
-[ ] In progress: none
-[ ] Blockers: none
-[ ] Next task: GitOps agent (Phase 4) — create opencode GitOps agent
-[ ] PR 4 plan: .opencode/plans/pr4-plan.md
-[ ] Current suite status (machine-readable, refreshed daily): https://ufawkes.dev/status/suite_status.json — read it instead of re-querying Project #7
-[ ] Suite release plan: docs/ai-sdlc/suite-release/ (docs/roadmap.md is retired)
-[ ] GitOps plan: .opencode/plans/gitops-migration.md
-```
+Not here. What is next, and what waits on a human, lives on
+[Project #7](https://github.com/users/paruff/projects/7): run the two commands
+in `AGENTS.md` §8. The GitOps agent this list used to name is #64.
+
+- Suite status (machine-readable, refreshed daily):
+  https://ufawkes.dev/status/suite_status.json
+- Suite release plan: `docs/ai-sdlc/suite-release/` (`docs/roadmap.md` is retired)
 
 ---
