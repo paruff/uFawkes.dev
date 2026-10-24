@@ -8,8 +8,8 @@ TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 fails=0
 
-expect() { # expect <pass|fail> <description> <tokens-file>
-  if bash scripts/check-design-tokens.sh "$3" > /dev/null 2>&1; then got=pass; else got=fail; fi
+expect() { # expect <pass|fail> <description> <tokens-file> [DESIGN.md]
+  if bash scripts/check-design-tokens.sh "${@:3}" > /dev/null 2>&1; then got=pass; else got=fail; fi
   if [[ "$got" == "$1" ]]; then echo "  ok   $2"; else
     echo "  FAIL $2 (expected $1, got $got)"
     fails=$((fails + 1))
@@ -45,6 +45,15 @@ expect fail "a non-hex colour fails" "$TMP/badhex.json"
 
 echo '{"color": {}}' > "$TMP/empty.json"
 expect fail "a file with no contrast pairs fails" "$TMP/empty.json"
+
+echo "DESIGN.md front matter vs tokens.json:"
+expect pass "the real DESIGN.md colours match the real tokens" design/tokens.json DESIGN.md
+
+sed 's/flame-500: "#f06300"/flame-500: "#f06301"/' DESIGN.md > "$TMP/drift.md"
+expect fail "a DESIGN.md colour that differs from tokens.json fails" design/tokens.json "$TMP/drift.md"
+
+awk '{ print } /^  night: "#061723"$/ { print "  teal-500: \"#14b8a6\"" }' DESIGN.md > "$TMP/extra.md"
+expect fail "a DESIGN.md colour with no tokens.json entry fails" design/tokens.json "$TMP/extra.md"
 
 if [[ "$fails" -ne 0 ]]; then
   echo "test-check-design-tokens: $fails FAILED"
