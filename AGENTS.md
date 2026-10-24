@@ -67,29 +67,21 @@ server-side logic.
 - UI changes: read DESIGN.md first (tokens, components, do and don't)
 - Reviewing a PR: apply REVIEW.md (what is Important, verification, validation, security)
 
-What is next, and what waits on a human, lives on
-[Project #7](https://github.com/users/paruff/projects/7), never in a doc or from
-memory. Its **Status** is the only place status lives: no status labels, no ✅ in
-plans. Routing labels (`claude-code`, `opencode`) say who does the work, not its
-state. Work traces to `docs/ai-sdlc/<feature>/` intent → spec → plan; a plan links
-its issues and never lists tasks of its own. Statuses, the Gate field, the issue
-lifecycle and owner decisions:
+Status lives only on [Project #7](https://github.com/users/paruff/projects/7):
+no status labels, no ✅ in plans. Routing labels say who does the work, not its
+state. Work traces to `docs/ai-sdlc/<feature>/` intent → spec → plan; plans link
+issues, never list tasks. Statuses, Gate, lifecycle and owner decisions:
 [the board rules](https://github.com/paruff/uFawkes.dev/blob/main/docs/ai-sdlc/suite-release/plan.md#the-board-statuses-gates-and-moves).
 
 ```bash
-# 1. Next item for an agent. Use the routing label you run as: claude-code or opencode.
-gh project item-list 7 --owner paruff --limit 300 \
-  --query 'status:"Ready for agent" is:open label:opencode' --format json \
-  --jq '.items | sort_by(.priority // "P9", .content.number) | .[:1][] | "\(.content.repository)#\(.content.number) \(.title)"'
-
-# 2. Waiting on a human, and which gate each one waits on.
-gh project item-list 7 --owner paruff --limit 300 \
-  --query 'status:"Needs human" is:open' --format json \
-  --jq '.items[] | "\(.gate // "-")\t\(.content.repository)#\(.content.number) \(.title)"'
-
-# Move an item: "In Progress" before you start; "Needs human" plus Gate "PR review" when the PR is up.
+# 1. Next item for an agent (label: the routing label you run as, claude-code or opencode)
+gh project item-list 7 --owner paruff --limit 300 --query 'status:"Ready for agent" is:open label:opencode' \
+  --format json --jq '.items | sort_by(.priority // "P9", .content.number) | .[:1][] | "\(.content.repository)#\(.content.number) \(.title)"'
+# 2. Waiting on a human, and which gate each waits on
+gh project item-list 7 --owner paruff --limit 300 --query 'status:"Needs human" is:open' \
+  --format json --jq '.items[] | "\(.gate // "-")\t\(.content.repository)#\(.content.number) \(.title)"'
+# Move: "In Progress" before you start; "Needs human" plus Gate "PR review" when the PR is up
 gh project item-edit 7 --owner paruff --url <issue url> --field Status --value "In Progress"
-gh project item-edit 7 --owner paruff --url <issue url> --field Gate --value "PR review"
 ```
 
 ---
