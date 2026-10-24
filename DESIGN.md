@@ -1,77 +1,246 @@
+---
+version: alpha
+name: uFawkes
+description: >-
+  Brand and UI tokens for Fawkes and the uFawkes suite. Every colour below
+  mirrors design/tokens.json (same name, same hex); make design-check fails if
+  they drift or a contrast pair drops below its floor.
+colors:
+  # Identity: Flame, Ember, Night (from the Fawkes phoenix)
+  flame-400: "#fc8200"
+  flame-500: "#f06300"
+  flame-600: "#e85800"
+  ember-700: "#c2410c"
+  night: "#061723"
+  # Interaction: Indigo (Fawkes design system)
+  indigo-300: "#a5b4fc"
+  indigo-400: "#818cf8"
+  indigo-600: "#4f46e5"
+  indigo-700: "#4338ca"
+  # Neutral
+  neutral-50: "#f9fafb"
+  neutral-100: "#f3f4f6"
+  neutral-200: "#e5e7eb"
+  neutral-400: "#9ca3af"
+  neutral-600: "#4b5563"
+  neutral-800: "#1f2937"
+  neutral-900: "#111827"
+  white: "#ffffff"
+  # Status, always with a symbol and a word
+  green-100: "#dcfce7"
+  green-400: "#4ade80"
+  green-700: "#15803d"
+  red-100: "#fee2e2"
+  red-400: "#f87171"
+  red-700: "#b91c1c"
+  amber-100: "#fef3c7"
+  amber-400: "#fbbf24"
+  amber-800: "#92400e"
+  # Roles (spec names)
+  primary: "{colors.flame-500}"
+  on-primary: "{colors.night}"
+  secondary: "{colors.indigo-600}"
+  surface: "{colors.white}"
+  on-surface: "{colors.neutral-900}"
+  error: "{colors.red-700}"
+typography:
+  headline-display:
+    fontFamily: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif
+    fontSize: 2.4rem
+    fontWeight: 700
+    lineHeight: 1.2
+  headline-lg:
+    fontFamily: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif
+    fontSize: 1.5rem
+    fontWeight: 700
+    lineHeight: 1.3
+  headline-md:
+    fontFamily: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif
+    fontSize: 1.125rem
+    fontWeight: 600
+    lineHeight: 1.4
+  body-md:
+    fontFamily: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif
+    fontSize: 1rem
+    fontWeight: 400
+    lineHeight: 1.6
+  body-sm:
+    fontFamily: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif
+    fontSize: 0.875rem
+    fontWeight: 400
+    lineHeight: 1.5
+  code:
+    fontFamily: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace
+    fontSize: 0.9em
+    fontWeight: 400
+    lineHeight: 1.5
+rounded:
+  sm: 4px
+  md: 8px
+spacing:
+  xs: 8px
+  sm: 16px
+  md: 24px
+  lg: 32px
+  xl: 40px
+  2xl: 48px
+  3xl: 64px
+components:
+  button-primary:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.on-primary}"
+    rounded: "{rounded.md}"
+    typography: "{typography.body-md}"
+  button-primary-hover:
+    backgroundColor: "{colors.flame-600}"
+    textColor: "{colors.on-primary}"
+  button-primary-dark-hover:
+    backgroundColor: "{colors.flame-400}"
+    textColor: "{colors.night}"
+  button-secondary:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.secondary}"
+    rounded: "{rounded.md}"
+  button-secondary-hover:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.indigo-700}"
+  link:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.secondary}"
+  link-dark:
+    backgroundColor: "{colors.night}"
+    textColor: "{colors.indigo-300}"
+  button-action-dark:
+    backgroundColor: "{colors.indigo-400}"
+    textColor: "{colors.night}"
+  card:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.on-surface}"
+    rounded: "{rounded.md}"
+    padding: 24px
+  card-dark:
+    backgroundColor: "{colors.neutral-800}"
+    textColor: "{colors.neutral-50}"
+  page:
+    backgroundColor: "{colors.neutral-50}"
+    textColor: "{colors.on-surface}"
+  page-dark:
+    backgroundColor: "{colors.night}"
+    textColor: "{colors.neutral-50}"
+  text-muted:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.neutral-600}"
+  text-muted-dark:
+    backgroundColor: "{colors.night}"
+    textColor: "{colors.neutral-400}"
+  brand-text:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.ember-700}"
+  badge-pass:
+    backgroundColor: "{colors.green-100}"
+    textColor: "{colors.green-700}"
+    rounded: "{rounded.sm}"
+  badge-fail:
+    backgroundColor: "{colors.red-100}"
+    textColor: "{colors.error}"
+    rounded: "{rounded.sm}"
+  badge-warning:
+    backgroundColor: "{colors.amber-100}"
+    textColor: "{colors.amber-800}"
+    rounded: "{rounded.sm}"
+  badge-manual:
+    backgroundColor: "{colors.neutral-100}"
+    textColor: "{colors.neutral-600}"
+    rounded: "{rounded.sm}"
+  status-dark:
+    backgroundColor: "{colors.night}"
+    textColor: "{colors.green-400}"
+  status-fail-dark:
+    backgroundColor: "{colors.night}"
+    textColor: "{colors.red-400}"
+  status-warning-dark:
+    backgroundColor: "{colors.night}"
+    textColor: "{colors.amber-400}"
+  progress-track:
+    backgroundColor: "{colors.neutral-200}"
+    height: 8px
+  code-block:
+    backgroundColor: "{colors.neutral-50}"
+    textColor: "{colors.on-surface}"
+    typography: "{typography.code}"
+---
+
 # DESIGN.md: Fawkes and uFawkes brand and design system
 
-**Status:** Draft, revision 3, for owner review | **Updated:** 2026-10-03 | **Owner:** @paruff
+**Status:** Draft, revision 4, for owner review | **Updated:** 2026-10-24 | **Owner:** @paruff
 
 This is the single reference for how Fawkes (the platform) and uFawkes (the
 open-source stacks and their site, ufawkes.dev) look, sound and behave.
 **uFawkes.dev is its canonical home.** The machine-readable version is
 [`design/tokens.json`](design/tokens.json), published at
 `https://ufawkes.dev/design/tokens.json`, and `make design-check` fails if any
-colour pair in it drops below its contrast floor.
+colour pair in it drops below its contrast floor. This file follows the
+[DESIGN.md format](https://github.com/google-labs-code/design.md): the YAML
+front matter holds the tokens agents read, mirroring `tokens.json` name for
+name, and `npx @google/design.md@0.4.0 lint DESIGN.md` checks it.
 
 **How to read it.** "Today" means measured in the seven repos on 2026-10-02.
 "Proposed" means a recommendation that nobody has approved yet. Every
 contrast ratio was computed from the hex values (WCAG relative luminance),
 not estimated.
 
-## 1. What exists today: inventory of the seven repos
+## Overview
 
-Inventory made on 2026-10-02 from a shallow clone of each repo's default branch.
+Orange says who we are, Indigo says you can act on this, and green, red
+and amber say what state something is in. The look is plain, dense enough
+for operators who skim, and honest about what is not built yet.
 
-| Repo        | What it ships visually                                                                                          | Colours found                                                    | Logo / favicon                                                                         |
-| ----------- | --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| uFawkes.dev | Jekyll site, hand-written CSS (`assets/css/main.css`)                                                           | Green `#16a34a` (24 occurrences), grays                          | 🔥 emoji as the favicon, no logo                                                       |
-| fawkes      | MkDocs Material docs site; a React design system (`design-system/`, 30+ components, tokens in TypeScript)       | Indigo `#6366f1` primary, teal secondary, amber accent in MkDocs | The phoenix PNG; the README's logo path (`docs/images/fawkes-logo.png`) does not exist |
-| uFawkesDojo | Three hand-written HTML pages (`index.html`, `lesson.html`, `onboarding.html`), served at dojo.ufawkes.dev      | Violet gradient `#667eea` (40 times) to `#764ba2` (12 times)     | None                                                                                   |
-| uFawkesDevX | One hand-written API gateway docs page, "Developer Control Plane - API Gateway" (`gateway/api-docs/index.html`) | `#667eea`, `#764ba2`                                             | None                                                                                   |
-| uFawkesObs  | No site. Grafana dashboards (colours found in `dashboards/platform/dora-overview.json`) and a README            | Amber `#d68b00`, orange-red `#d63902`, green `#1b7f3a` (data)    | None                                                                                   |
-| uFawkesPipe | No site. README only                                                                                            | None                                                             | None                                                                                   |
-| uFawkesAI   | No site. README only                                                                                            | README badge blue `#0a66c2`                                      | None                                                                                   |
+### Names and marks
 
-### What the inventory shows
+**Naming.**
 
-1. **Three unrelated "brand" colours.** The phoenix and the favicon are
-   orange, ufawkes.dev is green, and the Fawkes design system, its docs and
-   the Dojo are indigo or violet. A visitor moving between them sees three
-   products.
-2. **Only one repo has a real token set,** the Fawkes design system
-   (`design-system/src/tokens/`), and it already uses the same neutral and
-   status scales as ufawkes.dev (`#111827`, `#e5e7eb`, `#15803d`, `#b91c1c`).
-   That is a strong base to converge on.
-3. **Orange is already a "warning" colour in the stacks.** Obs thresholds use
-   amber and orange-red, and the Fawkes design system's `warning` is amber
-   (`#f59e0b`). Using the same orange family for the brand risks being read
-   as a status.
-4. **A real accessibility defect in the design system:** white text on its
-   main primary `#6366f1` is 4.47:1, just under AA (4.5:1). Its `600` step,
-   `#4f46e5`, is 6.29:1.
-5. **A name collision.** `uFawkesPipe` and `uFawkesDevX` already have a
-   lowercase `design.md` (engineering design documents). On macOS and Windows,
-   file names are case-insensitive by default, so a root `DESIGN.md` there
-   would collide with it. Other repos should link to this file instead of
-   copying it.
-6. **Most repos have no mark at all,** and the Fawkes README links to a logo
-   that does not exist.
+- Write **Fawkes** for the platform and **uFawkes** for the suite of stacks
+  and the site. Never "UFawkes", "ufawkes" or "U-Fawkes" in prose.
+- Stacks are **uFawkesObs**, **uFawkesPipe**, **uFawkesDevX**,
+  **uFawkesAI** and **uFawkesDojo**. Short forms in navigation and cards are
+  Obs, Pipe, DevX, AI and Dojo.
+- Repository names and commands stay lowercase in code font:
+  `ufawkesobs`, `docker compose up obs`.
 
-## 2. The phoenix and the colours measured from it
+**Marks.**
 
-Source: `paruff/fawkes`, `docs/assets/images/fawkes-idp.png` (1024 x 1024 PNG),
-read from its default branch on 2026-10-02: an orange phoenix with raised
-wings on a dark navy field, with "FAWKES" in a bold geometric sans and
-"INTERNAL DEVELOPER PLATFORM" in spaced capitals.
+| Mark     | Used for                                 | Source                                                                                                                                                                           |
+| -------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Phoenix  | Fawkes: README header, docs, social card | `fawkes-idp.png` today. A vector version is still needed (D2)                                                                                                                    |
+| Flame    | uFawkes: favicon, header, stack cards    | [`design/marks/flame.svg`](design/marks/flame.svg). **Interim**: a simple drawn flame in Flame 500 and 400, made on 2026-10-02 to replace the 🔥 emoji. It is not the final mark |
+| Wordmark | Next to either mark                      | "Fawkes" or "uFawkes" in the heading font, never stretched or recoloured                                                                                                         |
 
-Colours sampled from a 128 px downscale, so treat them as approximate:
+**Rules.**
 
-| Part of the image  | Value     |
-| ------------------ | --------- |
-| Background         | `#061723` |
-| Phoenix, deep      | `#e85800` |
-| Phoenix, body      | `#f06300` |
-| Phoenix, highlight | `#fc8200` |
+- Clear space around a mark equals the height of the "F" in the wordmark.
+- Minimum size: 16px for the flame, 48px for the phoenix. The flame was
+  checked at 16, 32 and 220px on white and on Night.
+- On dark, use the Flame colours on Night. On light, text in orange uses
+  Ember 700.
+- Don't add outlines, gradients the source does not have, shadows or
+  rotation, and don't place a mark on a busy photo.
 
-The lettering in the image is image-generated, not a named font (see D3).
+### Voice
 
-## 3. Colour: two tiers
+- Plain and specific: "3 of 9 acceptance checks pass", not "30% complete".
+- Honest about uncertainty: say "estimate", "not verified", "not built yet".
+- Failures are shown as facts with a link, never softened.
+- Claims are made only for what is in the repo or the release.
+- Calls to action name the outcome and the time: "Run Obs in 60 seconds".
+
+### Imagery
+
+- Marks are vector. No stock photos or generic illustrations.
+- Screenshots show real output, with alt text that says what the screenshot
+  proves. Every image has `alt` text; decorative images use `alt=""`.
+- Social card (Open Graph): Night background, the mark, the page's own title.
+
+## Colors
 
 **Rule.** Orange says _who we are_ and, by owner decision D9, fills the one
 primary button. Indigo says _you can act on this_: links, focus rings,
@@ -135,37 +304,25 @@ Status always carries a symbol and a word as well as colour.
 Warning is amber with a "!" and the word, so it cannot be confused with the
 brand orange.
 
-## 4. Names and marks
+### The phoenix and the colours measured from it
 
-**Naming.**
+Source: `paruff/fawkes`, `docs/assets/images/fawkes-idp.png` (1024 x 1024 PNG),
+read from its default branch on 2026-10-02: an orange phoenix with raised
+wings on a dark navy field, with "FAWKES" in a bold geometric sans and
+"INTERNAL DEVELOPER PLATFORM" in spaced capitals.
 
-- Write **Fawkes** for the platform and **uFawkes** for the suite of stacks
-  and the site. Never "UFawkes", "ufawkes" or "U-Fawkes" in prose.
-- Stacks are **uFawkesObs**, **uFawkesPipe**, **uFawkesDevX**,
-  **uFawkesAI** and **uFawkesDojo**. Short forms in navigation and cards are
-  Obs, Pipe, DevX, AI and Dojo.
-- Repository names and commands stay lowercase in code font:
-  `ufawkesobs`, `docker compose up obs`.
+Colours sampled from a 128 px downscale, so treat them as approximate:
 
-**Marks.**
+| Part of the image  | Value     |
+| ------------------ | --------- |
+| Background         | `#061723` |
+| Phoenix, deep      | `#e85800` |
+| Phoenix, body      | `#f06300` |
+| Phoenix, highlight | `#fc8200` |
 
-| Mark     | Used for                                 | Source                                                                                                                                                                           |
-| -------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Phoenix  | Fawkes: README header, docs, social card | `fawkes-idp.png` today. A vector version is still needed (D2)                                                                                                                    |
-| Flame    | uFawkes: favicon, header, stack cards    | [`design/marks/flame.svg`](design/marks/flame.svg). **Interim**: a simple drawn flame in Flame 500 and 400, made on 2026-10-02 to replace the 🔥 emoji. It is not the final mark |
-| Wordmark | Next to either mark                      | "Fawkes" or "uFawkes" in the heading font, never stretched or recoloured                                                                                                         |
+The lettering in the image is image-generated, not a named font (see D3).
 
-**Rules.**
-
-- Clear space around a mark equals the height of the "F" in the wordmark.
-- Minimum size: 16px for the flame, 48px for the phoenix. The flame was
-  checked at 16, 32 and 220px on white and on Night.
-- On dark, use the Flame colours on Night. On light, text in orange uses
-  Ember 700.
-- Don't add outlines, gradients the source does not have, shadows or
-  rotation, and don't place a mark on a busy photo.
-
-## 5. Typography
+## Typography
 
 **Today.** ufawkes.dev and the Fawkes design system both use the system font
 stack. The design system's tokens name "Inter" as a display font; I searched its
@@ -185,7 +342,7 @@ runtime.
 | Small, meta | 0.875rem                     | 400    | 1.5         |
 | Code        | 0.9em, monospace             | 400    | 1.5         |
 
-## 6. Layout and spacing
+## Layout
 
 - Spacing in multiples of 8px (the Fawkes design system uses a 4px base; its
   steps of 8px and up already line up).
@@ -196,7 +353,16 @@ runtime.
 - Dark mode follows `prefers-color-scheme`, with Night as the page background
   and `#1f2937` for cards.
 
-## 7. Components
+## Shapes
+
+Two radii. 8px (`rounded.md`) for cards, buttons and inputs; 4px
+(`rounded.sm`) for badges and small controls. The one pill (999px) is
+`.status-pill` on /status/. Cards are separated by a 1px `#e5e7eb` border.
+The site also uses light shadows (header, hover cards and the status page,
+for example main.css:50 and :2108); they have no tokens yet, so there is no
+Elevation section.
+
+## Components
 
 | Component        | Rule                                                                                                                                                                             |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -205,33 +371,84 @@ runtime.
 | Links in text    | Indigo 600, underlined, with a visible focus ring                                                                                                                                |
 | Focus ring       | 2px outline, 2px offset: Indigo 600 on light, Indigo 300 on dark                                                                                                                 |
 | Navigation       | Inline above 767px, menu button at or below it. The current page is marked with `aria-current` and a text change                                                                 |
-| Status badge     | Symbol, word and colour pair from section 3                                                                                                                                      |
+| Status badge     | Symbol, word and colour pair from Colors                                                                                                                                         |
 | Progress bar     | 8px track `#e5e7eb`, Indigo 600 fill, and the "3 / 9" text beside it                                                                                                             |
 | Code block       | Subtle background, wraps long commands, never makes the page scroll sideways                                                                                                     |
 | Tables on mobile | Scroll inside their own container or turn into a list. The page itself never scrolls sideways                                                                                    |
 
-## 8. Voice
+### Today in the site CSS (measured 2026-10-24, `assets/css/main.css`)
 
-- Plain and specific: "3 of 9 acceptance checks pass", not "30% complete".
-- Honest about uncertainty: say "estimate", "not verified", "not built yet".
-- Failures are shown as facts with a link, never softened.
-- Claims are made only for what is in the repo or the release.
-- Calls to action name the outcome and the time: "Run Obs in 60 seconds".
+The rules above are the target. The site does not meet them yet; each gap is
+a tracked issue, not a reason to copy the old value.
 
-## 9. Imagery
+| Rule                               | What the CSS has                                                                    |
+| ---------------------------------- | ----------------------------------------------------------------------------------- |
+| Primary button: Flame, Night label | Indigo `#4f46e5` with a white label, hover `#4338ca` (`.cta-button`, main.css:1554) |
+| Green only for pass                | Retired green `#16a34a` in 24 places: text, outlines, borders, badges               |
+| Two breakpoints, 767px and 640px   | Also `max-width: 400px` (main.css:333) and `min-width: 768px`                       |
+| Radii 4px and 8px                  | Also 2px, 6px, 10px and 12px                                                        |
+| Colours from the palette           | Also `#7c3aed`, `#d97706`, `#dc2626`, `#93c5fd` (callout borders, dark-mode links)  |
 
-- Marks are vector. No stock photos or generic illustrations.
-- Screenshots show real output, with alt text that says what the screenshot
-  proves. Every image has `alt` text; decorative images use `alt=""`.
-- Social card (Open Graph): Night background, the mark, the page's own title.
+## Do's and Don'ts
 
-## 10. Accessibility floor
+- Do fill the one primary action per view with Flame 500 and a Night label (D9).
+- Do use Indigo 600 for links, focus rings, secondary buttons and selected items.
+- Do pair every status colour with a symbol and a word ("✓ PASS").
+- Do take every value from the tokens; if a value is missing, add it here and to
+  `design/tokens.json` in the same PR.
+- Do keep text at 4.5:1 and UI shapes and focus rings at 3:1 or better.
+- Don't use orange as text on white (Flame 500 is 3.24:1), as a status, or for links.
+- Don't use `#16a34a`: it fails text contrast (3.30:1).
+- Don't add breakpoints beyond 767px and 640px, web fonts, or gradients
+  the source marks do not have.
+- Don't recolour, outline, stretch or rotate a mark.
+
+## Accessibility
 
 WCAG 2.2 AA is the minimum: contrast as above, keyboard access to every
 control, one `<h1>` per page, status never shown by colour alone, no
 horizontal page scroll at 390px, and `prefers-reduced-motion` respected.
 
-## 11. UX and UI review: proposed answers to D1 to D4
+## Inventory of the seven repos
+
+Inventory made on 2026-10-02 from a shallow clone of each repo's default branch.
+
+| Repo        | What it ships visually                                                                                          | Colours found                                                    | Logo / favicon                                                                         |
+| ----------- | --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| uFawkes.dev | Jekyll site, hand-written CSS (`assets/css/main.css`)                                                           | Green `#16a34a` (24 occurrences), grays                          | 🔥 emoji as the favicon, no logo                                                       |
+| fawkes      | MkDocs Material docs site; a React design system (`design-system/`, 30+ components, tokens in TypeScript)       | Indigo `#6366f1` primary, teal secondary, amber accent in MkDocs | The phoenix PNG; the README's logo path (`docs/images/fawkes-logo.png`) does not exist |
+| uFawkesDojo | Three hand-written HTML pages (`index.html`, `lesson.html`, `onboarding.html`), served at dojo.ufawkes.dev      | Violet gradient `#667eea` (40 times) to `#764ba2` (12 times)     | None                                                                                   |
+| uFawkesDevX | One hand-written API gateway docs page, "Developer Control Plane - API Gateway" (`gateway/api-docs/index.html`) | `#667eea`, `#764ba2`                                             | None                                                                                   |
+| uFawkesObs  | No site. Grafana dashboards (colours found in `dashboards/platform/dora-overview.json`) and a README            | Amber `#d68b00`, orange-red `#d63902`, green `#1b7f3a` (data)    | None                                                                                   |
+| uFawkesPipe | No site. README only                                                                                            | None                                                             | None                                                                                   |
+| uFawkesAI   | No site. README only                                                                                            | README badge blue `#0a66c2`                                      | None                                                                                   |
+
+### What the inventory shows
+
+1. **Three unrelated "brand" colours.** The phoenix and the favicon are
+   orange, ufawkes.dev is green, and the Fawkes design system, its docs and
+   the Dojo are indigo or violet. A visitor moving between them sees three
+   products.
+2. **Only one repo has a real token set,** the Fawkes design system
+   (`design-system/src/tokens/`), and it already uses the same neutral and
+   status scales as ufawkes.dev (`#111827`, `#e5e7eb`, `#15803d`, `#b91c1c`).
+   That is a strong base to converge on.
+3. **Orange is already a "warning" colour in the stacks.** Obs thresholds use
+   amber and orange-red, and the Fawkes design system's `warning` is amber
+   (`#f59e0b`). Using the same orange family for the brand risks being read
+   as a status.
+4. **A real accessibility defect in the design system:** white text on its
+   main primary `#6366f1` is 4.47:1, just under AA (4.5:1). Its `600` step,
+   `#4f46e5`, is 6.29:1.
+5. **A name collision.** `uFawkesPipe` and `uFawkesDevX` already have a
+   lowercase `design.md` (engineering design documents). On macOS and Windows,
+   file names are case-insensitive by default, so a root `DESIGN.md` there
+   would collide with it. Other repos should link to this file instead of
+   copying it.
+6. **Most repos have no mark at all,** and the Fawkes README links to a logo
+   that does not exist.
+
+## Design review and decisions
 
 This section is a design review written for an owner who is not a
 designer. **It is a recommendation, not an approval.** Where something is
@@ -274,7 +491,7 @@ research:
 
 **Recommendation: use both, with different jobs.** Orange is the identity
 (marks, favicon, hero), and indigo is the action colour (buttons, links,
-focus). Green is only for "pass". See section 3.
+focus). Green is only for "pass". See Colors.
 
 Why not one colour for everything:
 
@@ -328,8 +545,10 @@ ChatGPT, about a year ago.** That changes the question.
   `design/marks/` (the marks), all published under `https://ufawkes.dev/design/`.
 - The Fawkes design system keeps its TypeScript tokens for now. Later it
   should generate them from `tokens.json`, so there is only one source.
-- Other repos link here from their README and `AGENTS.md` and do not copy the
-  file (see the name collision in section 1).
+- Repos with no UI of their own (uFawkesObs, uFawkesPipe, uFawkesAI) link
+  here from their `AGENTS.md`. Repos with UI (fawkes, uFawkesDojo,
+  uFawkesDevX) keep a short `DESIGN.md` of their own in the same format,
+  using these tokens (D11).
 
 ### Decisions recorded (2026-10-02)
 
@@ -357,28 +576,38 @@ the amber used for warnings, links and focus rings stay Indigo, and orange
 never appears as text or as a status. If users read the button as a warning,
 revisit it.
 
+### Decisions recorded (2026-10-24)
+
+| #   | Decision                                                          | Outcome                                                                                                  |
+| --- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| D11 | Which repos carry a `DESIGN.md`?                                  | **This one, plus fawkes, uFawkesDojo and uFawkesDevX** (owner). Obs, Pipe and AI link here               |
+| D12 | Follow the official DESIGN.md format?                             | **Yes** (owner). Front matter tokens plus the spec's section order; the other sections stay as they were |
+| D13 | Primary button stays Flame (D9) though the CSS is Indigo?         | **Yes** (owner). The CSS gap is an issue, not a change to this file                                      |
+| D14 | Does D9 (Flame primary button) apply to the Fawkes design system? | **Yes** (owner). `Button.css` and its default-primary test change in a fawkes PR                         |
+| D15 | Do uFawkesDojo and the DevX API page move to these tokens?        | **Yes** (owner). The violet gradient goes; tracked as an issue in each repo                              |
+
 ### Still open
 
 - Nothing from the colour questions. D1's text above is kept as the record of
   the reasoning, with D9 as the outcome for buttons.
 
-## 12. Implementing this
+## Implementing this
 
 The site's CSS rules still apply: vanilla CSS in `assets/css/main.css`,
 append-only, BEM names, hex values (no CSS variables until the token
 migration). Order, one small PR each:
 
 1. **This PR:** tokens, the interim flame, the contrast check and this guide.
-2. **ufawkes.dev:** buttons, links, focus and nav to Indigo, the flame as
-   favicon and header mark, green only for pass/live. `main.css` contains 24
-   occurrences of the old green.
+2. **ufawkes.dev:** primary button to Flame with a Night label (D9); links,
+   focus and nav to Indigo; the flame as favicon and header mark; green only
+   for pass/live. See "Today in the site CSS" under Components.
 3. **Pointer PRs** in the other six repos (D7 approved).
 4. **Repos with their own CSS:** Dojo and the DevX API page move from the
    violet gradient to the tokens; the Fawkes design system adopts the
    corrected primary and generates its tokens from `tokens.json`.
 5. **Open Graph card and the final marks** (D2).
 
-## 13. Provenance
+## Provenance
 
 - Inventory: shallow clones of the default branch of each repo, 2026-10-02.
   File and colour counts come from searching those clones, so they cover
