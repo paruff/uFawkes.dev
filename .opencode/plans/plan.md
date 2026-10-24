@@ -4,111 +4,21 @@
 
 ---
 
-## Issue status tracker
+## Status lives on Project #7
 
-### PR 1 — Trust & conversion (index.md)
+This file is no longer a tracker. What is next, and what waits on a human, is
+on [Project #7](https://github.com/users/paruff/projects/7): run the two
+commands in `AGENTS.md` §8. The old PR tables (PR 1 to PR 7) are in git
+history; the rows still open on 2026-10-24 map as follows.
 
-| #   | Issue                                                                                 | Status  | Notes                                       |
-| --- | ------------------------------------------------------------------------------------- | ------- | ------------------------------------------- |
-| 1   | Fix double H1 — change `# uFawkes` to `<span class="sr-only">uFawkes</span>`          | ✅ Done | index.md line 1 after front matter          |
-| 2   | Move email form below fold; add `## Try it now` docker compose CTA above Stack Family | ✅ Done | index.md structural reorder                 |
-| 3   | Remove `## Social proof` zero-star badges; replace with maintainer bio line           | ✅ Done | index.md                                    |
-| 4   | Fix raw badge alt text in Stack Family headings                                       | ✅ Done | index.md — replace with plain `/obs/` paths |
-| 5   | Add Fawkes Dojo callout div between Stack Family and DORA AI Capabilities             | ✅ Done | index.md + assets/css/main.css              |
-| 9   | Replace 5× "GitHub repo coming soon" with single consolidated notice + notify link    | ✅ Done | index.md — Stack Family section             |
-| 10  | Add visible primary CTA button above the fold ("See the stacks ↓")                    | ✅ Done | index.md + assets/css/main.css              |
-| 11  | Rename "Posts" section → "From the blog"                                              | ✅ Done | index.md                                    |
-| 12  | DORA AI Capabilities — add one-sentence description to each of 7 items                | ✅ Done | index.md                                    |
+| Old row                                        | Now                                                                   |
+| ---------------------------------------------- | --------------------------------------------------------------------- |
+| PR 4 sprint 6: screenshots and trust signals   | #66 (closed)                                                          |
+| PR 7 G1 to G7: GitOps templates and migration  | #12 (closed); the standard is `docs/ai-sdlc/suite-hygiene/`           |
+| PR 7 G8: opencode GitOps agent                 | #64 (open)                                                            |
+| PR 5 D to I: local agent, skill and MCP setup  | No issue yet: local OpenCode setup, open one if it is still wanted    |
 
-### PR 2 — Content quality (stack pages + learn guides)
-
-| #   | Issue                                                                                                                     | Status  | Notes                                                      |
-| --- | ------------------------------------------------------------------------------------------------------------------------- | ------- | ---------------------------------------------------------- |
-| 6   | Remove `## Screenshot placeholder` text from all five stack pages                                                         | ✅ Done | obs/ pipe/ dora/ sec/ devx/ index.md — one file per commit |
-| 7   | Add `read_time` + `next_guide_url/title` to learn guides; create `_includes/guide-meta.html`; fix cross-link URL patterns | ✅ Done | learn/\*.html + new include                                |
-| 8   | Fix per-page `description` meta on all stack pages (currently shows global tagline)                                       | ✅ Done | obs/ pipe/ dora/ sec/ devx/ front matter                   |
-
-### PR 3 — Design system — Sprint 3 (dark mode fixes) complete
-
-| #   | Issue                                                                                                                      | Status  | Notes               |
-| --- | -------------------------------------------------------------------------------------------------------------------------- | ------- | ------------------- |
-| S1  | Sprint 3: Fix broken dark-mode nesting, add cta-button--secondary light mode, dojo-callout dark mode, guide-meta dark link | ✅ Done | assets/css/main.css |
-| S2  | Sprint 3: Fix DORA badge from live→coming-soon                                                                             | ✅ Done | dora/index.md       |
-| S3  | Sprint 3: Navigation redesign — larger hit area, hover/focus states                                                        | ✅ Done | assets/css/main.css |
-
-### PR 4 — Design System: Foundation, Components & Content (see `pr4-plan.md` for full audit + sprint breakdown)
-
-6 sprints covering 28 issues (3 P0, 6 P1, 12 P2, 7 P3).
-
-| Sprint | Theme                                             | Issues                       | Key files                                                                       |
-| ------ | ------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------------- |
-| 1      | Foundation: typography, borders, 3 P0 fixes       | P0a-c, P2a, P2f, P2j, P2b    | ✅ Done — `_layouts/home.html`, `_layouts/default.html`, `index.md`, `main.css` |
-| 2      | Component styling: cards, code, badges, focus     | P2c, P2d, P2e, P1f, P2k, P3e | ✅ Done — `main.css`                                                            |
-| 3      | Navigation: breadcrumbs, favicon, 404, nav polish | P1d, P1e, P2h, P2i, P3b, P3f | ✅ Done — `404.html`, `_includes/breadcrumbs.html`, `main.css`, `header.html`   |
-| 4      | Content: blog expansion, DORA mapping             | P1b, P2g, P3a, P3d           | ✅ Done — `_posts/*.md`, `index.md`, `main.css`                                 |
-| 5      | Dark mode polish, stack differentiation           | P2l, P3c, P3g                | ✅ Done — `main.css`, `_layouts/stack.html`, all stack `index.md`               |
-| 6      | Screenshots & trust signals                       | P1a, P2                      | Stack pages + `assets/images/`                                                  |
-
-### PR 7 — GitOps Migration (all repos)
-
-| #   | Issue                                                        | Status         | Notes                                                         |
-| --- | ------------------------------------------------------------ | -------------- | ------------------------------------------------------------- |
-| G1  | Create `.gitops-templates/` in fawkes                        | 🔄 In progress | pre-commit, ci.yml, dependabot, CODEOWNERS, Makefile, configs |
-| G2  | Initialize uFawkesDORA, uFawkesSec, uFawkesDevX with GitOps  | ⬜ Not started | Fresh repos — GitOps from day 1                               |
-| G3  | Migrate uFawkesObs — add pre-commit, CODEOWNERS, dependabot  | ⬜ Not started | Keep existing 10 workflows                                    |
-| G4  | Migrate uFawkesPipe — rename ci.yml → lint, add GitOps       | ⬜ Not started | Rename existing workflow descriptively                        |
-| G5  | Migrate uFawkesAI — add pre-commit, CODEOWNERS               | ⬜ Not started | Keep existing 5 workflows                                     |
-| G6  | Migrate uFawkes.dev — add pre-commit, CODEOWNERS, dependabot | ⬜ Not started | Keep existing 3 workflows                                     |
-| G7  | Apply branch protection Rulesets (all 8 repos)               | ⬜ Not started | PR required, status check `Validate`                          |
-| G8  | Create opencode GitOps agent + update AGENTS.md              | ⬜ Not started | Enforce branch → validate → PR workflow                       |
-
-### PR 5 — Agent & skill infrastructure (can run parallel)
-
-| #   | Issue                                                                            | Status         | Notes                                |
-| --- | -------------------------------------------------------------------------------- | -------------- | ------------------------------------ |
-| D   | Run consolidate-agents.sh — migrate agents to ~/.config/opencode/agents/         | ⬜ Not started | Repo root → run script               |
-| E   | Install 12 consolidated skills to ~/.config/opencode/skills/                     | ⬜ Not started | Run script — verify report           |
-| F   | Verify opencode.json written correctly — deny tailwind-tokens + astro-components | ⬜ Not started | .opencode/opencode.json              |
-| G   | Delete old .opencode/agents/ and .opencode/skills/ after verification            | ⬜ Not started | Only after D+E confirmed working     |
-| H   | Add playwright MCP — test UX agent screenshot of live site                       | ⬜ Not started | Requires Node + npx                  |
-| I   | Add GitHub MCP — test planning agent creating a test issue                       | ⬜ Not started | Requires GitHub Copilot subscription |
-
-### PR 6 — Product Suite Roadmap & Research Integration
-
-| #   | Issue                                                            | Status  | Notes                                              |
-| --- | ---------------------------------------------------------------- | ------- | -------------------------------------------------- |
-| R1  | Create `fawkes/ROADMAP.md` — comprehensive product suite roadmap | ✅ Done | `.opencode/plans/roadmap.md` (ready to move)       |
-| R2  | Create `uFawkesDORA` repo with description, topics               | ✅ Done | GitHub repo created, 8 topics added                |
-| R3  | Create `uFawkesSec` repo with description, topics                | ✅ Done | GitHub repo created, 7 topics added                |
-| R4  | Fix `uFawkesObs` — add description, topics                       | ✅ Done | Description + 8 topics added                       |
-| R5  | Fix `uFawkesDevX` — add description, topics                      | ✅ Done | Description + 7 topics added                       |
-| R6  | Update homepage — correct 7 DORA AI Capabilities from research   | ✅ Done | index.md updated with research-backed capabilities |
-| R7  | Update homepage — research citations section                     | ✅ Done | Added DORA, CNCF, SPACE research links             |
-| R8  | Update stack pages — live badges for DORA/Sec/DevX               | ✅ Done | All stack pages show "Live" badges                 |
-| R9  | Update stack pages — real GitHub repo URLs                       | ✅ Done | All stack pages link to real repos                 |
-| R10 | Add "Roadmap" link to navigation                                 | ✅ Done | \_data/navigation.yml updated                      |
-| R11 | Add research section CSS                                         | ✅ Done | assets/css/main.css updated                        |
-| R12 | Add cross-repo README links                                      | ✅ Done | All 7 repos + fawkes updated                       |
-
----
-
-## Handoff
-
-Suite release work is tracked in `docs/ai-sdlc/suite-release/plan.md` (Status
-section) and on [Project #7](https://github.com/users/paruff/projects/7); this
-file only tracks site PRs. `docs/roadmap.md` is retired (a pointer).
-
-```
-[x] Last completed: suite status sweep + plan Revision 4 (2026-10-17)
-[x] Shipped since 10-08: uFawkesAI v2.0.0, uFawkesObs v1.0.0, uFawkesDojo 0.2.0, uFawkes.dev v1.2.0
-[ ] Next release: Obs 1.0 -> finish as v1.0.1 (uFawkesObs#670, #671, AC-OBS-01, #600)
-[ ] Then: Pipe v2.0.0 (#122 decision first), DevX first verified stable (AC-DEVX-01)
-[ ] Blockers: fawkes P0 security (fawkes#2004, #1797) hold AC-FAWKES-03
-[ ] Site follow-ups: suite mode numbers (#70), opencode GitOps agent (#64)
-[ ] Status page: make status (local) / deploy.yml (daily) -> /status/
-[ ] Stale tables above: PR 5 and PR 7 rows predate the suite plan; superseded by
-    docs/ai-sdlc/suite-hygiene/ and Project #7, not re-verified row by row
-```
+## History
 
 ### Branch cleanup — 2026-10-08 (all seven repos)
 
@@ -127,4 +37,4 @@ file only tracks site PRs. `docs/roadmap.md` is retired (a pointer).
 
 ---
 
-_Last updated: 2026-10-17_
+_Last updated: 2026-10-24_

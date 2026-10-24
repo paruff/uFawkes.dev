@@ -26,7 +26,7 @@ Generator : Jekyll 4.4.1 (GitHub Pages whitelist)
 Theme     : minima (overridden via _layouts/, _includes/)
 Plugins   : jekyll-feed only — NO others
 CSS       : Vanilla CSS in assets/css/main.css (BEM naming, append-only)
-JS        : Vanilla JS only — assets/js/nav.js — NO npm/webpack/bundler
+JS        : Vanilla JS only — assets/js/status.js — NO npm/webpack/bundler
 Templating: Liquid (Jekyll-flavored) — whitelisted filters only
 Deployment: GitHub Pages from main root — no build step needed locally
 Commands  : make serve  →  bundle exec jekyll serve --livereload
@@ -62,10 +62,27 @@ server-side logic.
 
 ---
 
-## 8. Issue status tracker
+## 8. Workflow: board, gates, review
 
-See `.opencode/plans/plan.md` — issue tracker, priorities, and handoff state live there.
-The planning agent (`@planning`) reads and updates this file.
+- UI changes: read DESIGN.md first (tokens, components, do and don't)
+- Reviewing a PR: apply REVIEW.md (what is Important, verification, validation, security)
+
+Status lives only on [Project #7](https://github.com/users/paruff/projects/7):
+no status labels, no ✅ in plans. Routing labels say who does the work, not its
+state. Work traces to `docs/ai-sdlc/<feature>/` intent → spec → plan; plans link
+issues, never list tasks. Statuses, Gate, lifecycle and owner decisions:
+[the board rules](https://github.com/paruff/uFawkes.dev/blob/main/docs/ai-sdlc/suite-release/plan.md#the-board-statuses-gates-and-moves).
+
+```bash
+# 1. Next item for an agent (label: the routing label you run as, claude-code or opencode)
+gh project item-list 7 --owner paruff --limit 300 --query 'status:"Ready for agent" is:open label:opencode' \
+  --format json --jq '.items | sort_by(.priority // "P9", .content.number) | .[:1][] | "\(.content.repository)#\(.content.number) \(.title)"'
+# 2. Waiting on a human, and which gate each waits on
+gh project item-list 7 --owner paruff --limit 300 --query 'status:"Needs human" is:open' \
+  --format json --jq '.items[] | "\(.gate // "-")\t\(.content.repository)#\(.content.number) \(.title)"'
+# Move: "In Progress" before you start; "Needs human" plus Gate "PR review" when the PR is up
+gh project item-edit 7 --owner paruff --url <issue url> --field Status --value "In Progress"
+```
 
 ---
 

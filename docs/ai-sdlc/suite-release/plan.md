@@ -144,6 +144,51 @@ Docker Desktop host (4 vCPU, 8 GB).
   indicators where the repo emits them: intent-to-merge time, first-pass CI
   success rate, and eval pass rate.
 
+### The board: statuses, gates and moves
+
+Every suite repo's `AGENTS.md` links here and holds the two board commands.
+
+| Status          | Means                                                                                  | Moved here by                           |
+| --------------- | -------------------------------------------------------------------------------------- | --------------------------------------- |
+| Backlog         | Not ready, or its release is gated                                                     | "Item added" workflow; anyone           |
+| Ready for agent | Has a routing label, a plan link and an exit criterion, and its release is not Blocked | Owner, or Claude Code on a `goal`       |
+| In Progress     | Claimed. Move it here **before** starting, so no one else picks it                     | Whoever starts it                       |
+| Needs human     | Waits on the owner: a decision, a PR to review and merge, or work only a human can do  | The agent, when it asks or opens the PR |
+| Blocked         | Can't move until something named in the issue happens                                  | Anyone, with a comment naming it        |
+| Done            | Closed or merged                                                                       | Built-in workflows                      |
+
+`In Progress` and `Done` keep these exact names: `scripts/suite-status.sh`
+matches them.
+
+**Gate** says which approval a _Needs human_ item waits on. Read it only with
+that status. No Gate means work only a human can do (real secrets, a live host).
+
+| Gate          | The owner is asked to                                       |
+| ------------- | ----------------------------------------------------------- |
+| intent        | Approve `docs/ai-sdlc/<feature>/intent.md`                  |
+| spec          | Approve the spec and its acceptance criteria                |
+| plan          | Approve the plan, or answer a `Decision:` question          |
+| PR review     | Review the PR against `REVIEW.md`                           |
+| merge/release | Merge, or tag the release once its acceptance criteria pass |
+
+**Lifecycle.** Pick with command 1 in `AGENTS.md`, or the owner points you at
+an issue. Move it to _In Progress_, then branch. The PR body says
+`Closes #<n>` and pastes the checks named in the repo's `REVIEW.md`; then move
+the issue to _Needs human_ with Gate _PR review_. Changes requested: back to
+_In Progress_. Stuck: _Blocked_, with a comment naming the blocker. The owner
+merges; the issue closes and the board sets _Done_.
+
+**Decisions for the owner.** A question only the owner can answer is an issue:
+title `Decision: …`, label `question`, assigned to `paruff`, the "Decision for
+the owner" template, then _Needs human_ with the gate it holds. The owner
+answers in the issue and closes it. Whoever applies the answer records it
+where it belongs (intent, spec, plan, `DESIGN.md`) with a link to the issue.
+Docs keep no question lists.
+
+**Copilot.** It reads `AGENTS.md`, so it can run the commands above, but it
+can't move items on this private board. Whoever assigns an issue to `@copilot`
+moves it to _In Progress_; its PR shows up in the owner's queue.
+
 ## Conventions reused from uFawkesAI (linked, not copied)
 
 uFawkesAI is the template every repo is built from, so its process docs
