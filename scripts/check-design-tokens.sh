@@ -7,7 +7,12 @@
 # computes the ratio from relative luminance, and fails if any pair is below its
 # minimum, if a path does not resolve, or if a value is not a #rrggbb colour.
 #
-# Usage: scripts/check-design-tokens.sh [tokens.json]
+# Then every literal colour in DESIGN.md's front matter must equal the
+# tokens.json colour of the same name (flame-500 -> color.flame.500), so the
+# two copies of the palette cannot drift. Checked for the real tokens.json, or
+# when a DESIGN.md path is given.
+#
+# Usage: scripts/check-design-tokens.sh [tokens.json] [DESIGN.md]
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -17,6 +22,8 @@ FILE="${1:-design/tokens.json}"
   echo "check-design-tokens: $FILE not found" >&2
   exit 1
 }
+MD="${2:-}"
+if [[ -z "$MD" && "$FILE" == "design/tokens.json" ]]; then MD=DESIGN.md; fi
 
 python3 - "$FILE" << 'PY'
 import json, re, sys
@@ -76,4 +83,35 @@ for pair in pairs:
 if failures:
     sys.exit("check-design-tokens: %d pair(s) below the floor" % failures)
 print("check-design-tokens: %d pairs meet their floor." % len(pairs))
+PY
+
+[[ -n "$MD" ]] || exit 0
+[[ -f "$MD" ]] || {
+  echo "check-design-tokens: $MD not found" >&2
+  exit 1
+}
+
+python3 - "$FILE" "$MD" << 'PY'
+import json, re, sys
+
+colors = json.load(open(sys.argv[1]))["color"]
+front = open(sys.argv[2]).read().split("\n---\n", 1)[0]
+found = re.findall(r'^  ([a-z]+(?:-\d+)?): "(#[0-9a-fA-F]{6})"', front, re.M)
+if not found:
+    sys.exit("check-design-tokens: no colours in %s front matter" % sys.argv[2])
+
+drift = 0
+for name, value in found:
+    base, _, step = name.partition("-")
+    # white is the one literal DESIGN.md names that tokens.json keeps only as a surface value.
+    want = "#ffffff" if name == "white" else colors.get(base)
+    if isinstance(want, dict):
+        want = want.get(step)
+    if (want or "").lower() != value.lower():
+        print("  FAIL colors.%s is %s in %s, %s in tokens.json" % (name, value, sys.argv[2], want))
+        drift += 1
+
+if drift:
+    sys.exit("check-design-tokens: %d DESIGN.md colour(s) differ from tokens.json" % drift)
+print("check-design-tokens: %d DESIGN.md colours match tokens.json." % len(found))
 PY
