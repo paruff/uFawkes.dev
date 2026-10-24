@@ -280,7 +280,7 @@ claude --model claude-sonnet-4-6
 
 ### GitHub Copilot Coding Agent
 
-Governed by `.copilotinstructions.md`. Assign GitHub issues directly from the Issues UI.
+Reads `AGENTS.md` (natively, and through the `.github/copilot-instructions.md` symlink). Assign GitHub issues directly from the Issues UI.
 
 ### Gemini CLI
 
