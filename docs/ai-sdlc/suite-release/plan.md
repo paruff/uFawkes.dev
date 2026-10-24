@@ -161,7 +161,7 @@ Every suite repo's `AGENTS.md` links here and holds the two board commands.
 matches them.
 
 **Gate** says which approval a _Needs human_ item waits on. Read it only with
-that status.
+that status. No Gate means work only a human can do (real secrets, a live host).
 
 | Gate          | The owner is asked to                                       |
 | ------------- | ----------------------------------------------------------- |
