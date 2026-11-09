@@ -18,7 +18,7 @@ for repo in "${REPOS[@]}"; do
     bad=1
   # A digest pins, with or without a version tag in front (:2.2.0@sha256:...).
   elif ! grep -qE 'fawkes-space(:[0-9][^@"]*)?@sha256:|fawkes-space:2\.0\.0' <<< "$body"; then
-    echo "$repo: does not pin fawkes-space to 2.0.0 or a digest"
+    echo "$repo: does not pin fawkes-space to 2.0.0 or by digest (e.g. :2.2.0@sha256:...)"
     bad=1
   fi
 done

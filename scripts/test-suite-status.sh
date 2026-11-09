@@ -188,19 +188,9 @@ cat > "$TMP/items-shipped.json" << 'JSON'
 JSON
 STATUS_ACS="$TMP/acs-shipped.yml" STATUS_ITEMS_FILE="$TMP/items-shipped.json" \
   STATUS_OUT="$TMP/out-shipped.json" STATUS_NOW=2026-10-02T06:00:00Z bash scripts/suite-status.sh > /dev/null
-sh_ev() { jq -e --arg id "$1" --arg st "$2" '[.releases[].ac_results[]] | map(select(.id==$id))[0].status==$st' "$TMP/out-shipped.json" > /dev/null; }
-sh_ev AC-S-01 pass && echo "  ok   old evidence passes once every goal of its release is closed" || {
-  echo "  FAIL old evidence of a shipped release should pass"
-  fails=$((fails + 1))
-}
-sh_ev AC-S-02 stale && echo "  ok   one open goal keeps the release unshipped, so old evidence is stale" || {
-  echo "  FAIL a release with an open goal is not shipped"
-  fails=$((fails + 1))
-}
-sh_ev AC-S-03 stale && echo "  ok   a dead link stays stale even after the release ships" || {
-  echo "  FAIL a dead link is stale whatever the release"
-  fails=$((fails + 1))
-}
+check "old evidence passes once every goal of its release is closed" '[.releases[].ac_results[]] | map(select(.id=="AC-S-01"))[0].status=="pass"' "$TMP/out-shipped.json"
+check "one open goal keeps the release unshipped, so old evidence is stale" '[.releases[].ac_results[]] | map(select(.id=="AC-S-02"))[0].status=="stale"' "$TMP/out-shipped.json"
+check "a dead link stays stale even after the release ships" '[.releases[].ac_results[]] | map(select(.id=="AC-S-03"))[0].status=="stale"' "$TMP/out-shipped.json"
 check "manual without evidence is pending" '.releases[1].ac_results[0].status=="manual"' "$TMP/out.json"
 check "next release is the first not fully passing" '.next_release=="Alpha"' "$TMP/out.json"
 
@@ -334,7 +324,7 @@ done
 bash scripts/checks/ac-ai-05.sh > /dev/null && ok "AC-AI-05 accepts a version tag plus digest" || bad "AC-AI-05 should accept :2.2.0@sha256:"
 printf '{"image": "ghcr.io/paruff/fawkes-space:2.2.0"}\n' > "$RAW/fawkes/main/.devcontainer/devcontainer.json"
 out="$(bash scripts/checks/ac-ai-05.sh 2>&1)" && bad "AC-AI-05 should fail on a bare version tag" \
-  || { grep -q "fawkes: does not pin" <<< "$out" && ok "AC-AI-05 rejects a version tag with no digest"; }
+  || { grep -q "fawkes: does not pin" <<< "$out" && ok "AC-AI-05 rejects a version tag with no digest" || bad "AC-AI-05 failed for the wrong reason: $out"; }
 unset CHECK_RAW_BASE
 mkdir -p "$TMP/dojo/modules"
 printf 'Module 5 uses Jenkins for CI.\nFour key metrics are tracked.\n[VIDEO PLACEHOLDER]\n' > "$TMP/dojo/modules/m5.md"
