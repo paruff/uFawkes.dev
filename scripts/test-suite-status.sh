@@ -180,6 +180,45 @@ check "pace hidden with too little data" '.releases[1].pace.weeks_to_done_estima
 check "ready list only on next release (Dojo 0.2 here)" '(.releases[1].ready | length) == 1 and (.releases[0] | has("ready") | not)' "$TMP/out2.json"
 check "burn-up ends at now with totals" '.burnup[-1] == {"date":"2026-10-02","done":3,"total":6}' "$TMP/out2.json"
 
+# A shipped release (every goal: issue for it closed) keeps evidence that only aged
+# out; broken evidence, and releases with an open goal, still read stale.
+echo "Shipped releases:"
+cat > "$TMP/ship-items.json" << 'JSON'
+[
+  {"release":"Shipped","status":"Done","number":1,"title":"goal: release Shipped","state":"CLOSED","url":"u/1","repo":"a","createdAt":"2026-07-01T00:00:00Z","closedAt":"2026-08-02T00:00:00Z","assigned":false,"labels":["goal"],"merged_prs":[]},
+  {"release":"Reopened","status":"Done","number":2,"title":"goal: old beta","state":"CLOSED","url":"u/2","repo":"a","createdAt":"2026-07-01T00:00:00Z","closedAt":"2026-08-02T00:00:00Z","assigned":false,"labels":["goal"],"merged_prs":[]},
+  {"release":"Reopened","status":"Backlog","number":3,"title":"goal: verify stable","state":"OPEN","url":"u/3","repo":"a","createdAt":"2026-09-01T00:00:00Z","closedAt":null,"assigned":false,"labels":["goal"],"merged_prs":[]}
+]
+JSON
+cat > "$TMP/acs-ship.yml" << 'YML'
+- id: AC-S-01
+  release: Shipped
+  title: Old evidence, shipped release
+  check: manual
+  run: ""
+  evidence: https://github.com/o/r/pull/102
+- id: AC-S-02
+  release: Shipped
+  title: Dead evidence, shipped release
+  check: manual
+  run: ""
+  evidence: https://dead.example/y
+  evidence_date: 2026-08-01
+- id: AC-S-03
+  release: Reopened
+  title: Old evidence, a goal still open
+  check: manual
+  run: ""
+  evidence: https://github.com/o/r/pull/102
+YML
+STATUS_ACS="$TMP/acs-ship.yml" STATUS_ITEMS_FILE="$TMP/ship-items.json" \
+  STATUS_OUT="$TMP/out-ship.json" STATUS_NOW=2026-10-02T06:00:00Z bash scripts/suite-status.sh > /dev/null
+sh_ac() { printf '[.releases[].ac_results[] | select(.id=="%s")][0]' "$1"; }
+check "old evidence on a shipped release passes, marked shipped" "$(sh_ac AC-S-01) | .status==\"pass\" and (.detail|test(\"shipped\"))" "$TMP/out-ship.json"
+check "dead evidence on a shipped release is still stale" "$(sh_ac AC-S-02) | .status==\"stale\"" "$TMP/out-ship.json"
+check "a release with any open goal: issue is not shipped" "$(sh_ac AC-S-03) | .status==\"stale\"" "$TMP/out-ship.json"
+check "shipped release counts: 1 pass, 1 stale (the dead link)" '.releases[0].acs | .pass==1 and .stale==1' "$TMP/out-ship.json"
+
 # Board drift: the board says Done but GitHub says open (and the reverse), and
 # open blocker/security issues the board has never seen.
 echo "Board drift:"

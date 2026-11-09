@@ -108,6 +108,11 @@ fi
 # The checks that look at the board (AC-SUITE-02, AC-OBS-02) read this file, so
 # they and the dashboard always see the same data.
 export STATUS_ITEMS_JSON="$WORK/items.json"
+# A release has shipped when it has goal: issues on the board and all are closed.
+# Its manual evidence then keeps passing after it ages out (plan: a suite release
+# is the first version that passes its checks; re-proving it monthly adds nothing).
+SHIPPED="$(jq -r '[.[] | select(.title | test("^goal:"))] | group_by(.release)
+  | map(select(all(.state == "CLOSED")) | .[0].release) | .[]' "$WORK/items.json")"
 
 # --- 1c. open issues in the suite repos (for the board-coverage flag) -------
 # The board only knows the issues on it, so an open release-blocker or security
@@ -138,6 +143,7 @@ age_days() {
 judge_evidence() {
   local ev="$1" evdate="$2" date="" code="" json="" kind="" path="" field=""
   EV_AGE=""
+  EV_EXPIRED=""
   if [[ ! "$ev" =~ ^https?:// ]]; then
     EV_STATUS="manual"
     EV_DETAIL="evidence pending"
@@ -186,6 +192,7 @@ judge_evidence() {
     EV_DETAIL="unreadable evidence date '$date': $ev"
   elif ((EV_AGE > STALE_DAYS)); then
     EV_STATUS="stale"
+    EV_EXPIRED=1
     EV_DETAIL="evidence is $EV_AGE $unit old (limit $STALE_DAYS): $ev"
   else
     EV_STATUS="pass"
@@ -205,6 +212,10 @@ for ((i = 0; i < n; i++)); do
     status="$EV_STATUS"
     detail="$EV_DETAIL"
     age="$EV_AGE"
+    if [[ -n "$EV_EXPIRED" ]] && grep -Fxq "$(jq -r .release <<< "$ac")" <<< "$SHIPPED"; then
+      status="pass"
+      detail="shipped (release goal closed); $detail"
+    fi
   elif [[ -n "${STATUS_SKIP_CHECKS:-}" ]]; then
     status="fail"
     detail="skipped"
