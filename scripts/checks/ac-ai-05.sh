@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# AC-AI-05: no suite repo's devcontainer uses fawkes-space:latest.
+# AC-AI-05: no suite repo's devcontainer uses fawkes-space:latest. A pin is any
+# tag with a digest (fawkes-space:2.2.0@sha256:...), a bare digest, or :2.0.0.
 set -euo pipefail
 
 REPOS=(uFawkesAI uFawkesObs uFawkesPipe uFawkesDevX uFawkesDojo fawkes uFawkes.dev)
@@ -14,8 +15,8 @@ for repo in "${REPOS[@]}"; do
   if grep -q 'fawkes-space:latest' <<< "$body"; then
     echo "$repo: still uses :latest"
     bad=1
-  elif ! grep -qE 'fawkes-space(:2\.0\.0|@sha256:)' <<< "$body"; then
-    echo "$repo: does not pin fawkes-space to 2.0.0 or a digest"
+  elif ! grep -qE 'fawkes-space(:[^"@[:space:]]+)?@sha256:|fawkes-space:2\.0\.0' <<< "$body"; then
+    echo "$repo: does not pin fawkes-space (a digest, or :2.0.0)"
     bad=1
   fi
 done
