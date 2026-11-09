@@ -280,7 +280,9 @@ Rolling, tracked under the `Dojo labs` release (moved off `Dojo 0.2` on
 - **Expected:** Dojo `0.3`–`0.6` each add the lab for the stack released
   alongside it, pinned to that tag (`git clone --branch vX.Y.Z`). The
   stack's announcement links to it. Each lab follows uFawkesAI's
-  [`dojo-handoff.md`](https://github.com/paruff/uFawkesAI/blob/main/docs/ai-sdlc/dojo-handoff.md) mapping: one exercise step per
+  [`dojo-handoff.md`](https://github.com/paruff/uFawkesAI/blob/v2.1.0/docs/ai-sdlc/dojo-handoff.md) mapping
+  as of `v2.1.0` (paruff/uFawkesAI#251 removed it from the template's `main`;
+  the suite keeps that version): one exercise step per
   row of the release plan's Verification Strategy, one `record_test` per
   spec AC in `validate.sh`, and a provenance header naming the source
   `docs/ai-sdlc/<release>/` and commit
@@ -300,9 +302,10 @@ Rolling, tracked under the `Dojo labs` release (moved off `Dojo 0.2` on
 
 #### AC-OBS-02: No open release blockers
 
-- **Expected:** The `v1.0.0` milestone has zero open `release-blocker`
-  issues. #534 joins it
-- **Verification:** The Project's Blockers view
+- **Expected:** No open issue in Project #7's `Obs 1.0` release carries the
+  `release-blocker` label. uFawkesObs has no milestones; the board release is
+  the scope, and it covers the `v1.0.x` patches that finish this release
+- **Verification:** `scripts/checks/ac-obs-02.sh`, run by the status build
 
 #### AC-OBS-03: The contract is written down
 
