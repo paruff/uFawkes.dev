@@ -110,7 +110,8 @@ or simulated one.
   plus the Dojo link. `/compatibility/` lists every released version and
   what it was verified with ("standalone" is valid). It includes the
   devcontainer image version each stack was tested in
-- **Verification:** Page live; updated in the same release that changes it
+- **Verification:** `scripts/checks/ac-site-01.sh`: the pages exist and each
+  matrix row's release is the repo's newest GitHub Release
 
 ### Release 1 — uFawkesAI `v2.0.0`
 

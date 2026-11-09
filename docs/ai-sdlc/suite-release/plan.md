@@ -51,11 +51,11 @@ A dead link still turns it red.
    wait to be closed.
 2. **uFawkesAI's image build is red** (`build-cde-space-image.yml`, Trivy
    gate). `make live-checks` shows it; it doesn't block a suite release.
-3. **The site's version claims are checked by hand.** `/compatibility/` once
-   said DevX "heading to v0.1.0" while `/devx/` said `v1.2.0` (fixed
-   2026-10-17). No check catches this: AC-SUITE-01 looks for retired names,
-   and AC-SITE-01 checks that the pages exist. Check the matrix against each
-   repo's latest GitHub Release before every announcement.
+3. **The compatibility matrix fell behind the releases.** It listed uFawkesAI
+   `v2.0.0` and uFawkesObs `v1.0.0` after `v2.2.0` and `v1.0.1` shipped.
+   AC-SUITE-01 looks for retired names and couldn't see this, so AC-SITE-01
+   now runs `scripts/checks/ac-site-01.sh`, which compares each row with the
+   repo's newest GitHub Release. The matrix is updated.
 4. **Suite mode (paruff/uFawkes.dev#70) is not measured.** Only
    `obs-alone-idle.csv` exists. It needs a 16 GB host (the documented one
    has 8 GB) and a Pipe that runs without uFawkesRes.
@@ -355,18 +355,18 @@ When one lands, update the table in uFawkesRes's README.
 
 ## Verification Strategy
 
-| Criterion        | Evidence                                            | Collected in            |
-| ---------------- | --------------------------------------------------- | ----------------------- |
-| AC-SUITE-01      | `scripts/checks/ac-suite-01.sh`                     | Daily status build      |
-| AC-SUITE-02      | `scripts/checks/ac-suite-02.sh`                     | Daily status build      |
-| AC-SUITE-03      | `scripts/checks/ac-suite-03.sh`                     | Daily status build      |
-| AC-SITE-01       | The site pages exist; the matrix is checked by hand | Every release           |
-| AC-AI-01..09     | Manifest and cosign output, template run            | uFawkesAI release notes |
-| AC-DOJO-01..04   | Grep, lab transcripts, same-week releases           | Dojo release notes      |
-| AC-OBS-01..04    | Clean-host transcripts, four live URLs              | Obs release notes       |
-| AC-PIPE-01       | Real pipeline run output                            | Pipe release notes      |
-| AC-DEVX-01       | ADR plus clean-host transcript                      | DevX release notes      |
-| AC-FAWKES-01..04 | CI run, Grafana panels, closed security issues      | fawkes release notes    |
+| Criterion        | Evidence                                       | Collected in            |
+| ---------------- | ---------------------------------------------- | ----------------------- |
+| AC-SUITE-01      | `scripts/checks/ac-suite-01.sh`                | Daily status build      |
+| AC-SUITE-02      | `scripts/checks/ac-suite-02.sh`                | Daily status build      |
+| AC-SUITE-03      | `scripts/checks/ac-suite-03.sh`                | Daily status build      |
+| AC-SITE-01       | `scripts/checks/ac-site-01.sh`                 | Daily status build      |
+| AC-AI-01..09     | Manifest and cosign output, template run       | uFawkesAI release notes |
+| AC-DOJO-01..04   | Grep, lab transcripts, same-week releases      | Dojo release notes      |
+| AC-OBS-01..04    | Clean-host transcripts, four live URLs         | Obs release notes       |
+| AC-PIPE-01       | Real pipeline run output                       | Pipe release notes      |
+| AC-DEVX-01       | ADR plus clean-host transcript                 | DevX release notes      |
+| AC-FAWKES-01..04 | CI run, Grafana panels, closed security issues | fawkes release notes    |
 
 Manual evidence is a link: a merged PR, a closed issue, an issue comment
 (dated by the comment, for pasted transcripts) or a run URL with an
