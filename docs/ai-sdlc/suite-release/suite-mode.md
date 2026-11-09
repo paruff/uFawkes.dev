@@ -4,7 +4,7 @@
 
 **Suite mode** is uFawkesObs, uFawkesPipe and uFawkesDevX running together on
 one Docker host, each from its own `compose.yaml` on `main`, with no uFawkesRes
-dependency (uFawkesPipe#97 closed; DevX database pending uFawkesDevX#57).
+dependency (paruff/uFawkesPipe#97 closed; uFawkesDevX runs no database service, ADR-0001).
 Each stack alone is "single-stack mode".
 
 ## Status: not measured
@@ -26,7 +26,7 @@ set `vm.max_map_count >= 524288` for SonarQube.
 4. Repeat steps 2–3 for each stack alone.
 5. After 24 h: `scripts/measure-suite.sh disk 0`
 
-## Results (fill from the CSVs in `suite-measurements/`)
+## Results (fill from the CSVs in [`measurements/`](measurements/))
 
 | Scope      | Idle mem | Peak mem | Idle CPU | Peak CPU | Disk 24 h | Min | Recommended |
 | ---------- | -------- | -------- | -------- | -------- | --------- | --- | ----------- |
