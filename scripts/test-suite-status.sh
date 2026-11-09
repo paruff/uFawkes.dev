@@ -27,6 +27,8 @@ case "$*" in
   *pulls/102*) echo '{"state":"closed","at":"2026-08-01T10:00:00Z"}' ;; # merged 62 days ago
   *pulls/103*) echo '{"state":"open","at":null}' ;;                    # not merged
   *pulls/404*) echo "gh: Not Found (HTTP 404)" >&2; exit 1 ;;
+  *issues/comments/777*) echo '{"state":null,"at":"2026-09-27T10:00:00Z"}' ;; # comment posted 4 days ago
+  *issues/55*) echo '{"state":"open","at":null}' ;;                           # its issue is still open
   *) echo "gh stub: unexpected call: $*" >&2; exit 1 ;;
 esac
 STUB
@@ -106,6 +108,12 @@ cat > "$TMP/acs.yml" << 'YML'
   check: manual
   run: ""
   evidence: https://github.com/o/r/pull/404
+- id: AC-T-14
+  release: Alpha
+  title: Issue-comment evidence on a still-open issue
+  check: manual
+  run: ""
+  evidence: https://github.com/o/r/issues/55#issuecomment-777
 - id: AC-T-04
   release: AI 2.0
   title: Manual without evidence
@@ -146,7 +154,53 @@ evcheck AC-T-08 stale "unreachable" "a dead link is stale"
 evcheck AC-T-09 stale "no evidence_date" "a link with no date is stale"
 evcheck AC-T-12 stale "62 days old" "a dated link older than 30 days is stale"
 evcheck AC-T-13 stale "could not verify" "evidence that cannot be looked up is stale, never pass"
-check "counts: 3 pass (1 command + 2 evidence), 5 stale, 1 awaiting, 1 fail" '.releases[0].acs | .pass==3 and .stale==5 and .manual_pending==1 and .fail==1' "$TMP/out.json"
+evcheck AC-T-14 pass "4 days old" "an issue comment is dated by the comment, not the issue"
+check "counts: 4 pass (1 command + 3 evidence), 5 stale, 1 awaiting, 1 fail" '.releases[0].acs | .pass==4 and .stale==5 and .manual_pending==1 and .fail==1' "$TMP/out.json"
+
+# A shipped release (every goal: issue closed) keeps its evidence: it is not aged.
+cat > "$TMP/acs-shipped.yml" << 'YML'
+- id: AC-S-01
+  release: Shipped
+  title: Old evidence, release shipped
+  check: manual
+  run: ""
+  evidence: https://github.com/o/r/pull/102
+- id: AC-S-02
+  release: Open
+  title: Old evidence, release still open
+  check: manual
+  run: ""
+  evidence: https://github.com/o/r/pull/102
+- id: AC-S-03
+  release: Shipped
+  title: Dead link, release shipped
+  check: manual
+  run: ""
+  evidence: https://dead.example/y
+  evidence_date: 2026-09-30
+YML
+cat > "$TMP/items-shipped.json" << 'JSON'
+[
+  {"release":"Shipped","status":"Done","number":1,"title":"goal: release S","state":"CLOSED","url":"u/1","repo":"a","createdAt":"2026-08-01T00:00:00Z","closedAt":"2026-08-02T00:00:00Z","assigned":false,"labels":["goal"],"merged_prs":[]},
+  {"release":"Open","status":"Done","number":2,"title":"goal: release O, part 1","state":"CLOSED","url":"u/2","repo":"a","createdAt":"2026-08-01T00:00:00Z","closedAt":"2026-08-02T00:00:00Z","assigned":false,"labels":["goal"],"merged_prs":[]},
+  {"release":"Open","status":"Blocked","number":3,"title":"goal: release O, part 2","state":"OPEN","url":"u/3","repo":"a","createdAt":"2026-08-01T00:00:00Z","closedAt":null,"assigned":false,"labels":["goal"],"merged_prs":[]}
+]
+JSON
+STATUS_ACS="$TMP/acs-shipped.yml" STATUS_ITEMS_FILE="$TMP/items-shipped.json" \
+  STATUS_OUT="$TMP/out-shipped.json" STATUS_NOW=2026-10-02T06:00:00Z bash scripts/suite-status.sh > /dev/null
+sh_ev() { jq -e --arg id "$1" --arg st "$2" '[.releases[].ac_results[]] | map(select(.id==$id))[0].status==$st' "$TMP/out-shipped.json" > /dev/null; }
+sh_ev AC-S-01 pass && echo "  ok   old evidence passes once every goal of its release is closed" || {
+  echo "  FAIL old evidence of a shipped release should pass"
+  fails=$((fails + 1))
+}
+sh_ev AC-S-02 stale && echo "  ok   one open goal keeps the release unshipped, so old evidence is stale" || {
+  echo "  FAIL a release with an open goal is not shipped"
+  fails=$((fails + 1))
+}
+sh_ev AC-S-03 stale && echo "  ok   a dead link stays stale even after the release ships" || {
+  echo "  FAIL a dead link is stale whatever the release"
+  fails=$((fails + 1))
+}
 check "manual without evidence is pending" '.releases[1].ac_results[0].status=="manual"' "$TMP/out.json"
 check "next release is the first not fully passing" '.next_release=="Alpha"' "$TMP/out.json"
 
@@ -273,6 +327,14 @@ out="$(bash scripts/checks/ac-suite-01.sh 2>&1)" && bad "AC-SUITE-01 should fail
 printf '# Pipe\n| uFawkesRes* |\n' > "$RAW/uFawkesPipe/main/README.md"
 printf '# fawkes\nfine\n' > "$RAW/fawkes/main/README.md"
 bash scripts/checks/ac-suite-01.sh > /dev/null && ok "AC-SUITE-01 honours the reviewed allowlist" || bad "AC-SUITE-01 should honour the allowlist"
+for r in uFawkes.dev uFawkesAI uFawkesObs uFawkesPipe uFawkesDevX uFawkesDojo fawkes; do
+  mkdir -p "$RAW/$r/main/.devcontainer"
+  printf '{"image": "ghcr.io/paruff/fawkes-space:2.2.0@sha256:abc"}\n' > "$RAW/$r/main/.devcontainer/devcontainer.json"
+done
+bash scripts/checks/ac-ai-05.sh > /dev/null && ok "AC-AI-05 accepts a version tag plus digest" || bad "AC-AI-05 should accept :2.2.0@sha256:"
+printf '{"image": "ghcr.io/paruff/fawkes-space:2.2.0"}\n' > "$RAW/fawkes/main/.devcontainer/devcontainer.json"
+out="$(bash scripts/checks/ac-ai-05.sh 2>&1)" && bad "AC-AI-05 should fail on a bare version tag" \
+  || { grep -q "fawkes: does not pin" <<< "$out" && ok "AC-AI-05 rejects a version tag with no digest"; }
 unset CHECK_RAW_BASE
 mkdir -p "$TMP/dojo/modules"
 printf 'Module 5 uses Jenkins for CI.\nFour key metrics are tracked.\n[VIDEO PLACEHOLDER]\n' > "$TMP/dojo/modules/m5.md"
