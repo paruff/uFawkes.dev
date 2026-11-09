@@ -63,7 +63,7 @@
   release: Suite hygiene
   title: The site lists all seven repos and the matrix is current
   check: command
-  run: test -f ai/index.md && test -f fawkes/index.md && test -f compatibility/index.md && test -f obs/index.md && test -f pipe/index.md && test -f devx/index.md
+  run: bash scripts/checks/ac-site-01.sh
   evidence: ""
 
 # --- AI 2.0 ----------------------------------------------------------------
