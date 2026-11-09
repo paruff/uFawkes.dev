@@ -1,39 +1,41 @@
 # Intent: uFawkes Suite Release
 
-**Owner:** @paruff | **Created:** 2026-09-27 | **Revised:** 2026-10-08 |
-**Status:** Draft | **Revision:** 4
+**Owner:** @paruff | **Created:** 2026-09-27 | **Revised:** 2026-11-09 |
+**Status:** Draft | **Revision:** 5
 
 ## The suite repos
 
-Revision 4 adds the three golden-path repos, so the suite is ten. Nothing in
-this document's goals or acceptance criteria has been widened yet — the
-criteria still describe the original seven, and the new repos meet none of
-AC-SUITE-03's conditions (root `INTENT.md`, artifact chain).
+The suite is ten repos: the seven product repos below, plus three golden-path
+repos. "The seven repos" in this folder's goals and acceptance criteria means
+the seven product repos. Release status lives on
+[Project #7](https://github.com/users/paruff/projects/7) and
+[ufawkes.dev/status](https://ufawkes.dev/status/), not here.
 
-### Original seven (as of 2026-10-01)
+### The seven product repos
 
-| Repo                                                 | Role                                                                                                                                                           | Today (2026-10-01)                                                                  |
-| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| [uFawkes.dev](https://github.com/paruff/uFawkes.dev) | Public website and suite tracking repo. Holds this plan, the compatibility matrix and Project #7                                                               | Live; nav lists no uFawkesAI or fawkes page                                         |
-| [uFawkesAI](https://github.com/paruff/uFawkesAI)     | Golden-path template for the AI-native SDLC: `intent → spec → plan`, agents, skills, DORA AI capabilities, and the shared devcontainer CDE every repo now uses | `v1.0.0` (June); 236 commits unreleased; devcontainer image can't be pinned (#111)  |
-| [uFawkesObs](https://github.com/paruff/uFawkesObs)   | Small-team starter observability plane (Docker Compose)                                                                                                        | `v1.0.0-rc.1` / `v1.0.1-rc.1` cut; `v1.0.0` milestone closed                        |
-| [uFawkesPipe](https://github.com/paruff/uFawkesPipe) | Small-team starter CI/CD plane (Woodpecker, Docker Compose)                                                                                                    | `v1.7.4-beta.1`; `build-image` still a placeholder                                  |
-| [uFawkesDevX](https://github.com/paruff/uFawkesDevX) | Small-team starter developer-experience plane (Coder, Backstage, Docker Compose)                                                                               | Unreleased; blocked on the uFawkesRes database decision (#57)                       |
-| [fawkes](https://github.com/paruff/fawkes)           | Full Kubernetes internal developer platform: multiple planes and golden paths that move a team through the DORA performance tiers. The graduation target       | `v0.3.154` pre-releases; Tracer Bullet Alpha (#1804) not yet passing                |
-| [uFawkesDojo](https://github.com/paruff/uFawkesDojo) | Learning platform for both the small-team stacks and the full platform                                                                                         | `0.1.0-alpha.1`; 19 of 20 modules have no runnable lab; Yellow Belt teaches Jenkins |
+| Repo                                                 | Role                                                                                                                                                           |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [uFawkes.dev](https://github.com/paruff/uFawkes.dev) | Public website and suite tracking repo. Holds this plan, the compatibility matrix and Project #7                                                               |
+| [uFawkesAI](https://github.com/paruff/uFawkesAI)     | Golden-path template for the AI-native SDLC: `intent → spec → plan`, agents, skills, DORA AI capabilities, and the shared devcontainer CDE every repo now uses |
+| [uFawkesObs](https://github.com/paruff/uFawkesObs)   | Small-team starter observability plane (Docker Compose)                                                                                                        |
+| [uFawkesPipe](https://github.com/paruff/uFawkesPipe) | Small-team starter CI/CD plane (Woodpecker, Docker Compose)                                                                                                    |
+| [uFawkesDevX](https://github.com/paruff/uFawkesDevX) | Small-team starter developer-experience plane (Coder, Backstage, Docker Compose)                                                                               |
+| [fawkes](https://github.com/paruff/fawkes)           | Full Kubernetes internal developer platform: multiple planes and golden paths that move a team through the DORA performance tiers. The graduation target       |
+| [uFawkesDojo](https://github.com/paruff/uFawkesDojo) | Learning platform for both the small-team stacks and the full platform                                                                                         |
 
 ### Golden-path repos (joined 2026-10-08)
 
 These exist to prove the fawkes pipeline against real, disposable services
-rather than to be installed by a user. Phase 1 governance (license, code of
-conduct, security policy, funding) landed in each repo's own PR on
-2026-10-08; this records them as suite members.
+rather than to be installed by a user. They are fawkes-owned fixtures: they
+are in the suite's ruleset and shift-left audits, and are not held to the
+document-level criteria (AC-SUITE-01, AC-SUITE-03) until each gets a root
+`INTENT.md`.
 
-| Repo                                                                             | Role                                                                                                                                                                      | Today (2026-10-08)                                                                                                                                 |
-| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [java-fawkes-path](https://github.com/paruff/java-fawkes-path)                   | Java/Spring Boot golden path (fawkes#2032): proves the build, scan, sign, push and GitOps-promotion path for JVM services                                                 | Unreleased; no root `INTENT.md`; no ruleset on `main`; README still advertises a Jenkins pipeline while `.github/workflows/ci.yml` runs on Actions |
-| [python-fawkes-path](https://github.com/paruff/python-fawkes-path)               | Deliberately minimal FastAPI service — not a product feature. Exists so the fawkes CI/CD/observability machinery can be validated end to end against a real, tiny example | Unreleased; no root `INTENT.md`; no ruleset on `main`; `README.md` trips MD022 (headings without surrounding blank lines)                          |
-| [python-fawkes-path-gitops](https://github.com/paruff/python-fawkes-path-gitops) | ArgoCD-synced desired-state manifests for `python-fawkes-path`. The image tag is written by that repo's pipeline via PR, never by hand                                    | Unreleased; no root `INTENT.md`; no ruleset on `main`; no workflows of its own                                                                     |
+| Repo                                                                             | Role                                                                                                                                                                      |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [java-fawkes-path](https://github.com/paruff/java-fawkes-path)                   | Java/Spring Boot golden path (fawkes#2032): proves the build, scan, sign, push and GitOps-promotion path for JVM services                                                 |
+| [python-fawkes-path](https://github.com/paruff/python-fawkes-path)               | Deliberately minimal FastAPI service — not a product feature. Exists so the fawkes CI/CD/observability machinery can be validated end to end against a real, tiny example |
+| [python-fawkes-path-gitops](https://github.com/paruff/python-fawkes-path-gitops) | ArgoCD-synced desired-state manifests for `python-fawkes-path`. The image tag is written by that repo's pipeline via PR, never by hand                                    |
 
 ## Problem
 
@@ -45,7 +47,7 @@ out. Since then:
   `docs/ai-sdlc/compose-curriculum/`, and Project #7 tracks 48 items.
 - **uFawkesAI became the foundation, not a finished template.** Every repo
   now builds on its devcontainer image, but the image has only a `:latest`
-  tag, so consumers can't pin it (#111). The package rename and the removal
+  tag, so consumers can't pin it (uFawkesAI#111). The package rename and the removal
   of the gitops variant are breaking changes that haven't been released.
 - **The Dojo is the suite's onboarding path, and it isn't accurate.** It
   teaches four DORA metrics and Jenkins, and it describes labs that were
@@ -88,7 +90,7 @@ copied into the repos.
   integration between uFawkesObs, uFawkesPipe and uFawkesAI. It's recorded
   as direction for after this plan, not a release gate (no new features).
 
-\*\*From Osmani, Saboo & Kartakis, _The New SDLC With Vibe Coding: From ad-hoc prompting to Agentic Engineering_ (May 2026):
+**From Osmani, Saboo & Kartakis, _The New SDLC With Vibe Coding: From ad-hoc prompting to Agentic Engineering_ (May 2026):**
 
 - **Agent = Model + Harness.** The harness is everything around the model:
   instructions and rule files, tools and MCP servers, the sandbox,
@@ -113,10 +115,10 @@ copied into the repos.
 | --- | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | 1   | **uFawkesAI `v2.0.0`**: AI-native SDLC + CDE   | Every other repo depends on its devcontainer and its `intent → spec → plan` convention. Ship it pinnable first |
 | 2   | **uFawkesDojo `0.2`**: accurate + "Start here" | Moved earlier. Gives users a correct learning path from day one, starting with the uFawkesAI CDE               |
-| 3   | **uFawkesObs `v1.0.0`**: first stable stack    | Its rc is already out. Ships after the Dojo is accurate so the announcement can link to a lab                  |
-| 4   | **uFawkesPipe `v2.0.0`**: first stable         | `v2.0.0` signals "the real one" after the 1.x beta line                                                        |
-| 5   | **uFawkesDevX `v0.1.0`**: beta                 | Needs the uFawkesRes replacement first                                                                         |
-| 6   | **fawkes Tracer Bullet Alpha**                 | The graduation target. Released when epic #1804 passes end to end                                              |
+| 3   | **uFawkesObs 1.x**: first stable stack         | Ships after the Dojo is accurate so the announcement can link to a lab                                         |
+| 4   | **uFawkesPipe `v2.0.0`**: first stable         | `v2.0.0` marks the first stable release after the 1.x beta line                                                |
+| 5   | **uFawkesDevX 1.x**: first verified stable     | Runs without uFawkesRes since ADR-0001 (uFawkesDevX#57)                                                        |
+| 6   | **fawkes Tracer Bullet Alpha**                 | The graduation target. Released when epic fawkes#1804 passes end to end                                        |
 
 **uFawkes.dev is continuous.** It ships with every release: the
 compatibility-matrix row, the stack page, and the announcement.
@@ -125,6 +127,17 @@ compatibility-matrix row, the stack page, and the announcement.
 adds one Dojo lab pinned to that release (`0.3` Obs, `0.4` Pipe, `0.5`
 DevX, `0.6` fawkes graduation). The Dojo stops trailing and becomes the
 thread that connects the announcements.
+
+### What counts as a release (decided 2026-11-09)
+
+Each repo's Release Please tags versions continuously, so a tag is not a
+release in this plan. **A suite release is the first version of that repo
+that passes its release's acceptance criteria.** Until one passes,
+`/compatibility/` lists the newest tag as "released, not yet verified". The
+release's `goal` issue closes when its criteria pass, and `/status/` treats a
+release whose `goal` issues are all closed as shipped. This generalises the
+uFawkesDevX decision of 2026-10-17 to every release: uFawkesObs `v1.0.0` and
+uFawkesDevX `v1.0.0`–`v1.2.0` were tagged before their criteria passed.
 
 ### Kept from revision 1
 
@@ -154,7 +167,7 @@ thread that connects the announcements.
 - A coordinated "suite version" that gates every repo on the slowest one.
 - New stack features. Each release ships what exists. When a feature's
   claim doesn't hold, the claim is removed; the feature isn't rushed in.
-- fawkes Beta or Production phases (#1805, #1806), and re-planning fawkes's
+- fawkes Beta or Production phases (fawkes#1805, fawkes#1806), and re-planning fawkes's
   own milestones.
 - A full Dojo rewrite. Modules move one at a time, behind the stack release
   they teach.
@@ -171,8 +184,8 @@ thread that connects the announcements.
    CDE to the developer-experience evidence in
    [`docs/research-foundation.md`](../../research-foundation.md).
 2. **fawkes ships Tracer Bullet Alpha as `v0.4.0`.**
-3. **If uFawkesAI slips, uFawkesObs ships first.** The only real slip risk
-   is #111: the signed image publish path has never run for a tag.
+3. **If uFawkesAI slips, uFawkesObs ships first.** (uFawkesAI shipped
+   first, on 2026-10-14.)
 
 ## Still open
 
