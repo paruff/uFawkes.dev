@@ -69,9 +69,12 @@ A dead link still turns it red.
      clean-host runs (fresh clones, but on working machines). If yes, record a
      comment on paruff/uFawkesObs#600 that links both as `evidence` in `acceptance.yml`. If not,
      the owner reruns them on clean hosts; only a human can.
+     For later releases, give uFawkesObs a `live-acceptance.yml` like
+     uFawkesDevX's (`make up` on a fresh Linux runner on every release); its
+     run link is then the Linux half.
    - AC-OBS-04 needs the Dojo 0.3 lab: Brown Belt Modules 13–16,
-     paruff/uFawkesDojo#42, paruff/uFawkesDojo#43, paruff/uFawkesDojo#44 and paruff/uFawkesDojo#45 (OpenCode). paruff/uFawkesObs#600's body names them
-     on a `Blocked by` line. If they aren't merged when everything else
+     paruff/uFawkesDojo#42, paruff/uFawkesDojo#43, paruff/uFawkesDojo#44 and paruff/uFawkesDojo#45 (OpenCode). Add a `Blocked by` line naming them to
+     paruff/uFawkesObs#600's body. If they aren't merged when everything else
      passes, file `Decision: announce Obs 1.0 before its Dojo lab?` and wait.
    - paruff/uFawkesObs#502 (SLO burn-rate rework) stays _Blocked_ until paruff/uFawkesObs#600
      closes, because it edits the same rules.
@@ -148,7 +151,9 @@ command 1 lists the next _Ready for agent_ item for a routing label, command
 | Done            | Closed or merged                                                                       | Built-in workflows                      |
 
 `In Progress` and `Done` keep these exact names: `scripts/suite-status.sh`
-matches them.
+matches them. `scripts/setup-suite-board.sh` created these fields;
+keep it to rebuild the board. `make status` reads the board, so its token
+needs the `read:project` scope (`gh auth refresh -s read:project`).
 
 **Order.** Command 1 sorts by `Priority` (P0 first), then issue number. An
 item with no Priority sorts last; set one when an item must jump the queue.
@@ -285,8 +290,8 @@ In order:
 
 1. paruff/uFawkesPipe#121: consolidate the specs and designs into
    `docs/ai-sdlc/v2.0.0/` (OpenCode).
-2. paruff/uFawkesPipe#122 (`Decision:`, owner): make `build-image` real, or
-   drop the claim.
+2. paruff/uFawkesPipe#122 (owner decision; retitle it `Decision: …`): make
+   `build-image` real, or drop the claim.
 3. paruff/uFawkesPipe#125: nightly live acceptance (OpenCode).
 4. paruff/uFawkesPipe#123: a real pipeline run on a sample repo, with
    `notify-obs` pointed at Obs `v1.0.1`. `notify-obs` reads four Woodpecker
