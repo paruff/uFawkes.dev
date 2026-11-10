@@ -13,3 +13,7 @@ _data/ci_determinism.json
 status/ci_determinism.json
 _data/live_checks.json
 status/live_checks.json
+
+# Bundler installs (bundle config path vendor/bundle); never commit them (#220)
+.bundle/
+vendor/
