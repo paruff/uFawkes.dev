@@ -77,15 +77,10 @@ checks:
     starts_stack: false
     stale_after_hours: 192
   - repo: uFawkesAI
-    workflow: build-devsecops-images.yml
-    purpose: Rebuilds and CVE-rescans the DevSecOps images and devcontainer
+    workflow: build-cde-space-image.yml
+    purpose: Weekly no-cache rebuild and Trivy gate of the fawkes-space image
     starts_stack: false
     stale_after_hours: 192
-  - repo: uFawkesAI
-    workflow: dojo-feedback-intent.yml
-    purpose: Turns merged dojo-feedback files into intent issues
-    starts_stack: false
-    stale_after_hours: 30
   - repo: uFawkesAI
     workflow: image-lock-bump.yml
     purpose: Bumps the image toolchain lock with re-verified checksums

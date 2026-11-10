@@ -136,24 +136,30 @@ age_days() {
 # Evidence is checked, never trusted: a link must resolve, a PR must be merged,
 # an issue closed, and it must be no older than STALE_DAYS.
 judge_evidence() {
-  local ev="$1" evdate="$2" date="" code="" json="" kind="" path="" field=""
+  local ev="$1" evdate="$2" date="" code="" json="" kind="" api="" field=""
   EV_AGE=""
   if [[ ! "$ev" =~ ^https?:// ]]; then
     EV_STATUS="manual"
     EV_DETAIL="evidence pending"
     return
   fi
-  if [[ "$ev" =~ ^https://github\.com/([^/]+)/([^/]+)/(pull|issues)/([0-9]+) ]]; then
+  # A comment (a pasted transcript) counts from when it was posted, whatever its issue's state.
+  if [[ "$ev" =~ ^https://github\.com/([^/]+)/([^/]+)/(pull|issues)/[0-9]+#issuecomment-([0-9]+)$ ]]; then
+    kind="comment"
+    api="repos/${BASH_REMATCH[1]}/${BASH_REMATCH[2]}/issues/comments/${BASH_REMATCH[4]}"
+    field="created_at"
+  elif [[ "$ev" =~ ^https://github\.com/([^/]+)/([^/]+)/(pull|issues)/([0-9]+) ]]; then
     kind="${BASH_REMATCH[3]}"
     if [[ "$kind" == "pull" ]]; then
-      path="pulls"
+      api="repos/${BASH_REMATCH[1]}/${BASH_REMATCH[2]}/pulls/${BASH_REMATCH[4]}"
       field="merged_at"
     else
-      path="issues"
+      api="repos/${BASH_REMATCH[1]}/${BASH_REMATCH[2]}/issues/${BASH_REMATCH[4]}"
       field="closed_at"
     fi
-    if ! json="$(gh api "repos/${BASH_REMATCH[1]}/${BASH_REMATCH[2]}/$path/${BASH_REMATCH[4]}" \
-      --jq "{state, at: .$field}" 2>&1)"; then
+  fi
+  if [[ -n "$api" ]]; then
+    if ! json="$(gh api "$api" --jq "{state, at: .$field}" 2>&1)"; then
       EV_STATUS="stale"
       EV_DETAIL="could not verify evidence ($(head -n 1 <<< "$json" | cut -c1-80)): $ev"
       return
@@ -193,6 +199,13 @@ judge_evidence() {
   fi
 }
 
+# A release has shipped when it has goal issues ("goal: ..." titles) and all are
+# closed. Its manual evidence was judged at release time, so it is not aged again.
+shipped="$(jq -c '[group_by(.release)[]
+  | map(select((.title // "") | test("^goal:")))
+  | select(length > 0 and all(.state == "CLOSED")) | .[0].release]' "$WORK/items.json")" \
+  || die "cannot read the releases' goal issues"
+
 for ((i = 0; i < n; i++)); do
   ac="$(jq -c ".[$i]" "$WORK/acs.json")"
   id="$(jq -r .id <<< "$ac")"
@@ -205,6 +218,12 @@ for ((i = 0; i < n; i++)); do
     status="$EV_STATUS"
     detail="$EV_DETAIL"
     age="$EV_AGE"
+    # Only age makes it stale here: a dead or unverifiable link stays stale.
+    if [[ "$status" == "stale" && -n "$age" ]] \
+      && jq -e --arg r "$(jq -r .release <<< "$ac")" 'index($r) != null' <<< "$shipped" > /dev/null; then
+      status="pass"
+      detail="release shipped, age not checked: $detail"
+    fi
   elif [[ -n "${STATUS_SKIP_CHECKS:-}" ]]; then
     status="fail"
     detail="skipped"

@@ -25,7 +25,15 @@ Each level links to the one above it: a feature's intent names its
 release, and a release's intent names this plan. Each `spec.md` has a
 `## Design` section. AC-SUITE-03 makes this enforceable.
 
-Remaining per-repo document cleanup is tracked as issues on Project #7.
+| Repo            | `INTENT.md`                                                     | Release docs                                    | Remaining doc cleanup                                                                                             |
+| --------------- | --------------------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **uFawkes.dev** | ✅                                                              | `docs/ai-sdlc/suite-release/` (this folder)     | Add `/ai/` and `/fawkes/` pages to the nav; retire `/dora/` (ufawkesdora archived) and `/sec/` (merged into Pipe) |
+| **uFawkesAI**   | ❌ (corrected 2026-10-01: only `docs/ai-sdlc/intent.md` exists) | `docs/ai-sdlc/v2.0.0/` ❌                       | Close paruff/uFawkesAI#36 (superseded by this folder)                                                             |
+| **uFawkesDojo** | ✅                                                              | `docs/ai-sdlc/compose-curriculum/` ✅; `0.2` ❌ | Rebase `compose-curriculum/plan.md` on the new order: Dojo `0.2` before any stack lab                             |
+| **uFawkesObs**  | ✅                                                              | `docs/ai-sdlc/v1.0.0/` ✅                       | paruff/uFawkesObs#534 (dead uFawkesRes panels, `TBD` SQL in the tier table)                                       |
+| **uFawkesPipe** | ✅                                                              | `docs/ai-sdlc/v2.0.0/` ❌                       | Consolidate the 3 spec files, 2 design files and `plan-for-the-day.md`                                            |
+| **uFawkesDevX** | ✅                                                              | `docs/ai-sdlc/v0.1.0/` ❌                       | Move root `specification.md`/`design.md`/`plan.md` in; remove uFawkesRes references                               |
+| **fawkes**      | ❌                                                              | `docs/ai-sdlc/tracer-bullet-alpha/` ❌          | Mark `ADR-004 jenkins 4 ci` superseded by ADR-036                                                                 |
 
 ## 2. Release acceptance criteria
 
@@ -44,6 +52,36 @@ or simulated one.
 - **Verification:** `bash scripts/checks/ac-suite-01.sh` returns only
   historical, superseded or explicitly labelled mentions
 - **Gate for:** every announcement (it's re-checked before each one)
+- **Scoped recheck 2026-10-02, public entry points only** (each repo's README
+  and INTENT, and the ufawkes.dev pages): 12 lines matched with no qualifier
+  on the line. Reading each in context, **7 were real false claims** (uFawkesDORA
+  and uFawkesSec listed as live or planned repos, Jenkins listed as a fawkes
+  component, and fawkes's "four key metrics automated from day one") in
+  uFawkesAI, uFawkesPipe and fawkes. They are fixed in uFawkesAI#143,
+  uFawkesPipe#116 and fawkes#2185. The other 5 were already labelled
+  ("not Jenkins", "stale", a deprecation footnote, or a criterion's own name).
+  ufawkes.dev itself had none left after #81. All three merged and `main` was re-scanned on 2026-10-02: no real violation
+  remains. **Owner decision, 2026-10-02: this gate means public entry points, so
+  AC-SUITE-01 is met for Phase 0.** The wider count below is handled in each
+  repo's own phase and re-checked before each announcement.
+- **Full count 2026-10-02, beyond this gate's scope:** Counting lines that name a retired term
+  with no qualifier (deprecated, historical, merged, formerly and similar)
+  on each repo's `main`, excluding the suite plan folders and ADRs. Each
+  repo's debt belongs to its own phase:
+
+  | Repo        | Lines | Mostly                                     | Fixed in                                                   |
+  | ----------- | ----- | ------------------------------------------ | ---------------------------------------------------------- |
+  | uFawkes.dev | 35    | Internal planning docs; one live claim     | Phase 0 (live claim fixed in #81)                          |
+  | uFawkesAI   | 43    | uFawkesDORA and uFawkesSec mentions        | Phase 1                                                    |
+  | uFawkesObs  | 147   | Jenkins (61), uFawkesDORA (66), uFawkesRes | Phase 3 (paruff/uFawkesObs#534 covers the dead Res panels) |
+  | uFawkesPipe | 79    | uFawkesSec (41), uFawkesRes (24), Jenkins  | Phase 4                                                    |
+  | uFawkesDevX | 58    | uFawkesRes in design, plan and spec files  | Phase 0 (live docs in paruff/uFawkesDevX#69); Phase 5 rest |
+  | uFawkesDojo | 162   | Jenkins (147), "four key metrics" (13)     | Phase 2 (paruff/uFawkesDojo#19, Jenkins labeling)          |
+  | fawkes      | 859   | Jenkins (824), "four key metrics" (19)     | Phase 6                                                    |
+
+  The count is a ceiling, not a verdict: each line still needs reading to
+  decide whether it is a live claim. The only live false claim found on
+  ufawkes.dev itself was Obs's "Jenkins integration" (fixed in #81).
 
 #### AC-SUITE-02: Every tracked issue is routed
 
@@ -72,7 +110,8 @@ or simulated one.
   plus the Dojo link. `/compatibility/` lists every released version and
   what it was verified with ("standalone" is valid). It includes the
   devcontainer image version each stack was tested in
-- **Verification:** Page live; updated in the same release that changes it
+- **Verification:** `scripts/checks/ac-site-01.sh`: the pages exist and each
+  matrix row's release is the repo's newest GitHub Release
 
 ### Release 1 — uFawkesAI `v2.0.0`
 
@@ -85,7 +124,7 @@ or simulated one.
   and `:2.0`, signed. Its digest is in the GitHub Release
 - **Verification:** `docker manifest inspect` succeeds from an
   unauthenticated machine, and `cosign verify` passes using the documented
-  steps (uFawkesAI#111)
+  steps (paruff/uFawkesAI#111)
 
 #### AC-AI-02: The template works from "Use this template"
 
@@ -93,7 +132,7 @@ or simulated one.
   devcontainer
 - **Expected:** Each of the four documented agent harnesses starts. The
   `intent → spec → plan` flow produces files the plan command accepts.
-  The placeholder audit finds nothing unfilled (uFawkesAI#28), and `make validate`
+  The placeholder audit finds nothing unfilled (paruff/uFawkesAI#28), and `make validate`
   passes
 - **Verification:** Real run transcript
 
@@ -194,7 +233,7 @@ Google's AI RCTs).
 
 #### AC-DOJO-01: The curriculum is accurate
 
-- **Expected:** Five DORA metrics everywhere (uFawkesDojo#19). Every module that still
+- **Expected:** Five DORA metrics everywhere (paruff/uFawkesDojo#19). Every module that still
   teaches Jenkins says so at the top and names the replacement module's
   release. Every lab, video or community link that doesn't exist is either
   removed or labeled "not built yet"
@@ -243,8 +282,9 @@ Rolling, tracked under the `Dojo labs` release (moved off `Dojo 0.2` on
 - **Expected:** Dojo `0.3`–`0.6` each add the lab for the stack released
   alongside it, pinned to that tag (`git clone --branch vX.Y.Z`). The
   stack's announcement links to it. Each lab follows uFawkesAI's
-  [`dojo-handoff.md`](https://github.com/paruff/uFawkesAI/blob/2bd6e685faf36c8f38b098ae2e2a2d7bce0f2f04/docs/ai-sdlc/dojo-handoff.md) mapping (removed from uFawkesAI main on
-  2026-10-22, uFawkesAI#251; linked at its last version): one exercise step per
+  [`dojo-handoff.md`](https://github.com/paruff/uFawkesAI/blob/v2.1.0/docs/ai-sdlc/dojo-handoff.md) mapping
+  as of `v2.1.0` (paruff/uFawkesAI#251 removed it from the template's `main`;
+  the suite keeps that version): one exercise step per
   row of the release plan's Verification Strategy, one `record_test` per
   spec AC in `validate.sh`, and a provenance header naming the source
   `docs/ai-sdlc/<release>/` and commit
@@ -259,14 +299,15 @@ Rolling, tracked under the `Dojo labs` release (moved off `Dojo 0.2` on
   20.10+ and Compose v2
 - **Expected:** The README Quick Start alone brings every service to
   healthy, and every default dashboard panel shows data. No "datasource not
-  found" errors (uFawkesObs#534)
+  found" errors (paruff/uFawkesObs#534)
 - **Verification:** Real run transcripts on both hosts
 
 #### AC-OBS-02: No open release blockers
 
-- **Expected:** No open `release-blocker` issue on Project #7 under the
-  `Obs 1.0` release
-- **Verification:** `bash scripts/checks/ac-obs-02.sh`
+- **Expected:** No open issue in Project #7's `Obs 1.0` release carries the
+  `release-blocker` label. uFawkesObs has no milestones; the board release is
+  the scope, and it covers the `v1.0.x` patches that finish this release
+- **Verification:** `scripts/checks/ac-obs-02.sh`, run by the status build
 
 #### AC-OBS-03: The contract is written down
 
@@ -300,7 +341,7 @@ this release; until then, public pages call DevX unverified.
 
 #### AC-DEVX-01: Runs without uFawkesRes
 
-- **Expected:** An ADR records the uFawkesDevX#57 decision (ADR-0001). `make up` brings up Coder
+- **Expected:** An ADR records the paruff/uFawkesDevX#57 decision. `make up` brings up Coder
   and Backstage against storage defined inside the documented setup
 - **Verification:** Clean-host run transcript
 
@@ -308,15 +349,15 @@ this release; until then, public pages call DevX unverified.
 
 #### AC-FAWKES-01: Commit to staging works in one clean run
 
-- **Expected:** fawkes#1804's scope passes end to end in one continuous run:
-  push → build → scan → GitOps PR → ArgoCD sync to staging (fawkes#1858)
+- **Expected:** paruff/fawkes#1804's scope passes end to end in one continuous run: push
+  → build → scan → GitOps PR → ArgoCD sync to staging (paruff/fawkes#1858)
 - **Verification:** One CI run plus ArgoCD sync history, linked
 
 #### AC-FAWKES-02: Two DORA metrics are queryable
 
 - **Expected:** Deployment frequency and lead time for changes, both for the
-  tracer-bullet service, show in Grafana from native PromQL (fawkes#1572,
-  fawkes#1919). Grafana can query its own Prometheus (fawkes#2130)
+  tracer-bullet service, show in Grafana from native PromQL (paruff/fawkes#1572, paruff/fawkes#1919).
+  Grafana can query its own Prometheus (#2130)
 - **Verification:** Screenshot plus the PromQL behind each panel
 
 #### AC-FAWKES-03: No known P0 security issues
