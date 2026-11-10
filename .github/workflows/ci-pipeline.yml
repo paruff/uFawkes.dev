@@ -68,10 +68,14 @@ jobs:
           # Azure runner, 200 elsewhere). Those pages are self-referential
           # doc links, so they're ignored; releases and everything else stay
           # checked.
+          # --only-4xx: github.com also answers repo and package pages with
+          # 504s and timeouts from CI (2026-11-10: a different URL each run,
+          # 200 on rerun). A dead link is a 4xx and still fails the build.
           bundle exec htmlproofer ./_site \
             --checks "Links" \
             --ignore-empty-mailto \
             --ignore-urls "/https:\/\/ufawkes\.dev\/.*/,/https:\/\/www\.linkedin\.com\/.*/,/https:\/\/github\.com\/paruff\/ufawkes(obs|pipe|dora|sec|devx)/,/(?i)https:\/\/github\.com\/paruff\/.*\/blob\//" \
+            --only-4xx \
             --typhoeus '{"timeout":20,"followlocation":true}'
 
       - name: Spell check
