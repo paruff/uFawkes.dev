@@ -12,7 +12,9 @@ release of every stack and which versions of the other stacks it has been
 verified with. **"Standalone only"** means the stack has been tested by
 itself and nothing else.
 
-A blank or "not yet verified" entry means exactly that. Nothing on this page
+A stack's first **verified** release is the first version that passes its
+release criteria in the suite plan; a tag alone is "released, not yet
+verified". A blank or "not yet verified" entry means exactly that. Nothing on this page
 is inferred. **Dev image** is the devcontainer image (the uFawkes CDE,
 `ghcr.io/paruff/fawkes-space`) the release was built and tested in.
 
