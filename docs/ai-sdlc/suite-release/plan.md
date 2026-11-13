@@ -372,6 +372,23 @@ Manual evidence is a link: a merged PR, a closed issue, an issue comment
 (dated by the comment, for pasted transcripts) or a run URL with an
 `evidence_date`. It goes stale after 30 days unless its release has shipped.
 
+### Make commands
+
+Run in uFawkes.dev. The first two are the gate for every PR here; the audits
+read all the suite repos and change nothing.
+
+| Command                     | Proves                                                        | Needs                       |
+| --------------------------- | ------------------------------------------------------------- | --------------------------- |
+| `make validate`             | Every pre-commit hook passes on every file                    | Nothing                     |
+| `make build`                | The Jekyll site builds                                        | Bundler                     |
+| `make status-check-drift`   | `spec.md` and `acceptance.yml` name the same criteria         | Nothing                     |
+| `make design-check`         | Every design token pair meets its contrast floor              | Nothing                     |
+| `make status`               | The acceptance checks run and write `_data/suite_status.json` | A token with `read:project` |
+| `make shift-left-audit`     | PI-5 across the suite                                         | `gh`, signed in             |
+| `make ci-determinism-audit` | PI-1 to PI-4 across the suite                                 | `gh`, signed in             |
+| `make live-checks`          | The latest run of every scheduled workflow in the suite       | `gh`, signed in             |
+| `make doctor`               | This clone's hooks are installed and its tools are present    | Nothing                     |
+
 ### Suite membership
 
 Recorded in [`intent.md`](intent.md) (Revision 4). Both read-only audits
