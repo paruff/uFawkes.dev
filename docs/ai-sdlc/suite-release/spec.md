@@ -25,6 +25,68 @@ Each level links to the one above it: a feature's intent names its
 release, and a release's intent names this plan. Each `spec.md` has a
 `## Design` section. AC-SUITE-03 makes this enforceable.
 
+Every release `spec.md` also has these two sections, and every release
+`plan.md` has the third:
+
+| Section                                              | In        | Holds                                                                                                                                                 |
+| ---------------------------------------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `## Interfaces`                                      | `spec.md` | The repo's rows from "Cross-repo interface contracts" below, by link, plus anything it provides that isn't suite-wide. A repo with none says so       |
+| `## Pipeline invariants`                             | `spec.md` | A link to "Pipeline invariants" below, then the repo's own invariants and each departure from the suite list, with the issue that closes it           |
+| `### Make commands` under `## Verification Strategy` | `plan.md` | One row per command: what it proves and what it needs (nothing, Docker, a running stack, a cluster). Only targets that exist in the repo's `Makefile` |
+
+The suite lists below are the single copy. A repo's spec links to its rows
+and doesn't restate them, so a contract changes in one place.
+
+### Cross-repo interface contracts
+
+A contract is anything one suite repo reads from another. Changing one
+without its consumers is a breaking change for the provider's release.
+
+| Contract                                                                                                                               | Provider    | Consumers                                                        | Defined in (provider repo)                                                                                   | How a consumer pins it                                                                                                              |
+| -------------------------------------------------------------------------------------------------------------------------------------- | ----------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Reusable workflows: the inputs and outputs of `reusable-*.yml`                                                                         | uFawkesPipe | all six other repos                                              | `README.md`, "Reusable workflows"; each file's `workflow_call` block                                         | 40-character commit SHA plus a `# vX.Y.Z` comment; one release across the suite, moved by `scripts/suite-bump.sh`                   |
+| `ufawkes-ci` CI job image                                                                                                              | uFawkesPipe | all seven repos                                                  | `images/ci/`                                                                                                 | `ghcr.io/paruff/ufawkes-ci@sha256:…`; a tag alone is rejected                                                                       |
+| `.fawkespipe.yml` pipeline contract                                                                                                    | uFawkesPipe | uFawkesDevX golden-path templates; any application repo          | `docs/pipeline-contract.md`                                                                                  | The uFawkesPipe release tag the generator ran from                                                                                  |
+| Pipeline trigger from uFawkesDevX's Score service (`PIPELINE_WEBHOOK_URL`)                                                             | uFawkesPipe | uFawkesDevX                                                      | **Not defined.** uFawkesDevX's `.env.example` calls the URL and payload provisional (paruff/uFawkesPipe#217) | Unset by default; AC-PIPE-01 and AC-DEVX-01 don't depend on it                                                                      |
+| `fawkes-space` devcontainer image                                                                                                      | uFawkesAI   | the six other repos                                              | `docs/ai-sdlc/v2.0.0/spec.md` (AC-AI-01, AC-AI-05)                                                           | `fawkes-space:X.Y.Z@sha256:…` in `.devcontainer/`                                                                                   |
+| Template files: the artifact-chain workflow and script, `.pre-commit-config.yaml` base, `AGENTS.md` conventions                        | uFawkesAI   | the six other repos                                              | `docs/ai-sdlc/README.md`                                                                                     | Copied from a uFawkesAI release; `.artifact-chain-paths` is per repo and never overwritten                                          |
+| DORA event ingestion: endpoints, event types, required fields                                                                          | uFawkesObs  | uFawkesPipe (`notify-obs`), uFawkesAI (`dora-events` emitter)    | `docs/CONTRACTS.md` §1. uFawkesPipe mirrors it in `contracts/dora-events/*.schema.json`                      | A released uFawkesObs version, recorded in the compatibility matrix. The mirror isn't synced automatically (paruff/uFawkesPipe#218) |
+| OTLP receivers (`4317` gRPC, `4318` HTTP) and metric routing                                                                           | uFawkesObs  | uFawkesPipe                                                      | `docs/CONTRACTS.md` §2                                                                                       | A released uFawkesObs version                                                                                                       |
+| Compose surface: services, published ports, `.env.example` variables                                                                   | uFawkesObs  | uFawkesDojo labs; suite mode ([`suite-mode.md`](suite-mode.md))  | `docs/ai-sdlc/v1.0.0/spec.md`, "Public contract" and "Semver rules"                                          | The release tag                                                                                                                     |
+| Release tags of each stack                                                                                                             | each stack  | uFawkesDojo (a lab's `**Runs against**` line and its clone step) | The repo's GitHub Releases                                                                                   | `--branch vX.Y.Z`; never `main` (Dojo AC-003, AC-006, AC-007)                                                                       |
+| Files on `main` that the status checks read: `INTENT.md`, `README.md`, `.github/workflows/artifact-chain.yml`, `.artifact-chain-paths` | each repo   | uFawkes.dev (`scripts/checks/`)                                  | §2, AC-SUITE-01 and AC-SUITE-03                                                                              | Read from `main` daily; a rename fails the status build                                                                             |
+
+### Pipeline invariants
+
+These hold on every suite repo's `main`. Each names the check that proves it,
+so none rests on a reviewer noticing.
+
+| #     | Invariant                                                                                                                                                                                                               | Proven by                                                           |
+| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| PI-1  | Every `uses:` of an action or a reusable workflow outside the repo pins a 40-character commit SHA, and every image pins `@sha256`                                                                                       | `make ci-determinism-audit`, column `unpinned`                      |
+| PI-2  | Every repo calls uFawkesPipe's reusables at one release, and keeps no local copy of one                                                                                                                                 | `make ci-determinism-audit`, columns `pipe_refs` and `local_copies` |
+| PI-3  | The hook job runs in `ufawkes-ci` at one digest across the suite, built on the uFawkesAI release the devcontainer pins                                                                                                  | `make ci-determinism-audit`, columns `ci_image` and `release_match` |
+| PI-4  | No step fails silently: no `continue-on-error: true` or `\|\| true` unless `.pipeline.yml` lists it under `informational:`                                                                                              | `make ci-determinism-audit`, column `silent`                        |
+| PI-5  | `.pre-commit-config.yaml` is the only hook definition, and CI runs it as a required check (AC-AI-09)                                                                                                                    | `make shift-left-audit`                                             |
+| PI-6  | `main` has the `main-protection` ruleset: a pull request, no force push, no deletion, linear history, and the hook job and `🔗 Artifact Chain` as required checks ([the standard](../suite-hygiene/main-protection.md)) | `scripts/check-branch-protection.sh`                                |
+| PI-7  | The repo has its own `.artifact-chain-paths`, so the artifact chain checks the repo's real code paths                                                                                                                   | `scripts/checks/ac-suite-03.sh`                                     |
+| PI-8  | Every PR to `main` passes `main-ci-guard.yml`                                                                                                                                                                           | No check yet (paruff/uFawkes.dev#228)                               |
+| PI-9  | Every CI job starts with a `job-start` step and ends with a `job-finish` step that runs `if: always()`                                                                                                                  | No check yet (paruff/uFawkes.dev#228)                               |
+| PI-10 | Release Please cuts every release tag. An agent never merges, never pushes to `main` and never passes `--no-verify`                                                                                                     | PI-6; the `commit-msg` hook                                         |
+
+The audits print a matrix and exit non-zero only when the script itself
+breaks, so a column that isn't `ok` is the failure to act on.
+
+### Make verification commands
+
+`make validate` is each repo's local gate. It runs at least
+`pre-commit run --all-files`, needs no running stack or cluster, and exits
+non-zero on any failure. `make test` runs the tests that need nothing running.
+`make doctor` reports whether the clone's hooks are live. Checks that need a
+stack or a cluster get their own targets, named in the repo's release plan.
+Until a repo's `make validate` meets this, its plan names the command that
+does the same job.
+
 | Repo            | `INTENT.md`                                                     | Release docs                                    | Remaining doc cleanup                                                                                             |
 | --------------- | --------------------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | **uFawkes.dev** | ✅                                                              | `docs/ai-sdlc/suite-release/` (this folder)     | Add `/ai/` and `/fawkes/` pages to the nav; retire `/dora/` (ufawkesdora archived) and `/sec/` (merged into Pipe) |
