@@ -1,6 +1,6 @@
 # Spec: uFawkes Suite Release
 
-**Traces to:** [`intent.md`](intent.md) | **Status:** Draft | **Revision:** 5
+**Traces to:** [`intent.md`](intent.md) | **Status:** Draft | **Revision:** 6
 
 This file defines _what "released" means_ for each of the seven product repos
 (a release is the first version that passes its criteria; see `intent.md`,
@@ -42,19 +42,19 @@ and doesn't restate them, so a contract changes in one place.
 A contract is anything one suite repo reads from another. Changing one
 without its consumers is a breaking change for the provider's release.
 
-| Contract                                                                                                                               | Provider    | Consumers                                                        | Defined in (provider repo)                                                                                   | How a consumer pins it                                                                                                              |
-| -------------------------------------------------------------------------------------------------------------------------------------- | ----------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| Reusable workflows: the inputs and outputs of `reusable-*.yml`                                                                         | uFawkesPipe | all six other repos                                              | `README.md`, "Reusable workflows"; each file's `workflow_call` block                                         | 40-character commit SHA plus a `# vX.Y.Z` comment; one release across the suite, moved by `scripts/suite-bump.sh`                   |
-| `ufawkes-ci` CI job image                                                                                                              | uFawkesPipe | all seven repos                                                  | `images/ci/`                                                                                                 | `ghcr.io/paruff/ufawkes-ci@sha256:…`; a tag alone is rejected                                                                       |
-| `.fawkespipe.yml` pipeline contract                                                                                                    | uFawkesPipe | uFawkesDevX golden-path templates; any application repo          | `docs/pipeline-contract.md`                                                                                  | The uFawkesPipe release tag the generator ran from                                                                                  |
-| Pipeline trigger from uFawkesDevX's Score service (`PIPELINE_WEBHOOK_URL`)                                                             | uFawkesPipe | uFawkesDevX                                                      | **Not defined.** uFawkesDevX's `.env.example` calls the URL and payload provisional (paruff/uFawkesPipe#217) | Unset by default; AC-PIPE-01 and AC-DEVX-01 don't depend on it                                                                      |
-| `fawkes-space` devcontainer image                                                                                                      | uFawkesAI   | the six other repos                                              | `docs/ai-sdlc/v2.0.0/spec.md` (AC-AI-01, AC-AI-05)                                                           | `fawkes-space:X.Y.Z@sha256:…` in `.devcontainer/`                                                                                   |
-| Template files: the artifact-chain workflow and script, `.pre-commit-config.yaml` base, `AGENTS.md` conventions                        | uFawkesAI   | the six other repos                                              | `docs/ai-sdlc/README.md`                                                                                     | Copied from a uFawkesAI release; `.artifact-chain-paths` is per repo and never overwritten                                          |
-| DORA event ingestion: endpoints, event types, required fields                                                                          | uFawkesObs  | uFawkesPipe (`notify-obs`), uFawkesAI (`dora-events` emitter)    | `docs/CONTRACTS.md` §1. uFawkesPipe mirrors it in `contracts/dora-events/*.schema.json`                      | A released uFawkesObs version, recorded in the compatibility matrix. The mirror isn't synced automatically (paruff/uFawkesPipe#218) |
-| OTLP receivers (`4317` gRPC, `4318` HTTP) and metric routing                                                                           | uFawkesObs  | uFawkesPipe                                                      | `docs/CONTRACTS.md` §2                                                                                       | A released uFawkesObs version                                                                                                       |
-| Compose surface: services, published ports, `.env.example` variables                                                                   | uFawkesObs  | uFawkesDojo labs; suite mode ([`suite-mode.md`](suite-mode.md))  | `docs/ai-sdlc/v1.0.0/spec.md`, "Public contract" and "Semver rules"                                          | The release tag                                                                                                                     |
-| Release tags of each stack                                                                                                             | each stack  | uFawkesDojo (a lab's `**Runs against**` line and its clone step) | The repo's GitHub Releases                                                                                   | `--branch vX.Y.Z`; never `main` (Dojo AC-003, AC-006, AC-007)                                                                       |
-| Files on `main` that the status checks read: `INTENT.md`, `README.md`, `.github/workflows/artifact-chain.yml`, `.artifact-chain-paths` | each repo   | uFawkes.dev (`scripts/checks/`)                                  | §2, AC-SUITE-01 and AC-SUITE-03                                                                              | Read from `main` daily; a rename fails the status build                                                                             |
+| Contract                                                                                                                               | Provider    | Consumers                                                                                                                                                           | Defined in (provider repo)                                                                                                                   | How a consumer pins it                                                                                                                                                                                         |
+| -------------------------------------------------------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Reusable workflows: the inputs and outputs of `reusable-*.yml`                                                                         | uFawkesPipe | all six other repos                                                                                                                                                 | `README.md`, "Reusable workflows"; each file's `workflow_call` block                                                                         | 40-character commit SHA plus a `# vX.Y.Z` comment; one release across the suite, moved by `scripts/suite-bump.sh`                                                                                              |
+| `ufawkes-ci` CI job image                                                                                                              | uFawkesPipe | all seven repos                                                                                                                                                     | `images/ci/`                                                                                                                                 | `ghcr.io/paruff/ufawkes-ci@sha256:…`; a tag alone is rejected                                                                                                                                                  |
+| `.fawkespipe.yml` pipeline contract                                                                                                    | uFawkesPipe | uFawkesDevX golden-path templates; any application repo                                                                                                             | `docs/pipeline-contract.md`                                                                                                                  | The uFawkesPipe release tag the generator ran from                                                                                                                                                             |
+| Pipeline trigger from uFawkesDevX's Score service (`PIPELINE_WEBHOOK_URL`)                                                             | uFawkesPipe | uFawkesDevX                                                                                                                                                         | **Not defined.** uFawkesDevX's `.env.example` calls the URL and payload provisional (paruff/uFawkesPipe#217)                                 | Unset by default; AC-PIPE-01 and AC-DEVX-01 don't depend on it                                                                                                                                                 |
+| `fawkes-space` devcontainer image                                                                                                      | uFawkesAI   | the six other repos                                                                                                                                                 | `docs/ai-sdlc/v2.0.0/spec.md` (AC-AI-01, AC-AI-05)                                                                                           | `fawkes-space:X.Y.Z@sha256:…` in `.devcontainer/`                                                                                                                                                              |
+| Template files: the artifact-chain workflow and script, `.pre-commit-config.yaml` base, `AGENTS.md` conventions                        | uFawkesAI   | the six other repos                                                                                                                                                 | `docs/ai-sdlc/README.md`                                                                                                                     | Copied from a uFawkesAI release; `.artifact-chain-paths` is per repo and never overwritten                                                                                                                     |
+| DORA event ingestion: endpoints, event types, required fields                                                                          | uFawkesObs  | uFawkesPipe (`notify-obs`). uFawkesAI's `dora-events` emitter writes a log line to Loki (AC-AI-06) and doesn't post to `/event`, so it isn't a consumer of this row | `dora/events/*.schema.json`; `docs/CONTRACTS.md` §1 describes them. uFawkesPipe mirrors the schemas in `contracts/dora-events/*.schema.json` | A released uFawkesObs version, recorded in the compatibility matrix. No copy is synced automatically: on 2026-11-13 uFawkesPipe's mirror and uFawkesAI's test copy both differed from uFawkesObs (AC-SUITE-04) |
+| OTLP receivers (`4317` gRPC, `4318` HTTP) and metric routing                                                                           | uFawkesObs  | uFawkesPipe                                                                                                                                                         | `docs/CONTRACTS.md` §2                                                                                                                       | A released uFawkesObs version                                                                                                                                                                                  |
+| Compose surface: services, published ports, `.env.example` variables                                                                   | uFawkesObs  | uFawkesDojo labs; suite mode ([`suite-mode.md`](suite-mode.md))                                                                                                     | `docs/ai-sdlc/v1.0.0/spec.md`, "Public contract" and "Semver rules"                                                                          | The release tag                                                                                                                                                                                                |
+| Release tags of each stack                                                                                                             | each stack  | uFawkesDojo (a lab's `**Runs against**` line and its clone step)                                                                                                    | The repo's GitHub Releases                                                                                                                   | `--branch vX.Y.Z`; never `main` (Dojo AC-003, AC-006, AC-007)                                                                                                                                                  |
+| Files on `main` that the status checks read: `INTENT.md`, `README.md`, `.github/workflows/artifact-chain.yml`, `.artifact-chain-paths` | each repo   | uFawkes.dev (`scripts/checks/`)                                                                                                                                     | §2, AC-SUITE-01 and AC-SUITE-03                                                                                                              | Read from `main` daily; a rename fails the status build                                                                                                                                                        |
 
 ### Pipeline invariants
 
@@ -76,6 +76,21 @@ so none rests on a reviewer noticing.
 
 The audits print a matrix and exit non-zero only when the script itself
 breaks, so a column that isn't `ok` is the failure to act on.
+
+**Known departures, read from each repo's `main` on 2026-11-13.** The audits
+above don't cover these yet:
+
+- **PI-3:** uFawkesAI pins a different `ufawkes-ci` digest from the other six
+  repos (paruff/uFawkesAI#289).
+- **PI-8:** uFawkesDojo has no `main-ci-guard.yml` (paruff/uFawkesDojo#126).
+  uFawkesAI's guard is a local script, not uFawkesPipe's reusable
+  (paruff/uFawkesAI#289). uFawkesDevX's guard watches `ci.yml`, not the
+  pipeline that runs the reusables (paruff/uFawkesDevX#152).
+- **PI-9:** jobs without both stamps in uFawkesObs (11 of its 16 workflow files
+  have neither, paruff/uFawkesObs#720), fawkes (paruff/fawkes#2313), uFawkesAI
+  (paruff/uFawkesAI#289), uFawkesDojo (paruff/uFawkesDojo#126) and uFawkesDevX
+  (paruff/uFawkesDevX#152). The stamps are log lines that nothing reads; what
+  consumes them is decided with paruff/uFawkes.dev#228.
 
 ### Make verification commands
 
@@ -174,6 +189,36 @@ or simulated one.
   devcontainer image version each stack was tested in
 - **Verification:** `scripts/checks/ac-site-01.sh`: the pages exist and each
   matrix row's release is the repo's newest GitHub Release
+
+#### AC-SUITE-04: Every copy of a DORA event schema matches uFawkesObs
+
+- **Expected:** Each DORA event schema a suite repo keeps (uFawkesPipe's
+  `contracts/dora-events/`, and the `scripts/testdata/` copy beside each
+  `emit-dora-event.sh`) has the same properties and `required` list as
+  uFawkesObs's `dora/events/*.schema.json` at the release it names
+- **Must not:** Validate an event against a local copy that uFawkesObs would
+  reject
+- **Verification:** `bash scripts/checks/ac-suite-04.sh`. The script doesn't
+  exist yet (paruff/uFawkes.dev#232); until it does, the evidence is that
+  issue, closed
+- **Gate for:** none. Rolling, like AC-DOJO-04: it is listed last in
+  `acceptance.yml` so it never holds "Next release"
+- **Read 2026-11-13:** uFawkesPipe's deployment schema lacks
+  `first_commit_at` and `pr_merged_at`. uFawkesAI's copy requires
+  `deployment_intent`, which uFawkesObs's schema doesn't define and so
+  rejects
+
+#### AC-SITE-02: Each stack page states the version the matrix states
+
+- **Expected:** A version named on a stack page (`/obs/`, `/pipe/`, `/devx/`,
+  `/ai/`, `/fawkes/`) equals that repo's row in `/compatibility/`. A page for
+  a retired stack (`/dora/`, `/sec/`) redirects, or carries no live badge and
+  no empty Quick start card
+- **Verification:** `scripts/checks/ac-site-01.sh`, extended to read each
+  page's version (paruff/uFawkes.dev#233); until then, that issue, closed
+- **Gate for:** none. Rolling, listed last in `acceptance.yml`
+- **Read 2026-11-13:** `/fawkes/` says `v0.3.95` (matrix: `v0.3.163`), `/ai/`
+  says `v2.0.0` (matrix: `v2.2.0`), `/obs/` says `v1.0.0` (matrix: `v1.0.1`)
 
 ### Release 1 — uFawkesAI `v2.0.0`
 

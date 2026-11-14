@@ -238,3 +238,20 @@
   check: manual
   run: ""
   evidence: ""
+
+# Rolling, from the 2026-11-13 suite audit. Kept after AC-DOJO-04 so neither
+# holds "Next release". "Suite contracts" is not a Project #7 Release option;
+# no issue carries it. Each becomes `check: command` when its script lands.
+- id: AC-SUITE-04
+  release: Suite contracts
+  title: Every copy of a DORA event schema matches uFawkesObs
+  check: manual
+  run: ""
+  evidence: https://github.com/paruff/uFawkes.dev/issues/232
+
+- id: AC-SITE-02
+  release: Suite contracts
+  title: Each stack page states the version the matrix states
+  check: manual
+  run: ""
+  evidence: https://github.com/paruff/uFawkes.dev/issues/233

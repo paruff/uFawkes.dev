@@ -1,7 +1,7 @@
 # Plan: uFawkes Suite Release
 
 **Traces to:** [`spec.md`](spec.md) → [`intent.md`](intent.md) |
-**Status:** Draft | **Revision:** 5 (status as of 2026-11-09)
+**Status:** Draft | **Revision:** 6 (status as of 2026-11-09; audit findings added 2026-11-13)
 
 The plan is gate-driven, not date-driven. Each release starts its tag when
 the previous release's gate passes, but work for later releases can run
@@ -59,6 +59,23 @@ A dead link still turns it red.
 4. **Suite mode (paruff/uFawkes.dev#70) is not measured.** Only
    `obs-alone-idle.csv` exists. It needs a 16 GB host (the documented one
    has 8 GB) and a Pipe that runs without uFawkesRes.
+
+### Open findings from the 2026-11-13 audit
+
+A read of all seven repos at `main`. Nothing was run, so each line is what
+the files say, not a live observation. Each repo has one `goal` issue and its
+tasks are that issue's sub-issues; none carries a `Release` yet, which is the
+owner's call.
+
+| Finding                                                                                                                                                                                        | Goal                   |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| Only deployment frequency is fed by real pipelines. Lead time has no input, only successful deployments are sent, and uFawkesObs's written contract disagrees with its schema files            | paruff/uFawkesObs#719  |
+| `notify-obs` sends `status: success` only and no lead-time fields. The schema mirror is stale (paruff/uFawkesPipe#218), and `docs/pipeline-contract.md` documents fields the generator ignores | paruff/uFawkesPipe#223 |
+| The emitter's test validates against a local schema that uFawkesObs rejects. Six repos carry an older copy of the emitter that no workflow calls                                               | paruff/uFawkesAI#291   |
+| Every golden-path `.fawkespipe.yml` breaks uFawkesPipe's contract. The README, tests and catalog still describe Postgres, Jenkins and uFawkesSec                                               | paruff/uFawkesDevX#153 |
+| The uFawkesObs labs match their stack. The uFawkesDevX and uFawkesPipe labs don't, and nothing checks a lab's commands against the tag it pins                                                 | paruff/uFawkesDojo#127 |
+| Alpha's Grafana ships copies of uFawkesObs dashboards that nothing in fawkes feeds. The design system departs from the tokens                                                                  | paruff/fawkes#2314     |
+| Stack pages disagree with the compatibility matrix, `/dora/` and `/sec/` show a live badge, and `make design-check` doesn't read `main.css`. New criteria: AC-SUITE-04 and AC-SITE-02          | paruff/uFawkes.dev#236 |
 
 ### Next steps, in order
 
@@ -361,6 +378,8 @@ When one lands, update the table in uFawkesRes's README.
 | AC-SUITE-02      | `scripts/checks/ac-suite-02.sh`                | Daily status build      |
 | AC-SUITE-03      | `scripts/checks/ac-suite-03.sh`                | Daily status build      |
 | AC-SITE-01       | `scripts/checks/ac-site-01.sh`                 | Daily status build      |
+| AC-SUITE-04      | paruff/uFawkes.dev#232, then `ac-suite-04.sh`  | Daily status build      |
+| AC-SITE-02       | paruff/uFawkes.dev#233, then `ac-site-01.sh`   | Daily status build      |
 | AC-AI-01..09     | Manifest and cosign output, template run       | uFawkesAI release notes |
 | AC-DOJO-01..04   | Grep, lab transcripts, same-week releases      | Dojo release notes      |
 | AC-OBS-01..04    | Clean-host transcripts, four live URLs         | Obs release notes       |
