@@ -57,3 +57,19 @@
 | The secondary button is unchanged (it also carries `.cta-button`) | Same run: Indigo label on a transparent background, with its own hover colours                              | live-system | Playwright against a local build      |
 | CSS stays append-only                                             | `git diff --numstat assets/css/main.css` shows no deleted lines                                             | unit        | `git diff --numstat`                  |
 | Not covered                                                       | Whether visitors read an orange button as a warning (a judgment call recorded in `DESIGN.md`, not measured) | -           | Revisit if feedback says so           |
+
+### Verification for the CSS-against-tokens check (paruff/uFawkes.dev#234)
+
+A read of `assets/css/main.css` on 2026-11-13 found what the checks above
+can't see: 17 colours outside `design/tokens.json`, `@media` queries at
+`400px` and `min-width: 768px`, radii of 6, 10 and 12px, and 24 base
+declarations of the retired `#16a34a` (all before the override layer; whether
+each one loses the cascade was not traced). Sibling repos have the same gap:
+paruff/fawkes#2311 (design system), paruff/uFawkesDojo#126 (page width).
+
+| Criterion                                                                | How it's proven                                                                      | Test type | Command / CI job                           |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | --------- | ------------------------------------------ |
+| Every colour, breakpoint and radius in `main.css` is a token             | The check lists each literal that isn't in `tokens.json` or on a recorded allow-list | unit      | `make design-check`                        |
+| The check fails on a colour, a breakpoint or a radius that isn't a token | Fixture stylesheets, one per case                                                    | unit      | `bash scripts/test-check-design-tokens.sh` |
+| The live badge uses the AA green                                         | No `16a34a` in `index.md` or `_layouts/stack.html`                                   | unit      | `grep -rn 16a34a index.md _layouts`        |
+| CSS stays append-only                                                    | `git diff --numstat assets/css/main.css` shows no deleted lines                      | unit      | `git diff --numstat`                       |
