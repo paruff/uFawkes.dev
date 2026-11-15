@@ -1,0 +1,154 @@
+[
+  {
+    "name": "deployment-minimal",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "deployment",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1"
+    }
+  },
+  {
+    "name": "deployment-all-optional-failed",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "deployment",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "staging",
+      "commit_sha": "0123456789abcdef0123456789abcdef01234567",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "failed",
+      "pipeline_url": "https://ci.example.test/runs/1",
+      "deploy_duration_seconds": 0,
+      "ai_assisted": false,
+      "first_commit_at": "2024-03-01T09:00:00Z",
+      "pr_merged_at": "2024-03-01T09:30:00+00:00"
+    }
+  },
+  {
+    "name": "deployment-rollback-ai",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "deployment",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "rollback",
+      "pipeline_url": "https://ci.example.test/runs/2",
+      "deploy_duration_seconds": 95,
+      "ai_assisted": true
+    }
+  },
+  {
+    "name": "incident-opened",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "incident",
+      "incident_id": "INC-1",
+      "repo": "acme/shop",
+      "service": "shop",
+      "status": "opened",
+      "occurred_at": "2024-03-01T10:00:00Z"
+    }
+  },
+  {
+    "name": "incident-resolved-all-optional",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "incident",
+      "incident_id": "INC-2",
+      "repo": "acme/shop",
+      "service": "shop",
+      "status": "resolved",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "linked_deployment_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "severity": "SEV1"
+    }
+  },
+  {
+    "name": "pr-merged",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "pr",
+      "repo": "acme/shop",
+      "pr_number": 7,
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "merged",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "first_commit_at": "2024-03-01T09:00:00Z"
+    }
+  },
+  {
+    "name": "pr-opened-all-optional",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "pr",
+      "repo": "acme/shop",
+      "pr_number": 8,
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "opened",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "first_commit_at": "2024-03-01T09:00:00Z",
+      "lines_added": 10,
+      "lines_deleted": 0,
+      "ai_assisted": true
+    }
+  },
+  {
+    "name": "pr-closed",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "pr",
+      "repo": "acme/shop",
+      "pr_number": 9,
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "closed",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "first_commit_at": "2024-03-01T09:00:00Z"
+    }
+  },
+  {
+    "name": "rework-hotfix",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "rework",
+      "repo": "acme/shop",
+      "deployment_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "rework_type": "hotfix",
+      "triggered_at": "2024-03-01T10:00:00Z",
+      "user_visible": true
+    }
+  },
+  {
+    "name": "rework-rollback-hidden",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "rework",
+      "repo": "acme/shop",
+      "deployment_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "rework_type": "rollback",
+      "triggered_at": "2024-03-01T10:00:00Z",
+      "user_visible": false
+    }
+  },
+  {
+    "name": "rework-patch",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "rework",
+      "repo": "acme/shop",
+      "deployment_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "rework_type": "patch",
+      "triggered_at": "2024-03-01T10:00:00Z",
+      "user_visible": true
+    }
+  }
+]

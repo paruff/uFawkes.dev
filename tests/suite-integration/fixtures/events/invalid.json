@@ -1,0 +1,1010 @@
+[
+  {
+    "name": "deployment-missing-schema_version",
+    "payload": {
+      "event_type": "deployment",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1"
+    },
+    "expect_field": "schema_version"
+  },
+  {
+    "name": "deployment-missing-event_type",
+    "payload": {
+      "schema_version": "1.0",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1"
+    },
+    "expect_field": "event_type",
+    "no_schema": true
+  },
+  {
+    "name": "deployment-missing-repo",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "deployment",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1"
+    },
+    "expect_field": "repo"
+  },
+  {
+    "name": "deployment-missing-service",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "deployment",
+      "repo": "acme/shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1"
+    },
+    "expect_field": "service"
+  },
+  {
+    "name": "deployment-missing-environment",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "deployment",
+      "repo": "acme/shop",
+      "service": "shop",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1"
+    },
+    "expect_field": "environment"
+  },
+  {
+    "name": "deployment-missing-commit_sha",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "deployment",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1"
+    },
+    "expect_field": "commit_sha"
+  },
+  {
+    "name": "deployment-missing-deployed_at",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "deployment",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1"
+    },
+    "expect_field": "deployed_at"
+  },
+  {
+    "name": "deployment-missing-status",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "deployment",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "pipeline_url": "https://ci.example.test/runs/1"
+    },
+    "expect_field": "status"
+  },
+  {
+    "name": "deployment-missing-pipeline_url",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "deployment",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success"
+    },
+    "expect_field": "pipeline_url"
+  },
+  {
+    "name": "deployment-empty-repo",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "deployment",
+      "repo": "",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1"
+    },
+    "expect_field": "repo"
+  },
+  {
+    "name": "deployment-extra-field",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "deployment",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1",
+      "bogus": 1
+    },
+    "expect_field": "bogus"
+  },
+  {
+    "name": "deployment-bad-schema-version",
+    "payload": {
+      "schema_version": "v1",
+      "event_type": "deployment",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1"
+    },
+    "expect_field": "schema_version"
+  },
+  {
+    "name": "deployment-bad-timestamp",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "deployment",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "yesterday",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1"
+    },
+    "expect_field": "deployed_at",
+    "format_only": true
+  },
+  {
+    "name": "deployment-short-sha",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "deployment",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "abc1234",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1"
+    },
+    "expect_field": "commit_sha"
+  },
+  {
+    "name": "deployment-uppercase-sha",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "deployment",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1"
+    },
+    "expect_field": "commit_sha"
+  },
+  {
+    "name": "deployment-bad-enum",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "deployment",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "bogus",
+      "pipeline_url": "https://ci.example.test/runs/1"
+    },
+    "expect_field": "status"
+  },
+  {
+    "name": "incident-missing-schema_version",
+    "payload": {
+      "event_type": "incident",
+      "incident_id": "INC-1",
+      "repo": "acme/shop",
+      "service": "shop",
+      "status": "opened",
+      "occurred_at": "2024-03-01T10:00:00Z"
+    },
+    "expect_field": "schema_version"
+  },
+  {
+    "name": "incident-missing-event_type",
+    "payload": {
+      "schema_version": "1.0",
+      "incident_id": "INC-1",
+      "repo": "acme/shop",
+      "service": "shop",
+      "status": "opened",
+      "occurred_at": "2024-03-01T10:00:00Z"
+    },
+    "expect_field": "event_type",
+    "no_schema": true
+  },
+  {
+    "name": "incident-missing-incident_id",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "incident",
+      "repo": "acme/shop",
+      "service": "shop",
+      "status": "opened",
+      "occurred_at": "2024-03-01T10:00:00Z"
+    },
+    "expect_field": "incident_id"
+  },
+  {
+    "name": "incident-missing-repo",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "incident",
+      "incident_id": "INC-1",
+      "service": "shop",
+      "status": "opened",
+      "occurred_at": "2024-03-01T10:00:00Z"
+    },
+    "expect_field": "repo"
+  },
+  {
+    "name": "incident-missing-service",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "incident",
+      "incident_id": "INC-1",
+      "repo": "acme/shop",
+      "status": "opened",
+      "occurred_at": "2024-03-01T10:00:00Z"
+    },
+    "expect_field": "service"
+  },
+  {
+    "name": "incident-missing-status",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "incident",
+      "incident_id": "INC-1",
+      "repo": "acme/shop",
+      "service": "shop",
+      "occurred_at": "2024-03-01T10:00:00Z"
+    },
+    "expect_field": "status"
+  },
+  {
+    "name": "incident-missing-occurred_at",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "incident",
+      "incident_id": "INC-1",
+      "repo": "acme/shop",
+      "service": "shop",
+      "status": "opened"
+    },
+    "expect_field": "occurred_at"
+  },
+  {
+    "name": "incident-empty-repo",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "incident",
+      "incident_id": "INC-1",
+      "repo": "",
+      "service": "shop",
+      "status": "opened",
+      "occurred_at": "2024-03-01T10:00:00Z"
+    },
+    "expect_field": "repo"
+  },
+  {
+    "name": "incident-extra-field",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "incident",
+      "incident_id": "INC-1",
+      "repo": "acme/shop",
+      "service": "shop",
+      "status": "opened",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "bogus": 1
+    },
+    "expect_field": "bogus"
+  },
+  {
+    "name": "incident-bad-schema-version",
+    "payload": {
+      "schema_version": "v1",
+      "event_type": "incident",
+      "incident_id": "INC-1",
+      "repo": "acme/shop",
+      "service": "shop",
+      "status": "opened",
+      "occurred_at": "2024-03-01T10:00:00Z"
+    },
+    "expect_field": "schema_version"
+  },
+  {
+    "name": "incident-bad-timestamp",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "incident",
+      "incident_id": "INC-1",
+      "repo": "acme/shop",
+      "service": "shop",
+      "status": "opened",
+      "occurred_at": "yesterday"
+    },
+    "expect_field": "occurred_at",
+    "format_only": true
+  },
+  {
+    "name": "incident-bad-enum",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "incident",
+      "incident_id": "INC-1",
+      "repo": "acme/shop",
+      "service": "shop",
+      "status": "closed",
+      "occurred_at": "2024-03-01T10:00:00Z"
+    },
+    "expect_field": "status"
+  },
+  {
+    "name": "pr-missing-schema_version",
+    "payload": {
+      "event_type": "pr",
+      "repo": "acme/shop",
+      "pr_number": 7,
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "merged",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "first_commit_at": "2024-03-01T09:00:00Z"
+    },
+    "expect_field": "schema_version"
+  },
+  {
+    "name": "pr-missing-event_type",
+    "payload": {
+      "schema_version": "1.0",
+      "repo": "acme/shop",
+      "pr_number": 7,
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "merged",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "first_commit_at": "2024-03-01T09:00:00Z"
+    },
+    "expect_field": "event_type",
+    "no_schema": true
+  },
+  {
+    "name": "pr-missing-repo",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "pr",
+      "pr_number": 7,
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "merged",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "first_commit_at": "2024-03-01T09:00:00Z"
+    },
+    "expect_field": "repo"
+  },
+  {
+    "name": "pr-missing-pr_number",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "pr",
+      "repo": "acme/shop",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "merged",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "first_commit_at": "2024-03-01T09:00:00Z"
+    },
+    "expect_field": "pr_number"
+  },
+  {
+    "name": "pr-missing-commit_sha",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "pr",
+      "repo": "acme/shop",
+      "pr_number": 7,
+      "status": "merged",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "first_commit_at": "2024-03-01T09:00:00Z"
+    },
+    "expect_field": "commit_sha"
+  },
+  {
+    "name": "pr-missing-status",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "pr",
+      "repo": "acme/shop",
+      "pr_number": 7,
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "first_commit_at": "2024-03-01T09:00:00Z"
+    },
+    "expect_field": "status"
+  },
+  {
+    "name": "pr-missing-occurred_at",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "pr",
+      "repo": "acme/shop",
+      "pr_number": 7,
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "merged",
+      "first_commit_at": "2024-03-01T09:00:00Z"
+    },
+    "expect_field": "occurred_at"
+  },
+  {
+    "name": "pr-missing-first_commit_at",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "pr",
+      "repo": "acme/shop",
+      "pr_number": 7,
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "merged",
+      "occurred_at": "2024-03-01T10:00:00Z"
+    },
+    "expect_field": "first_commit_at"
+  },
+  {
+    "name": "pr-empty-repo",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "pr",
+      "repo": "",
+      "pr_number": 7,
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "merged",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "first_commit_at": "2024-03-01T09:00:00Z"
+    },
+    "expect_field": "repo"
+  },
+  {
+    "name": "pr-extra-field",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "pr",
+      "repo": "acme/shop",
+      "pr_number": 7,
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "merged",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "first_commit_at": "2024-03-01T09:00:00Z",
+      "bogus": 1
+    },
+    "expect_field": "bogus"
+  },
+  {
+    "name": "pr-bad-schema-version",
+    "payload": {
+      "schema_version": "v1",
+      "event_type": "pr",
+      "repo": "acme/shop",
+      "pr_number": 7,
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "merged",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "first_commit_at": "2024-03-01T09:00:00Z"
+    },
+    "expect_field": "schema_version"
+  },
+  {
+    "name": "pr-bad-timestamp",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "pr",
+      "repo": "acme/shop",
+      "pr_number": 7,
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "merged",
+      "occurred_at": "yesterday",
+      "first_commit_at": "2024-03-01T09:00:00Z"
+    },
+    "expect_field": "occurred_at",
+    "format_only": true
+  },
+  {
+    "name": "pr-short-sha",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "pr",
+      "repo": "acme/shop",
+      "pr_number": 7,
+      "commit_sha": "abc1234",
+      "status": "merged",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "first_commit_at": "2024-03-01T09:00:00Z"
+    },
+    "expect_field": "commit_sha"
+  },
+  {
+    "name": "pr-uppercase-sha",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "pr",
+      "repo": "acme/shop",
+      "pr_number": 7,
+      "commit_sha": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "status": "merged",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "first_commit_at": "2024-03-01T09:00:00Z"
+    },
+    "expect_field": "commit_sha"
+  },
+  {
+    "name": "pr-bad-enum",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "pr",
+      "repo": "acme/shop",
+      "pr_number": 7,
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "draft",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "first_commit_at": "2024-03-01T09:00:00Z"
+    },
+    "expect_field": "status"
+  },
+  {
+    "name": "rework-missing-schema_version",
+    "payload": {
+      "event_type": "rework",
+      "repo": "acme/shop",
+      "deployment_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "rework_type": "hotfix",
+      "triggered_at": "2024-03-01T10:00:00Z",
+      "user_visible": true
+    },
+    "expect_field": "schema_version"
+  },
+  {
+    "name": "rework-missing-event_type",
+    "payload": {
+      "schema_version": "1.0",
+      "repo": "acme/shop",
+      "deployment_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "rework_type": "hotfix",
+      "triggered_at": "2024-03-01T10:00:00Z",
+      "user_visible": true
+    },
+    "expect_field": "event_type",
+    "no_schema": true
+  },
+  {
+    "name": "rework-missing-repo",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "rework",
+      "deployment_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "rework_type": "hotfix",
+      "triggered_at": "2024-03-01T10:00:00Z",
+      "user_visible": true
+    },
+    "expect_field": "repo"
+  },
+  {
+    "name": "rework-missing-deployment_sha",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "rework",
+      "repo": "acme/shop",
+      "rework_type": "hotfix",
+      "triggered_at": "2024-03-01T10:00:00Z",
+      "user_visible": true
+    },
+    "expect_field": "deployment_sha"
+  },
+  {
+    "name": "rework-missing-rework_type",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "rework",
+      "repo": "acme/shop",
+      "deployment_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "triggered_at": "2024-03-01T10:00:00Z",
+      "user_visible": true
+    },
+    "expect_field": "rework_type"
+  },
+  {
+    "name": "rework-missing-triggered_at",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "rework",
+      "repo": "acme/shop",
+      "deployment_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "rework_type": "hotfix",
+      "user_visible": true
+    },
+    "expect_field": "triggered_at"
+  },
+  {
+    "name": "rework-missing-user_visible",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "rework",
+      "repo": "acme/shop",
+      "deployment_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "rework_type": "hotfix",
+      "triggered_at": "2024-03-01T10:00:00Z"
+    },
+    "expect_field": "user_visible"
+  },
+  {
+    "name": "rework-empty-repo",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "rework",
+      "repo": "",
+      "deployment_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "rework_type": "hotfix",
+      "triggered_at": "2024-03-01T10:00:00Z",
+      "user_visible": true
+    },
+    "expect_field": "repo"
+  },
+  {
+    "name": "rework-extra-field",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "rework",
+      "repo": "acme/shop",
+      "deployment_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "rework_type": "hotfix",
+      "triggered_at": "2024-03-01T10:00:00Z",
+      "user_visible": true,
+      "bogus": 1
+    },
+    "expect_field": "bogus"
+  },
+  {
+    "name": "rework-bad-schema-version",
+    "payload": {
+      "schema_version": "v1",
+      "event_type": "rework",
+      "repo": "acme/shop",
+      "deployment_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "rework_type": "hotfix",
+      "triggered_at": "2024-03-01T10:00:00Z",
+      "user_visible": true
+    },
+    "expect_field": "schema_version"
+  },
+  {
+    "name": "rework-bad-timestamp",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "rework",
+      "repo": "acme/shop",
+      "deployment_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "rework_type": "hotfix",
+      "triggered_at": "yesterday",
+      "user_visible": true
+    },
+    "expect_field": "triggered_at",
+    "format_only": true
+  },
+  {
+    "name": "rework-short-sha",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "rework",
+      "repo": "acme/shop",
+      "deployment_sha": "abc1234",
+      "rework_type": "hotfix",
+      "triggered_at": "2024-03-01T10:00:00Z",
+      "user_visible": true
+    },
+    "expect_field": "deployment_sha"
+  },
+  {
+    "name": "rework-uppercase-sha",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "rework",
+      "repo": "acme/shop",
+      "deployment_sha": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "rework_type": "hotfix",
+      "triggered_at": "2024-03-01T10:00:00Z",
+      "user_visible": true
+    },
+    "expect_field": "deployment_sha"
+  },
+  {
+    "name": "rework-bad-enum",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "rework",
+      "repo": "acme/shop",
+      "deployment_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "rework_type": "revert",
+      "triggered_at": "2024-03-01T10:00:00Z",
+      "user_visible": true
+    },
+    "expect_field": "rework_type"
+  },
+  {
+    "name": "deployment-negative-duration",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "deployment",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1",
+      "deploy_duration_seconds": -1
+    },
+    "expect_field": "deploy_duration_seconds"
+  },
+  {
+    "name": "deployment-duration-string",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "deployment",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1",
+      "deploy_duration_seconds": "60"
+    },
+    "expect_field": "deploy_duration_seconds"
+  },
+  {
+    "name": "deployment-duration-float",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "deployment",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1",
+      "deploy_duration_seconds": 1.5
+    },
+    "expect_field": "deploy_duration_seconds"
+  },
+  {
+    "name": "deployment-ai-assisted-string",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "deployment",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1",
+      "ai_assisted": "true"
+    },
+    "expect_field": "ai_assisted"
+  },
+  {
+    "name": "incident-linked-sha-short",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "incident",
+      "incident_id": "INC-1",
+      "repo": "acme/shop",
+      "service": "shop",
+      "status": "opened",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "linked_deployment_sha": "abc"
+    },
+    "expect_field": "linked_deployment_sha"
+  },
+  {
+    "name": "incident-empty-severity",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "incident",
+      "incident_id": "INC-1",
+      "repo": "acme/shop",
+      "service": "shop",
+      "status": "opened",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "severity": ""
+    },
+    "expect_field": "severity"
+  },
+  {
+    "name": "pr-number-string",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "pr",
+      "repo": "acme/shop",
+      "pr_number": "7",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "merged",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "first_commit_at": "2024-03-01T09:00:00Z"
+    },
+    "expect_field": "pr_number"
+  },
+  {
+    "name": "pr-number-zero",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "pr",
+      "repo": "acme/shop",
+      "pr_number": 0,
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "merged",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "first_commit_at": "2024-03-01T09:00:00Z"
+    },
+    "expect_field": "pr_number"
+  },
+  {
+    "name": "pr-lines-negative",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "pr",
+      "repo": "acme/shop",
+      "pr_number": 7,
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "merged",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "first_commit_at": "2024-03-01T09:00:00Z",
+      "lines_added": -1
+    },
+    "expect_field": "lines_added"
+  },
+  {
+    "name": "pr-ai-assisted-string",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "pr",
+      "repo": "acme/shop",
+      "pr_number": 7,
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "merged",
+      "occurred_at": "2024-03-01T10:00:00Z",
+      "first_commit_at": "2024-03-01T09:00:00Z",
+      "ai_assisted": "yes"
+    },
+    "expect_field": "ai_assisted"
+  },
+  {
+    "name": "rework-user-visible-string",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "rework",
+      "repo": "acme/shop",
+      "deployment_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "rework_type": "hotfix",
+      "triggered_at": "2024-03-01T10:00:00Z",
+      "user_visible": "true"
+    },
+    "expect_field": "user_visible"
+  },
+  {
+    "name": "rework-user-visible-int",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "rework",
+      "repo": "acme/shop",
+      "deployment_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "rework_type": "hotfix",
+      "triggered_at": "2024-03-01T10:00:00Z",
+      "user_visible": 1
+    },
+    "expect_field": "user_visible"
+  },
+  {
+    "name": "no-event-type",
+    "payload": {
+      "schema_version": "1.0",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1"
+    },
+    "expect_field": "event_type",
+    "no_schema": true
+  },
+  {
+    "name": "unknown-event-type",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "build",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1"
+    },
+    "expect_field": "event_type",
+    "no_schema": true
+  },
+  {
+    "name": "event-type-not-string",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": 5,
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1"
+    },
+    "expect_field": "event_type",
+    "no_schema": true
+  },
+  {
+    "name": "event-type-empty",
+    "payload": {
+      "schema_version": "1.0",
+      "event_type": "",
+      "repo": "acme/shop",
+      "service": "shop",
+      "environment": "production",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "deployed_at": "2024-03-01T10:00:00Z",
+      "status": "success",
+      "pipeline_url": "https://ci.example.test/runs/1"
+    },
+    "expect_field": "event_type",
+    "no_schema": true
+  }
+]
