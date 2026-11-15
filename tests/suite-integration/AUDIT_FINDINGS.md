@@ -3,7 +3,8 @@
 Bugs found by the suite integration harness (`make suite-integration-test`).
 Each finding has at least one test that reproduces it. The test body asserts
 the correct behaviour and carries `@pytest.mark.finding("AF-nn")`. While the
-bug is there the body fails, and the test passes: the bug reproduces. When
+bug is there the body fails its assertion, and the test passes: the bug
+reproduces. Any other error in the body is a harness fault and fails. When
 the bug is fixed the body passes and the test fails, so the mark and the
 entry here are removed together with the fix.
 
@@ -316,8 +317,8 @@ Three graders turn "could not check" into a warning that is not counted:
   "proved it reached Loki".
 
 Tests: `test_dojo_grading.py::test_lab1_no_env_must_not_pass`,
-`::test_brown_no_credentials_must_not_pass`,
-`::test_lab2_loki_down_must_not_pass`.
+`test_dojo_brown.py::test_brown_no_credentials_must_not_pass`,
+`test_dojo_grading.py::test_lab2_loki_down_must_not_pass`.
 
 ### AF-18 White belt lab 02 never reads the `.env` it relies on (Medium, uFawkesDojo)
 
@@ -345,7 +346,7 @@ result, the grader reports 9 of 9. The "Event Ingestion → Metrics" check
 filters on a `commit_sha` label that no DORA metric carries, so it can only
 ever see an empty result, and it passes too.
 
-Tests: `test_dojo_grading.py::test_brown_metric_name_is_exported_by_dora_api`
+Tests: `test_dojo_brown.py::test_brown_metric_name_is_exported_by_dora_api`
 (five cases), `::test_brown_empty_prometheus_result_must_not_pass`.
 
 ### AF-20 The brown belt grader's default stack path is never expanded (Low, uFawkesDojo)
@@ -354,7 +355,7 @@ Tests: `test_dojo_grading.py::test_brown_metric_name_is_exported_by_dora_api`
 tilde inside quotes is not expanded, so the documented default `.env` is
 never found. Together with AF-17 the dashboard check is then skipped.
 
-Test: `test_dojo_grading.py::test_brown_default_uf_obs_dir_is_read`.
+Test: `test_dojo_brown.py::test_brown_default_uf_obs_dir_is_read`.
 
 Fix: `$HOME/dojo-labs/uFawkesObs`.
 
@@ -372,7 +373,7 @@ The brown belt grader uses `curl -w "%{http_code}" ... || echo "000"`. On a
 refused connection curl prints `000` and exits non-zero, so the fallback adds
 a second `000`. Cosmetic, but it is in the message the learner reads.
 
-Test: `test_dojo_grading.py::test_brown_reports_a_refused_connection_as_http_000`.
+Test: `test_dojo_brown.py::test_brown_reports_a_refused_connection_as_http_000`.
 
 ### AF-23 A valid event gets HTTP 500 when it arrives while the worker is busy (High, uFawkesObs)
 

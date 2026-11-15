@@ -36,8 +36,9 @@ shuffles the tests with a different seed.
 correct behaviour. If a bug in a sibling repository breaks it, the test
 carries `@pytest.mark.finding("AF-nn")` and the bug is entry AF-nn in
 [`AUDIT_FINDINGS.md`](../../../tests/suite-integration/AUDIT_FINDINGS.md).
-Such a test passes while its body fails, which means the bug still
-reproduces. When the body passes, the test fails, so the fix, the mark and
+Such a test passes while its body fails its assertion (or raises the error
+the mark names with `raises=`), which means the bug still reproduces. Any
+other error fails the test. When the body passes, the test fails, so the fix, the mark and
 the entry are removed together. The run ends with a line that counts the
 reproductions. `SUITE_ASSERT_FIXED=1` runs every body as written and shows
 each finding failing.

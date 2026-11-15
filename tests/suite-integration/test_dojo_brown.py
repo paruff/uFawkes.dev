@@ -270,9 +270,7 @@ def test_brown_default_uf_obs_dir_is_read(tmp_path: Path) -> None:
         tmp_path,
         env={"GRAFANA_ADMIN_PASSWORD": "", "GRAFANA_ADMIN_USER": "", "HOME": str(home)},
     )
-    assert g.failed_with() and "Grafana DORA Dashboard: Found" in ANSI.sub("", g.out), (
-        g.out
-    )
+    assert "Grafana DORA Dashboard: Found" in ANSI.sub("", g.out), g.out
 
 
 # The metric names the brown-belt grader queries, read from its own `metrics=( ... )` array.
