@@ -233,7 +233,6 @@ def test_brown_sad(tmp_path: Path, kw: dict[str, Any], needles: list[str]) -> No
     assert g.counts[2] >= len(needles)
 
 
-@pytest.mark.finding("AF-22")
 def test_brown_reports_a_refused_connection_as_http_000(tmp_path: Path) -> None:
     g = brown(tmp_path, prom=None)
     assert "000000" not in g.out, g.fails

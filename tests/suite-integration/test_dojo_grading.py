@@ -286,18 +286,19 @@ def test_lab2_sad(tmp_path: Path, kw: dict[str, Any], needles: list[str]) -> Non
     assert g.rc == 1 and g.failed_with(*needles), g.out
 
 
-@pytest.mark.finding("AF-21")
 def test_lab2_passes_without_the_optional_gh_cli(tmp_path: Path) -> None:
     g = lab2(tmp_path, gh=False)
     # The grader itself calls gh optional ("PR metadata will be limited").
     assert g.rc == 0, g.out
 
 
-@pytest.mark.finding("AF-24")
 def test_lab2_finds_its_containers_on_a_host_that_runs_many(tmp_path: Path) -> None:
     # Both containers are listed first, then enough others that docker is
     # still writing when `grep -q` has its match and stops reading.
-    busy_host = f"echo {DORA}; echo {GRAFANA}; yes other-container | head -n 200000"
+    busy_host = (
+        f'case "$*" in *"name=^{DORA}$"*) echo {DORA};; *"name=^{GRAFANA}$"*) echo {GRAFANA};; '
+        f"*) echo {DORA}; echo {GRAFANA}; yes other-container | head -n 200000;; esac"
+    )
     g = lab2(tmp_path, docker_script=busy_host)
     assert g.rc == 0, g.fails
 
@@ -341,7 +342,6 @@ def test_lab2_loki_down_must_not_pass(tmp_path: Path) -> None:
     assert g.rc == 1, g.out
 
 
-@pytest.mark.finding("AF-18")
 def test_lab2_dotenv_in_cwd_is_read(tmp_path: Path) -> None:
     g = lab2(
         tmp_path,

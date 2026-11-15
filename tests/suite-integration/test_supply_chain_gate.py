@@ -101,7 +101,6 @@ def test_deployment_event_waits_for_the_scans_and_the_build() -> None:
     } <= ancestors("notify-obs")
 
 
-@pytest.mark.finding("AF-08")
 def test_no_pipeline_step_runs_an_unpinned_latest_image() -> None:
     def tag(step: dict) -> str:
         tag = step.get("image", "").rpartition("/")[2].partition(":")[2]
