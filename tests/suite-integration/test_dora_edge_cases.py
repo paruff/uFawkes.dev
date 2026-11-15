@@ -173,7 +173,6 @@ def test_lead_time_across_utc_offsets(obs: ObsStack, now: datetime) -> None:
     assert obs.metrics()[REPO]["lead_time_p50_hours"] == pytest.approx(6.0)
 
 
-@pytest.mark.finding("AF-05")
 @pytest.mark.parametrize("field", ["deployed_at", "first_commit_at"])
 @pytest.mark.parametrize(
     "value", ["2026-11-10T10:00:00", "2026-11-10"], ids=["no-offset", "date-only"]
@@ -186,7 +185,6 @@ def test_timestamp_without_a_utc_offset_is_rejected(
     assert obs.post("/event", event).status_code == 422
 
 
-@pytest.mark.finding("AF-05", raises=TypeError)
 def test_one_event_with_a_naive_timestamp_does_not_stop_metrics_for_every_team(
     obs: ObsStack, now: datetime
 ) -> None:

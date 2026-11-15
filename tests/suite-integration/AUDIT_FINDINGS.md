@@ -16,7 +16,7 @@ repository named in each finding.
 
 ## Result
 
-382 tests, all passing. 73 of them are reproductions of the 24 findings
+382 tests, all passing. 68 of them are reproductions of the 23 findings
 below, so a green run means "every behaviour is as recorded here", not
 "everything works". `RUNS=10 make suite-integration-test` passed all 382 in
 all ten runs, each in a different test order. With `SUITE_ASSERT_FIXED=1`
@@ -51,7 +51,6 @@ runs can change the result.
 | AF-02 | Medium   | uFawkesObs  | A retry that differs in one optional field counts the deployment twice             |
 | AF-03 | High     | uFawkesObs  | A failed canary and its rollback count as two failures, and recovery time is short |
 | AF-04 | High     | uFawkesObs  | Staging and test deployments count as production                                   |
-| AF-05 | Critical | uFawkesObs  | One timestamp without a UTC offset stops metrics for every team                    |
 | AF-06 | Medium   | uFawkesObs  | Future-dated deployments and negative lead times are accepted                      |
 | AF-07 | High     | uFawkesPipe | The deployment event does not wait for the SBOM or the signature                   |
 | AF-08 | Medium   | uFawkesPipe | The signing step runs `bitnami/cosign:latest`                                      |
@@ -141,26 +140,6 @@ The Dojo brown-belt grader posts a deployment with `"environment": "test"`
 on every run, so each grading run adds a deployment to the stack's metrics.
 
 Test: `test_dora_edge_cases.py::test_failed_staging_deployment_does_not_count_against_production`.
-
-### AF-05 One timestamp without a UTC offset stops metrics for every team (Critical, uFawkesObs)
-
-The `date-time` check is `datetime.fromisoformat`
-(`dora/ingestion/api/validator.py:19-25`). It accepts `2026-11-10T10:00:00`
-(no offset) and `2026-11-10` (date only). RFC 3339, which JSON Schema's
-`date-time` means, requires an offset.
-
-When an accepted deployment has one timestamp with an offset and one without,
-lead time raises `TypeError: can't subtract offset-naive and offset-aware
-datetimes` (`dora/compute/metrics_db_sqlite.py:178`). The exception aborts
-the whole compute cycle. `/metrics` stops updating for every team, on every
-cycle, until the event leaves the window 30 days later. Any client that can
-post an event can do this with one request.
-
-Tests: `test_dora_edge_cases.py::test_timestamp_without_a_utc_offset_is_rejected`
-(four cases), `::test_one_event_with_a_naive_timestamp_does_not_stop_metrics_for_every_team`.
-
-Fix: reject timestamps without an offset at validation. Also make the
-compute cycle skip a row it cannot parse, so one bad row cannot stop the rest.
 
 ### AF-06 Future-dated deployments and negative lead times are accepted (Medium, uFawkesObs)
 
