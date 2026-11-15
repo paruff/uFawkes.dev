@@ -31,3 +31,4 @@ header_pages: []
 exclude:
   - agents/
   - skills/
+  - tests/
