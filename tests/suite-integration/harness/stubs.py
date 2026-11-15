@@ -163,8 +163,7 @@ class RealDoraApi:
 
     Started once and reused: reset() empties its tables between tests, which
     is cheaper and steadier than a Python start-up per test. It runs without
-    its lifespan, so without the background worker: a request that overlaps
-    the worker can get a 500 (AF-23), and the graders only need the HTTP API.
+    its lifespan, so without the background worker: the graders only need the HTTP API.
     """
 
     def __init__(self, work_dir: Path, port: int = 8088) -> None:

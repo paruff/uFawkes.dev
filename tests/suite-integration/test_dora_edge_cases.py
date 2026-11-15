@@ -32,7 +32,6 @@ def test_recovery_time_when_events_arrive_as_they_happen(
     assert obs.metrics()[REPO]["fdrt_p50_hours"] == pytest.approx(2.0)
 
 
-@pytest.mark.finding("AF-01")
 def test_recovery_time_when_the_recovery_arrives_before_the_failure(
     obs: ObsStack, now: datetime
 ) -> None:
@@ -43,7 +42,6 @@ def test_recovery_time_when_the_recovery_arrives_before_the_failure(
     assert obs.metrics()[REPO]["fdrt_p50_hours"] == pytest.approx(2.0)
 
 
-@pytest.mark.finding("AF-01")
 def test_recovery_time_when_both_events_arrive_in_one_burst(
     obs: ObsStack, now: datetime
 ) -> None:
@@ -54,7 +52,6 @@ def test_recovery_time_when_both_events_arrive_in_one_burst(
     assert obs.metrics()[REPO]["fdrt_p50_hours"] == pytest.approx(2.0)
 
 
-@pytest.mark.finding("AF-01")
 def test_deployment_older_than_the_window_is_not_counted_when_delivered_late(
     obs: ObsStack, now: datetime
 ) -> None:
@@ -99,7 +96,6 @@ def _canary_story(obs: ObsStack, now: datetime) -> None:
         obs.deliver(event, ingested_at=datetime.fromisoformat(event["deployed_at"]))
 
 
-@pytest.mark.finding("AF-03")
 def test_failed_canary_and_its_rollback_are_one_failed_change(
     obs: ObsStack, now: datetime
 ) -> None:
@@ -108,7 +104,6 @@ def test_failed_canary_and_its_rollback_are_one_failed_change(
     assert obs.metrics()[REPO]["change_failure_rate"] == pytest.approx(1 / 3)
 
 
-@pytest.mark.finding("AF-03")
 def test_recovery_time_runs_from_the_failed_canary_not_from_its_rollback(
     obs: ObsStack, now: datetime
 ) -> None:
@@ -150,7 +145,6 @@ def test_recovery_in_another_repo_does_not_close_this_repos_failure(
     assert obs.metrics()[REPO]["fdrt_p50_hours"] is None
 
 
-@pytest.mark.finding("AF-04")
 def test_failed_staging_deployment_does_not_count_against_production(
     obs: ObsStack, now: datetime
 ) -> None:

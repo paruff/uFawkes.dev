@@ -141,7 +141,6 @@ def test_lab1_sad(tmp_path: Path, kw: dict[str, Any], needles: list[str]) -> Non
     assert g.counts[2] >= len(needles)
 
 
-@pytest.mark.finding("AF-16")
 def test_lab1_zero_events_must_not_pass(tmp_path: Path) -> None:
     g = lab1(
         tmp_path, dora=DORA_OK
@@ -149,7 +148,6 @@ def test_lab1_zero_events_must_not_pass(tmp_path: Path) -> None:
     assert g.rc == 1, g.out
 
 
-@pytest.mark.finding("AF-17")
 def test_lab1_no_env_must_not_pass(tmp_path: Path) -> None:
     g = lab1(tmp_path, cwd_env=None, grafana=grafana(uids=()))
     assert g.rc == 1, g.out
@@ -201,7 +199,6 @@ def test_lab2_happy(tmp_path: Path) -> None:
     assert any("/loki/api/v1/query_range" in r.path for r in g.servers["loki"].requests)
 
 
-@pytest.mark.finding("AF-12")
 def test_lab2_emitted_event_is_accepted_by_dora_api(tmp_path: Path, obs: Any) -> None:
     """The lab teaches this emitter; the event it produces must be one dora-api takes."""
     event = otlp_records(lab2(tmp_path))[0]["dora_event"]
@@ -329,7 +326,6 @@ def test_lab2_verify_script_missing(tmp_path: Path) -> None:
     assert g.rc == 1 and g.failed_with("verify-dora-event-in-loki.sh NOT found"), g.out
 
 
-@pytest.mark.finding("AF-12")
 @pytest.mark.parametrize("repo", ["uFawkesPipe", "uFawkesDevX", "fawkes", "uFawkesObs"])
 def test_lab2_works_with_every_repos_copy_of_the_emitter(
     tmp_path: Path, repo: str
@@ -340,7 +336,6 @@ def test_lab2_works_with_every_repos_copy_of_the_emitter(
     assert g.rc == 0, g.fails
 
 
-@pytest.mark.finding("AF-17")
 def test_lab2_loki_down_must_not_pass(tmp_path: Path) -> None:
     g = lab2(tmp_path, loki=None)
     assert g.rc == 1, g.out
