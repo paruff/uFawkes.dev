@@ -20,7 +20,7 @@
 - `make suite-integration-test` exits 0.
 - `RUNS=10 make suite-integration-test` gives the same counts in all ten
   runs, each in a different test order.
-- `SUITE_NO_XFAIL=1 make suite-integration-test` fails on exactly the tests
+- `SUITE_ASSERT_FIXED=1 make suite-integration-test` fails on exactly the tests
   that carry a `finding` mark. This shows each finding is a real failure and
   not a test that is skipped.
 - Every finding in `AUDIT_FINDINGS.md` names at least one test, and every

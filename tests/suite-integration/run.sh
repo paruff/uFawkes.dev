@@ -30,5 +30,5 @@ docker build -q -t "$IMAGE" . > /dev/null
 
 for run in $(seq 1 "$RUNS"); do
   echo "── suite-integration run $run/$RUNS (order seed $run) ──"
-  docker run --rm --network none --tmpfs /tmp:exec "${mounts[@]}" -e SUITE_SEED="$run" -e SUITE_NO_XFAIL="${SUITE_NO_XFAIL:-}" "$IMAGE" "$@"
+  docker run --rm --network none --tmpfs /tmp:exec "${mounts[@]}" -e SUITE_SEED="$run" -e SUITE_ASSERT_FIXED="${SUITE_ASSERT_FIXED:-}" "$IMAGE" "$@"
 done

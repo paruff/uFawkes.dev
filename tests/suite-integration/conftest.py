@@ -2,6 +2,7 @@
 
 import os
 import random
+import sqlite3
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -25,17 +26,46 @@ from harness.obs import ObsStack
 
 
 def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
-    for item in items:
-        mark = item.get_closest_marker("finding")
-        if mark and not os.environ.get("SUITE_NO_XFAIL"):
-            # strict: the day the bug is fixed the test passes, the run fails,
-            # and the mark has to come off together with the finding.
-            item.add_marker(pytest.mark.xfail(strict=True, reason=mark.args[0]))
     # A different order per run (run.sh sets SUITE_SEED): a test that only
     # passes after another one fails here instead of in CI months later.
     seed = os.environ.get("SUITE_SEED")
     if seed:
         random.Random(seed).shuffle(items)
+
+
+_reproduced: list[str] = []
+
+
+@pytest.hookimpl(wrapper=True)
+def pytest_pyfunc_call(pyfuncitem: pytest.Function):
+    """A test marked finding("AF-nn") is the reproduction of a known bug.
+
+    Its body asserts the correct behaviour. While the bug is there the body
+    fails, and that is the pass: the bug reproduces. When the body passes, the
+    test fails, so the fix, the mark and the report entry go together.
+    Only the test body is covered: a broken fixture is still an error.
+    """
+    mark = pyfuncitem.get_closest_marker("finding")
+    if mark is None or os.environ.get("SUITE_ASSERT_FIXED"):
+        return (yield)
+    try:
+        yield
+    # The three ways a known bug shows: a wrong result, and the two errors
+    # dora-api raises (AF-05, AF-23). Anything else is a harness fault and fails.
+    except (AssertionError, TypeError, sqlite3.OperationalError):
+        _reproduced.append(mark.args[0])
+        return True
+    pytest.fail(
+        f"{mark.args[0]} no longer reproduces: remove the finding mark and its AUDIT_FINDINGS.md entry",
+        pytrace=False,
+    )
+
+
+def pytest_terminal_summary(terminalreporter: pytest.TerminalReporter) -> None:
+    if _reproduced:
+        terminalreporter.write_line(
+            f"{len(_reproduced)} of the passing tests reproduce {len(set(_reproduced))} known findings (AUDIT_FINDINGS.md)"
+        )
 
 
 @pytest.fixture

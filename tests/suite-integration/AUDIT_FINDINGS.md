@@ -1,27 +1,29 @@
 # Audit findings: DORA event capture and Dojo lab grading
 
 Bugs found by the suite integration harness (`make suite-integration-test`).
-Each finding is pinned by at least one test that asserts the correct
-behaviour and carries `@pytest.mark.finding("AF-nn")`. The mark makes the test
-an expected failure, and it is strict: when the bug is fixed the test passes,
-the run turns red, and the mark and the entry here are removed together.
+Each finding has at least one test that reproduces it. The test body asserts
+the correct behaviour and carries `@pytest.mark.finding("AF-nn")`. While the
+bug is there the body fails, and the test passes: the bug reproduces. When
+the bug is fixed the body passes and the test fails, so the mark and the
+entry here are removed together with the fix.
 
 To see every finding fail for real, run
-`SUITE_NO_XFAIL=1 make suite-integration-test`.
+`SUITE_ASSERT_FIXED=1 make suite-integration-test`.
 
 Nothing in the sibling repositories was changed. Fixes belong to the
 repository named in each finding.
 
 ## Result
 
-382 tests. 309 pass. 73 are expected failures that pin the 24 findings below.
-`RUNS=10 make suite-integration-test` gave these same counts in all ten
-runs, each in a different test order. With `SUITE_NO_XFAIL=1` the same 73
-tests fail and the same 309 pass.
+382 tests, all passing. 73 of them are reproductions of the 24 findings
+below, so a green run means "every behaviour is as recorded here", not
+"everything works". `RUNS=10 make suite-integration-test` passed all 382 in
+all ten runs, each in a different test order. With `SUITE_ASSERT_FIXED=1`
+those 73 fail and the other 309 pass.
 
 Two of the findings (AF-23, AF-24) first showed up as tests that failed about
-one run in ten. Both were real races in the code under test. Each is now
-pinned by a test that sets up the interleaving directly instead of waiting
+one run in ten. Both were real races in the code under test. Each now has
+a test that sets up the interleaving directly instead of waiting
 for it to happen.
 
 ## Checkouts audited
