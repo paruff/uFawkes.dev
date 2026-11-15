@@ -87,7 +87,6 @@ def test_attestation_step_passes_when_its_tool_succeeds(
     assert '"level":"error"' not in result.stdout.replace(" ", "")
 
 
-@pytest.mark.finding("AF-07")
 @pytest.mark.parametrize("gate", ["generate-sbom", "sign-image"])
 def test_deployment_event_is_only_sent_after_the_image_is_attested(gate: str) -> None:
     assert gate in ancestors("notify-obs")

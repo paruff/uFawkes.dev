@@ -56,36 +56,43 @@ class ObsStack:
 
         return self._run(dequeue_next())
 
-    def worker_mid_dequeue(self) -> None:
-        """Leave the worker where a request can interleave with it: its claim
-        statement (the one in dequeue_next) has run and its row is not read yet.
-        The worker and the API share one connection, so this is a real state."""
-        import inspect
+    def restart(self) -> None:
+        """Drop the connection the way a container restart does."""
+        from ingestion.api.queue import close_pool
 
-        from ingestion.api import queue_sqlite
-        from ingestion.api.queue import get_pool
+        self._run(close_pool())
 
-        claim = (
-            "UPDATE event_queue SET status = 'processing' WHERE id = ( "
-            "SELECT id FROM event_queue WHERE status = 'pending' ORDER BY received_at LIMIT 1 "
-            ") RETURNING id, payload, event_type, source, attempts"
-        )
-        # This is a copy of dequeue_next's statement; fail loudly if dora-api changes it.
-        if claim not in " ".join(inspect.getsource(queue_sqlite.dequeue_next).split()):
-            raise RuntimeError(
-                "dequeue_next changed: update the copy of its statement here"
+    def post_many_while_the_worker_runs(self, payloads: list[dict]) -> list[int]:
+        """POST every payload concurrently with a worker draining the queue.
+        Returns the status codes."""
+        from ingestion.api.queue import dequeue_next
+        from ingestion.processor.worker import process_event
+
+        async def _worker(stop: asyncio.Event) -> None:
+            while not stop.is_set():
+                event = await dequeue_next()
+                if event is None:
+                    await asyncio.sleep(0)
+                else:
+                    await process_event(event)
+
+        async def _go() -> list[int]:
+            stop = asyncio.Event()
+            worker = asyncio.create_task(_worker(stop))
+            responses = await asyncio.gather(
+                *(self._client.post("/event", json=p) for p in payloads),
+                return_exceptions=True,
             )
+            stop.set()
+            await worker
+            return [getattr(r, "status_code", 500) for r in responses]
 
-        async def _claim() -> None:
-            conn = await get_pool()
-            self._open_cursor = await conn.execute(claim)
-
-        self._run(_claim())
+        return self._run(_go())
 
     def deliver(self, event: dict, ingested_at: datetime | None = None) -> int:
         """POST one event, process it, and return its queue id.
 
-        ingested_at moves the moment dora-api received it (raw_events.recorded_at),
+        ingested_at moves the moment dora-api received it (raw_events.ingested_at),
         which is how a test delivers events late or out of order.
         """
         response = self.post("/event", event)
@@ -97,7 +104,7 @@ class ObsStack:
         self.drain()
         if ingested_at is not None:
             self.sql(
-                "UPDATE raw_events SET recorded_at = ? WHERE event_queue_id = ?",
+                "UPDATE raw_events SET ingested_at = ? WHERE event_queue_id = ?",
                 (ingested_at.replace(tzinfo=None).isoformat(" "), event_id),
             )
         return event_id

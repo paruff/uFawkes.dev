@@ -28,10 +28,7 @@ REPOS = {
     "uFawkesAI": AI,
     "uFawkes.dev": SITE,
 }
-AI_DRIFT = pytest.mark.finding("AF-12")
-REPO_PARAMS = [
-    pytest.param(n, marks=AI_DRIFT) if n == "uFawkesAI" else n for n in REPOS
-]
+REPO_PARAMS = list(REPOS)
 
 
 def emit_script(repo: str) -> Path:
@@ -101,11 +98,7 @@ def one_event(result: Result) -> dict:
 
 @pytest.mark.parametrize(
     "repo",
-    [
-        pytest.param(n, marks=AI_DRIFT) if n == "uFawkesAI" else n
-        for n in REPOS
-        if n != "uFawkesObs"
-    ],
+    [n for n in REPOS if n != "uFawkesObs"],
 )
 def test_emit_script_identical_to_obs(repo: str) -> None:
     digest = lambda r: hashlib.md5(emit_script(r).read_bytes()).hexdigest()
@@ -142,7 +135,7 @@ def post_and_count(obs, event: dict) -> dict:
     response = obs.post("/event", event)
     assert response.status_code == 201, response.text
     obs.drain()
-    return obs.metrics()[event["repo"]]
+    return obs.metrics(window_days=3650)[event["repo"]]
 
 
 @pytest.mark.parametrize("repo", REPO_PARAMS)
@@ -262,7 +255,6 @@ def test_otlp_payload_carries_the_event_line(tmp_path: Path) -> None:
     )
 
 
-@pytest.mark.finding("AF-15")
 def test_deploy_marker_reaches_the_dora_api(tmp_path: Path) -> None:
     # dora-api is the only thing that turns a deployment into DORA metrics, and
     # nothing in uFawkesObs forwards the log line's dora_event to it.

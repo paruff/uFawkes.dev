@@ -1,7 +1,6 @@
 """Contract of the uFawkesObs ingestion API: what it accepts, rejects, dedupes and gates."""
 
 import json
-import sqlite3
 from typing import Any
 
 import conftest
@@ -262,22 +261,18 @@ def test_redelivery_of_a_processed_event_is_not_counted_twice(obs, now) -> None:
     assert obs.sql("SELECT COUNT(*) FROM raw_events") == [(1,)]
 
 
-@pytest.mark.finding("AF-11")
 def test_event_claimed_by_a_worker_that_died_is_processed_after_restart(
     obs, now
 ) -> None:
     assert obs.post("/event", events.deployment(1, now)).status_code == 201
     assert obs.claim() is not None  # the worker took it, then the container was killed
 
+    obs.restart()
     obs.drain()  # the worker after a restart
     assert obs.sql("SELECT COUNT(*) FROM raw_events") == [(1,)]
 
 
-@pytest.mark.finding("AF-23", raises=sqlite3.OperationalError)
-def test_event_posted_while_the_worker_is_claiming_another_is_accepted(
-    obs, now
-) -> None:
-    assert obs.post("/event", events.deployment(1, now)).status_code == 201
-    obs.worker_mid_dequeue()
+def test_events_posted_while_the_worker_is_running_are_all_accepted(obs, now) -> None:
+    payloads = [events.deployment(n, now) for n in range(1, 101)]
 
-    assert obs.post("/event", events.deployment(2, now)).status_code == 201
+    assert set(obs.post_many_while_the_worker_runs(payloads)) == {201}

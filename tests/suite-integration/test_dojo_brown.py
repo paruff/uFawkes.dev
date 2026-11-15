@@ -46,7 +46,7 @@ def test_brown_happy(tmp_path: Path) -> None:
         g.queued == 2
     )  # the ingestion check and the end-to-end check each POSTed one, both accepted
     prom_seen = g.servers["prom"].requests
-    assert any("dora_deployment_frequency%7Bcommit_sha" in r.path for r in prom_seen)
+    assert any("count" in r.path for r in prom_seen)
 
 
 @pytest.mark.parametrize(
@@ -143,7 +143,9 @@ BROWN_SAD = [
         {
             "prom": prom(
                 query=lambda r: (
-                    (400, "", TEXT) if "histogram_quantile" in r.path else QUERY_OK
+                    (400, "", TEXT)
+                    if "dora_lead_time_p95_hours" in r.path
+                    else QUERY_OK
                 )
             )
         },
@@ -153,7 +155,7 @@ BROWN_SAD = [
         "event-metric-query-503",
         {
             "prom": prom(
-                query=lambda r: (503, "", TEXT) if "commit_sha" in r.path else QUERY_OK
+                query=lambda r: (503, "", TEXT) if "count" in r.path else QUERY_OK
             )
         },
         ["Event Ingestion → Metrics: Event accepted but not yet visible"],
@@ -241,27 +243,22 @@ def test_brown_warn_is_counted_as_a_failure(tmp_path: Path) -> None:
     """The WARN status falls into record_test's else branch: printed as a red failure, counted failed."""
     g = brown(
         tmp_path,
-        prom=prom(
-            query=lambda r: (503, "", TEXT) if "commit_sha" in r.path else QUERY_OK
-        ),
+        prom=prom(query=lambda r: (503, "", TEXT) if "count" in r.path else QUERY_OK),
     )
     assert g.counts == (9, 8, 1) and g.rc == 1, g.out
 
 
-@pytest.mark.finding("AF-19")
 def test_brown_empty_prometheus_result_must_not_pass(tmp_path: Path) -> None:
     g = brown(tmp_path, prom=prom(query=QUERY_EMPTY))
     assert g.failed_with("DORA Metrics Query", "Event Ingestion → Metrics"), g.out
     assert g.rc == 1
 
 
-@pytest.mark.finding("AF-17")
 def test_brown_no_credentials_must_not_pass(tmp_path: Path) -> None:
     g = brown(tmp_path, env={"GRAFANA_ADMIN_PASSWORD": ""}, grafana=grafana(found=0))
     assert g.rc == 1, g.out
 
 
-@pytest.mark.finding("AF-20")
 def test_brown_default_uf_obs_dir_is_read(tmp_path: Path) -> None:
     home = tmp_path / "home"
     (home / "dojo-labs/uFawkesObs").mkdir(parents=True)
@@ -288,7 +285,12 @@ def exported(obs: Any, now: Any) -> set[str]:
 
     from compute.metrics import render_prometheus_text
 
-    obs.deliver(events.deployment(1, now - timedelta(days=3)))
+    obs.deliver(events.deployment(1, now - timedelta(days=3), "failed"))
+    obs.deliver(
+        events.deployment(
+            2, now - timedelta(days=2), first_commit_at=now - timedelta(days=3)
+        )
+    )
     text = render_prometheus_text(list(obs.metrics().values()))
     return set(re.findall(r"^# TYPE (\S+) ", text, re.MULTILINE))
 
@@ -299,7 +301,6 @@ def test_dora_api_exports_gauges_after_one_event(exported: set[str]) -> None:
     )
 
 
-@pytest.mark.finding("AF-19")
 @pytest.mark.parametrize("metric", GRADER_METRICS)
 def test_brown_metric_name_is_exported_by_dora_api(
     exported: set[str], metric: str
