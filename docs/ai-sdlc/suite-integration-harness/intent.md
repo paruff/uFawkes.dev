@@ -48,6 +48,9 @@ suite-wide checks. Run with `make suite-integration-test`.
 - Fixing the bugs it finds. They are listed in
   [`AUDIT_FINDINGS.md`](../../../tests/suite-integration/AUDIT_FINDINGS.md)
   for the owning repositories.
+- uFawkesDevX's compose stack (gateway, score service, Backstage). None of
+  it emits or reads a DORA event. The harness covers DevX through its copy of
+  the emitter and its pipeline contract with uFawkesObs.
 - Grafana dashboards, Prometheus rules and Loki queries against a live stack.
   The nightly live run keeps covering those.
 - Wiring the harness into CI. It needs all seven checkouts, which CI here

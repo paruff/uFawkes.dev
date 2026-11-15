@@ -65,19 +65,19 @@ when the behaviour is broken today.
 
 ### Emitters (`test_emitters.py`)
 
-| #   | Criterion                                                                                                                            | Finding |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------ | ------- |
-| T11 | `emit-dora-event.sh` is byte-identical in all seven repositories                                                                     | AF-12   |
-| T12 | uFawkesPipe's four schema copies and this repository's vendored copy equal uFawkesObs's                                              | AF-13   |
-| T13 | Each repository's deploy marker, under GitHub Actions and Woodpecker variables, is accepted and counted, with the exact lead time    | AF-12   |
-| T14 | A deploy marker with status `failure` or `rollback` counts as a failed change, not a deployment                                      |         |
-| T15 | A deployment is never dropped without an error when CI context is missing                                                            | AF-14   |
-| T16 | A deploy marker reaches dora-api                                                                                                     | AF-15   |
-| T17 | `job-start` then `job-finish` gives the exact duration                                                                               |         |
-| T18 | The OTLP export carries the event line, and a dead endpoint does not fail the pipeline                                               |         |
-| T19 | uFawkesPipe's `notify-obs` step sends an event dora-api accepts, sends the API key when set, and posts nothing when the URL is unset |         |
-| T20 | Every payload in uFawkesObs's collectors (curl examples, deployment sender, incident scripts) is accepted                            |         |
-| T21 | The fawkes `dora-metrics` service reports exact gauges for a fixed set of merged release PRs                                         |         |
+| #   | Criterion                                                                                                                                     | Finding |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| T11 | `emit-dora-event.sh` is byte-identical in all seven repositories                                                                              | AF-12   |
+| T12 | uFawkesPipe's four schema copies and this repository's vendored copy equal uFawkesObs's                                                       | AF-13   |
+| T13 | Each repository's deploy marker, under GitHub Actions and Woodpecker variables, is accepted and counted. With PR data, the lead time is exact | AF-12   |
+| T14 | A deploy marker with status `failure` or `rollback` counts as a failed change, not a deployment                                               |         |
+| T15 | A deployment is never dropped without an error when CI context is missing                                                                     | AF-14   |
+| T16 | A deploy marker reaches dora-api                                                                                                              | AF-15   |
+| T17 | `job-start` then `job-finish` gives the exact duration                                                                                        |         |
+| T18 | The OTLP export carries the event line, and a dead endpoint does not fail the pipeline                                                        |         |
+| T19 | uFawkesPipe's `notify-obs` step sends an event dora-api accepts, sends the API key when set, and posts nothing when the URL is unset          |         |
+| T20 | Every payload in uFawkesObs's collectors (curl examples, deployment sender, incident scripts) is accepted                                     |         |
+| T21 | The fawkes `dora-metrics` service reports exact gauges for a fixed set of merged release PRs                                                  |         |
 
 ### Edge cases (`test_dora_edge_cases.py`)
 

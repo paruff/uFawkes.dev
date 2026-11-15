@@ -59,15 +59,22 @@ class ObsStack:
         """Leave the worker where a request can interleave with it: its claim
         statement (the one in dequeue_next) has run and its row is not read yet.
         The worker and the API share one connection, so this is a real state."""
+        import inspect
+
+        from ingestion.api import queue_sqlite
         from ingestion.api.queue import get_pool
+
+        claim = (
+            "UPDATE event_queue SET status = 'processing' WHERE id = ( "
+            "SELECT id FROM event_queue WHERE status = 'pending' ORDER BY received_at LIMIT 1 "
+            ") RETURNING id, payload, event_type, source, attempts"
+        )
+        # This is a copy of dequeue_next's statement; fail loudly if dora-api changes it.
+        assert claim in " ".join(inspect.getsource(queue_sqlite.dequeue_next).split())
 
         async def _claim() -> None:
             conn = await get_pool()
-            self._open_cursor = await conn.execute(
-                "UPDATE event_queue SET status = 'processing' WHERE id = ("
-                "SELECT id FROM event_queue WHERE status = 'pending' ORDER BY received_at LIMIT 1"
-                ") RETURNING id, payload, event_type, source, attempts"
-            )
+            self._open_cursor = await conn.execute(claim)
 
         self._run(_claim())
 
@@ -105,6 +112,9 @@ class ObsStack:
     def close(self) -> None:
         from ingestion.api.queue import close_pool
 
+        cursor = getattr(self, "_open_cursor", None)
+        if cursor is not None:
+            self._run(cursor.close())
         self._run(self._client.aclose())
         self._run(close_pool())
         self._loop.close()

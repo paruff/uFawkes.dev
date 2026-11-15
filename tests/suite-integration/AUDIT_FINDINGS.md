@@ -14,10 +14,10 @@ repository named in each finding.
 
 ## Result
 
-381 tests. 312 pass. 69 are expected failures that pin the 24 findings below.
+382 tests. 309 pass. 73 are expected failures that pin the 24 findings below.
 `RUNS=10 make suite-integration-test` gave these same counts in all ten
-runs, each in a different test order. With `SUITE_NO_XFAIL=1` the same 69
-tests fail and the same 312 pass.
+runs, each in a different test order. With `SUITE_NO_XFAIL=1` the same 73
+tests fail and the same 309 pass.
 
 Two of the findings (AF-23, AF-24) first showed up as tests that failed about
 one run in ten. Both were real races in the code under test. Each is now
@@ -241,7 +241,9 @@ it only works with the uFawkesAI copy.
 
 Tests: `test_emitters.py::test_emit_script_identical_to_obs[uFawkesAI]`,
 `::test_github_deploy_marker_is_ingested_with_lead_time[uFawkesAI]`,
-`::test_woodpecker_deploy_marker_without_gh_is_ingested[uFawkesAI]`.
+`::test_woodpecker_deploy_marker_without_gh_is_ingested[uFawkesAI]`,
+`test_dojo_grading.py::test_lab2_emitted_event_is_accepted_by_dora_api`,
+`::test_lab2_works_with_every_repos_copy_of_the_emitter` (four cases).
 
 Fix: decide whether `deployment_intent` belongs in the contract. If yes, add
 it to the schema in uFawkesObs and uFawkesPipe and sync the emitter to all
@@ -274,8 +276,9 @@ Fix: make `deploy-marker` exit non-zero when it cannot build a valid event.
 
 `deploy-marker` writes its line to stdout, to a file and to OTLP logs, which
 uFawkesObs routes to Loki. Only `POST /event` on dora-api feeds the DORA
-metrics, and nothing in uFawkesObs reads `dora_event` out of Loki and
-forwards it. A repository that relies on the emitter alone has deploy
+metrics. A search of uFawkesObs's `config/` and `dora/` found nothing that
+reads `dora_event` out of Loki and forwards it; the harness does not test
+that part. A repository that relies on the emitter alone has deploy
 markers in its logs and no deployments in its metrics. Today deployments
 reach the metrics only through uFawkesPipe's `notify-obs` step and the
 workflows under `uFawkesObs/dora/collectors/`.
@@ -380,9 +383,9 @@ statement and the worker reading its row, SQLite refuses:
 The client gets a 500 for a valid event.
 
 This is how the harness found it: the brown belt grader posts two events in
-a row, and about one run in ten the second one got a 500. With 400 events
-posted at once against a running worker, 39, 221 and 335 of them failed in
-three runs. An emitter that does not retry (uFawkesPipe's `notify-obs` only
+a row, and about one run in ten the second one got a 500. In a one-off script outside the suite, 400 events
+posted at once against a running worker lost 39, 221 and 335 to this error
+in three runs. An emitter that does not retry (uFawkesPipe's `notify-obs` only
 logs a warning) loses the deployment.
 
 The module's docstring says a single shared connection means "there is no

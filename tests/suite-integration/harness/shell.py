@@ -5,6 +5,8 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
+from harness.stubs import stub_bin
+
 SYSTEM_PATH = "/usr/local/bin:/usr/bin:/bin"
 
 # Records every call as <n>.args (one argument per line) and <n>.body (the -d
@@ -39,14 +41,6 @@ class Result:
 class CurlCall:
     args: list[str]
     body: str
-
-
-def stub_bin(directory: Path, name: str, script: str) -> Path:
-    directory.mkdir(parents=True, exist_ok=True)
-    path = directory / name
-    path.write_text(f"#!/usr/bin/env bash\n{script}\n")
-    path.chmod(0o755)
-    return path
 
 
 def curl_stub(directory: Path, code: int = 201) -> dict[str, str]:

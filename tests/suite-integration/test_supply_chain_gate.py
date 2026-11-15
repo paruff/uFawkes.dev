@@ -12,6 +12,7 @@ from pathlib import Path
 import conftest
 import pytest
 import yaml
+from harness.stubs import stub_bin
 
 PIPELINE = yaml.safe_load((conftest.PIPE / ".woodpecker.yml").read_text())
 STEPS = {step["name"]: step for step in PIPELINE["steps"]}
@@ -32,16 +33,13 @@ def ancestors(step: str) -> set[str]:
 def run_step(
     name: str, tmp_path: Path, tools: dict[str, int]
 ) -> subprocess.CompletedProcess:
-    """Run a step's real commands the way Woodpecker does (one `sh -e` script).
+    """Run a step's real commands the way Woodpecker does (one script that stops at the first failing command).
 
     tools maps a tool name to the exit code its stub returns.
     """
     bin_dir = tmp_path / "bin"
-    bin_dir.mkdir()
     for tool, code in tools.items():
-        stub = bin_dir / tool
-        stub.write_text(f"#!/bin/sh\nexit {code}\n")
-        stub.chmod(0o755)
+        stub_bin(bin_dir, tool, f"exit {code}")
     script = "\n".join(STEPS[name]["commands"]).replace(
         "/drone/src", str(conftest.PIPE)
     )
@@ -106,8 +104,10 @@ def test_deployment_event_waits_for_the_scans_and_the_build() -> None:
 
 @pytest.mark.finding("AF-08")
 def test_no_pipeline_step_runs_an_unpinned_latest_image() -> None:
-    unpinned = sorted(
-        name for name, step in STEPS.items() if step["image"].endswith(":latest")
-    )
+    def tag(step: dict) -> str:
+        tag = step.get("image", "").rpartition("/")[2].partition(":")[2]
+        return tag or "latest"  # no tag means latest
+
+    unpinned = sorted(name for name, step in STEPS.items() if tag(step) == "latest")
 
     assert unpinned == []
