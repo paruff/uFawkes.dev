@@ -34,3 +34,7 @@
 - **A fixed bug turns the run red.** That is intended: a reproduction
   fails once its bug is gone, so the fix and the removal of the mark land
   together.
+
+### Audit follow-up, 2026-11-15
+
+This branch fixes High findings from the suite integration harness (uFawkes.dev `tests/suite-integration/AUDIT_FINDINGS.md`). Verified by running the harness against it: `make suite-integration-test` passes with the fix applied and the finding's reproduction test no longer reproduces.
