@@ -258,7 +258,6 @@ def test_brown_empty_prometheus_result_must_not_pass(tmp_path: Path) -> None:
 @pytest.mark.finding("AF-17")
 def test_brown_no_credentials_must_not_pass(tmp_path: Path) -> None:
     g = brown(tmp_path, env={"GRAFANA_ADMIN_PASSWORD": ""}, grafana=grafana(found=0))
-    assert "skipped" in ANSI.sub("", g.out)
     assert g.rc == 1, g.out
 
 

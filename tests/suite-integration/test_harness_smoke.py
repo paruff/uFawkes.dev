@@ -31,7 +31,7 @@ def test_every_finding_mark_has_a_report_entry_and_every_entry_a_test() -> None:
     marks = {
         m
         for f in here.glob("test_*.py")
-        for m in re.findall(r'mark\.finding\("(AF-\d+)"\)', f.read_text())
+        for m in re.findall(r'mark\.finding\("(AF-\d+)"', f.read_text())
     }
     entries = set(
         re.findall(

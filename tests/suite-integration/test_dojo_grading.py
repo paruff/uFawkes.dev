@@ -16,7 +16,6 @@ import conftest
 import pytest
 from harness import events
 from harness.graders import (
-    ANSI,
     CREDS,
     DORA,
     DORA_OK,
@@ -153,7 +152,6 @@ def test_lab1_zero_events_must_not_pass(tmp_path: Path) -> None:
 @pytest.mark.finding("AF-17")
 def test_lab1_no_env_must_not_pass(tmp_path: Path) -> None:
     g = lab1(tmp_path, cwd_env=None, grafana=grafana(uids=()))
-    assert "skipped" in ANSI.sub("", g.out), g.out  # the skip does happen
     assert g.rc == 1, g.out
 
 
@@ -294,7 +292,7 @@ def test_lab2_sad(tmp_path: Path, kw: dict[str, Any], needles: list[str]) -> Non
 @pytest.mark.finding("AF-21")
 def test_lab2_passes_without_the_optional_gh_cli(tmp_path: Path) -> None:
     g = lab2(tmp_path, gh=False)
-    assert "PR metadata will be limited" in g.out  # the grader itself calls gh optional
+    # The grader itself calls gh optional ("PR metadata will be limited").
     assert g.rc == 0, g.out
 
 
@@ -345,7 +343,6 @@ def test_lab2_works_with_every_repos_copy_of_the_emitter(
 @pytest.mark.finding("AF-17")
 def test_lab2_loki_down_must_not_pass(tmp_path: Path) -> None:
     g = lab2(tmp_path, loki=None)
-    assert "Loki not reachable (SKIP)" in ANSI.sub("", g.out)
     assert g.rc == 1, g.out
 
 

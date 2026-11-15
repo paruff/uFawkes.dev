@@ -18,8 +18,8 @@
 ## Verification Strategy
 
 - `make suite-integration-test` exits 0.
-- `RUNS=10 make suite-integration-test` gives the same counts in all ten
-  runs, each in a different test order.
+- `RUNS=10 make suite-integration-test` passes every test in all ten
+  runs, each in a different test order, with the same count of reproductions.
 - `SUITE_ASSERT_FIXED=1 make suite-integration-test` fails on exactly the tests
   that carry a `finding` mark. This shows each finding is a real failure and
   not a test that is skipped.
@@ -31,5 +31,6 @@
 - **A sibling checkout is on a feature branch.** The harness tests what is
   checked out. `AUDIT_FINDINGS.md` records the commit of each repository it
   ran against.
-- **A fixed bug turns the run red.** That is intended: the mark is strict,
-  so the fix and the removal of the mark land together.
+- **A fixed bug turns the run red.** That is intended: a reproduction
+  fails once its bug is gone, so the fix and the removal of the mark land
+  together.

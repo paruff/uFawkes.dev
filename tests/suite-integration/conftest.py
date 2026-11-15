@@ -2,7 +2,6 @@
 
 import os
 import random
-import sqlite3
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -50,9 +49,9 @@ def pytest_pyfunc_call(pyfuncitem: pytest.Function):
         return (yield)
     try:
         yield
-    # The three ways a known bug shows: a wrong result, and the two errors
-    # dora-api raises (AF-05, AF-23). Anything else is a harness fault and fails.
-    except (AssertionError, TypeError, sqlite3.OperationalError):
+    # A bug shows as a wrong result, or as the error the mark names with
+    # raises=. Anything else is a harness fault and fails the test.
+    except mark.kwargs.get("raises", AssertionError):
         _reproduced.append(mark.args[0])
         return True
     pytest.fail(

@@ -65,7 +65,7 @@ when the behaviour is broken today.
 | T36 | The deployment event waits for the scans, the policy check and the build                         |         |
 | T37 | No pipeline step runs an image tagged `latest`                                                   | AF-08   |
 
-## Dojo lab grading (`test_dojo_grading.py`)
+## Dojo lab grading (`test_dojo_grading.py`, `test_dojo_brown.py`)
 
 Graders covered: white belt module 02 labs 01 and 02, brown belt module 14
 lab 01.

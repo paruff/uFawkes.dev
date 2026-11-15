@@ -1,6 +1,7 @@
 """Contract of the uFawkesObs ingestion API: what it accepts, rejects, dedupes and gates."""
 
 import json
+import sqlite3
 from typing import Any
 
 import conftest
@@ -272,7 +273,7 @@ def test_event_claimed_by_a_worker_that_died_is_processed_after_restart(
     assert obs.sql("SELECT COUNT(*) FROM raw_events") == [(1,)]
 
 
-@pytest.mark.finding("AF-23")
+@pytest.mark.finding("AF-23", raises=sqlite3.OperationalError)
 def test_event_posted_while_the_worker_is_claiming_another_is_accepted(
     obs, now
 ) -> None:

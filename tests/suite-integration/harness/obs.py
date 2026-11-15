@@ -42,7 +42,8 @@ class ObsStack:
         async def _drain():
             count = 0
             while (event := await dequeue_next()) is not None:
-                assert await process_event(event), f"worker failed on {event}"
+                if not await process_event(event):
+                    raise RuntimeError(f"worker failed on {event}")
                 count += 1
             return count
 
@@ -70,7 +71,10 @@ class ObsStack:
             ") RETURNING id, payload, event_type, source, attempts"
         )
         # This is a copy of dequeue_next's statement; fail loudly if dora-api changes it.
-        assert claim in " ".join(inspect.getsource(queue_sqlite.dequeue_next).split())
+        if claim not in " ".join(inspect.getsource(queue_sqlite.dequeue_next).split()):
+            raise RuntimeError(
+                "dequeue_next changed: update the copy of its statement here"
+            )
 
         async def _claim() -> None:
             conn = await get_pool()
@@ -85,7 +89,10 @@ class ObsStack:
         which is how a test delivers events late or out of order.
         """
         response = self.post("/event", event)
-        assert response.status_code == 201, response.text
+        if response.status_code != 201:
+            raise RuntimeError(
+                f"dora-api refused a valid event: {response.status_code} {response.text}"
+            )
         event_id = response.json()["id"]
         self.drain()
         if ingested_at is not None:

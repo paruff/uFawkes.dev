@@ -186,7 +186,7 @@ def test_timestamp_without_a_utc_offset_is_rejected(
     assert obs.post("/event", event).status_code == 422
 
 
-@pytest.mark.finding("AF-05")
+@pytest.mark.finding("AF-05", raises=TypeError)
 def test_one_event_with_a_naive_timestamp_does_not_stop_metrics_for_every_team(
     obs: ObsStack, now: datetime
 ) -> None:
