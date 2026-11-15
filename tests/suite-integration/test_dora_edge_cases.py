@@ -69,7 +69,6 @@ def test_deployment_inside_the_window_is_counted(obs: ObsStack, now: datetime) -
     )
 
 
-@pytest.mark.finding("AF-02")
 def test_retry_that_adds_an_optional_field_is_still_one_deployment(
     obs: ObsStack, now: datetime
 ) -> None:
@@ -199,7 +198,6 @@ def test_one_event_with_a_naive_timestamp_does_not_stop_metrics_for_every_team(
     ] == pytest.approx(2.0)
 
 
-@pytest.mark.finding("AF-06")
 def test_first_commit_after_the_deployment_cannot_yield_a_negative_lead_time(
     obs: ObsStack, now: datetime
 ) -> None:
@@ -212,7 +210,6 @@ def test_first_commit_after_the_deployment_cannot_yield_a_negative_lead_time(
     assert response.status_code == 422 or lead_time is None or lead_time >= 0
 
 
-@pytest.mark.finding("AF-06")
 def test_deployment_dated_in_the_future_is_rejected(
     obs: ObsStack, now: datetime
 ) -> None:

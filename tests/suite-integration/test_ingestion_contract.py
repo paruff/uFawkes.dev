@@ -107,7 +107,6 @@ def test_invalid_payload_fails_bare_schema_unless_format_only(case: Case) -> Non
         assert errors
 
 
-@pytest.mark.finding("AF-09")
 @pytest.mark.parametrize(
     "case",
     [
@@ -123,7 +122,6 @@ def test_missing_required_field_is_named_in_the_error_location(obs, case: Case) 
     assert ["body", case["expect_field"]] in [d["loc"] for d in detail]
 
 
-@pytest.mark.finding("AF-10")
 def test_pipeline_url_that_is_not_a_uri_is_rejected(obs, now) -> None:
     # The schema declares format: uri; dashboards link to this value.
     assert (

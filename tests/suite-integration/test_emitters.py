@@ -105,13 +105,7 @@ def test_emit_script_identical_to_obs(repo: str) -> None:
     assert digest(repo) == digest("uFawkesObs")
 
 
-@pytest.mark.parametrize(
-    "event",
-    [
-        pytest.param(e, marks=pytest.mark.finding("AF-13")) if e == "deployment" else e
-        for e in EVENTS
-    ],
-)
+@pytest.mark.parametrize("event", list(EVENTS))
 def test_pipe_schema_matches_obs(event: str) -> None:
     name = f"{event}-event.schema.json"
     assert json.loads(
@@ -179,7 +173,6 @@ def test_failed_deploy_marker_counts_as_failed_change(
     assert metrics["deployment_frequency"] is None
 
 
-@pytest.mark.finding("AF-14")
 def test_deploy_without_sha_or_pipeline_url_is_not_lost(obs, tmp_path: Path) -> None:
     # Copied out of the checkout so `git rev-parse HEAD` finds no repository.
     script = tmp_path / "scripts" / "emit-dora-event.sh"
