@@ -19,7 +19,6 @@
       }
     }
   },
-  "plugin": ["opencode-cross-repo"],
   "mcp": {
     "playwright": {
       "type": "local",
