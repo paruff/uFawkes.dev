@@ -30,7 +30,7 @@ clean: ## Remove Jekyll build output, agent tooling caches, and generated report
 
 # Suite status dashboard (docs/ai-sdlc/suite-status/)
 # status/ is a directory too: without .PHONY, make sees the target as up to date.
-.PHONY: build serve pre-commit-setup pre-commit-run validate clean status status-check-drift live-checks design-check ci-determinism-audit shift-left-audit doctor
+.PHONY: build serve pre-commit-setup pre-commit-run validate clean status status-check-drift live-checks design-check ci-determinism-audit shift-left-audit doctor suite-integration-test
 
 status: ## Run the suite acceptance checks and write _data/suite_status.json (token needs read:project)
 	@GH_TOKEN="$${GH_TOKEN:-$$(gh auth token 2>/dev/null)}" bash scripts/suite-status.sh
@@ -55,3 +55,6 @@ shift-left-audit: ## Matrix of shift-left checks x suite repo (add --time via AR
 
 doctor: ## Are this clone's checks actually running? (hooks installed, tools, stamps)
 	@bash scripts/shift-left.sh doctor
+
+suite-integration-test: ## Cross-repo DORA + Dojo grading harness, offline in Docker (ARGS=pytest flags, RUNS=n repeats)
+	@bash tests/suite-integration/run.sh $(ARGS)
