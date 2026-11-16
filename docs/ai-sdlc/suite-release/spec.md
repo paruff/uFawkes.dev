@@ -86,8 +86,7 @@ above don't cover these yet:
   are pinned to the suite release).
 - **PI-3:** uFawkesAI pins a different `ufawkes-ci` digest from the other six
   repos (paruff/uFawkesAI#289).
-- **PI-8:** uFawkesDojo has no `main-ci-guard.yml` (paruff/uFawkesDojo#126).
-  uFawkesAI's guard is a local script, not uFawkesPipe's reusable
+- **PI-8:** uFawkesAI's guard is a local script, not uFawkesPipe's reusable
   (paruff/uFawkesAI#289). uFawkesDevX's guard watches `ci.yml`, not the
   pipeline that runs the reusables (paruff/uFawkesDevX#152).
 - **PI-9:** uFawkes.dev has 7 jobs without both stamps (paruff/uFawkes.dev#246) and
