@@ -93,8 +93,9 @@ is "a guard that calls Pipe's reusable" clean ci_guard ok
 is "no main-ci-guard.yml" messy ci_guard none
 is "no workflows: guard n/a" bare ci_guard n/a
 is "every job with steps is stamped" clean job_stamps ok
-is "an unstamped job and a look-alike one; a reusable-only job is skipped" messy job_stamps 2
+is "an unstamped job and a look-alike one; a reusable-only job is skipped" messy job_stamps 3
 says "the unstamped job is located" 'messy: stamps: ci.yml:[0-9]+ hooks'
+says "a stamp-named last step with if: !always() does not count" 'messy: stamps: ci.yml:[0-9]+ badif'
 says "a name that merely contains job-start, and an if of !always(), do not count" 'messy: stamps: ci.yml:[0-9]+ decoy'
 lacks "a step listed under informational: is not a finding" 'Status \(informational\)'
 

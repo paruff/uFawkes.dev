@@ -94,7 +94,7 @@ REUSABLES = {"reusable-build", "reusable-lint", "reusable-security-scanning", "r
 PIPE = re.compile(r"^paruff/ufawkespipe/\.github/workflows/[^@]+@(.+)$", re.I)
 SHA = re.compile(r"^[0-9a-f]{40}$")
 # `always()` or `${{ always() }}`, nothing else: `!always()` and `always() && x` don't stamp a failed run.
-ALWAYS = re.compile(r"^(\$\{\{\s*)?always\(\)(\s*\}\})?$")
+ALWAYS = re.compile(r"^(?:always\(\)|\$\{\{\s*always\(\)\s*\}\})$")
 CI_IMAGE = re.compile(r"^ghcr\.io/paruff/ufawkes-ci@sha256:[0-9a-f]{64}$", re.I)
 
 

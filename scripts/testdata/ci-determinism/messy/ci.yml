@@ -54,3 +54,11 @@ jobs:
       - name: job-finish
         if: "!always()"
         run: echo finish
+  badif:
+    runs-on: ubuntu-latest
+    steps:
+      - name: job-start
+        run: echo start
+      - name: job-finish
+        if: "!always()"
+        run: echo finish
