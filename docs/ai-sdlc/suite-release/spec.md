@@ -80,6 +80,8 @@ breaks, so a column that isn't `ok` is the failure to act on.
 **Known departures, read from each repo's `main` on 2026-11-13.** The audits
 above don't cover these yet:
 
+- **PI-1 and PI-2:** uFawkesDevX's `ci-pipeline.yml` calls five uFawkesPipe
+  reusables at `@main` (paruff/uFawkesDevX#160).
 - **PI-3:** uFawkesAI pins a different `ufawkes-ci` digest from the other six
   repos (paruff/uFawkesAI#289).
 - **PI-8:** uFawkesDojo has no `main-ci-guard.yml` (paruff/uFawkesDojo#126).
