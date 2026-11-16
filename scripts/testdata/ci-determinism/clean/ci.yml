@@ -29,5 +29,10 @@ jobs:
     runs-on: ubuntu-latest
     container: ghcr.io/paruff/ufawkes-ci@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
     steps:
+      - name: job-start
+        run: echo "job-start $(date -u +%FT%TZ)"
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - run: pre-commit run --all-files
+      - name: job-finish
+        if: always()
+        run: echo "job-finish $(date -u +%FT%TZ)"

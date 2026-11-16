@@ -34,7 +34,8 @@ cat > "$TMP/bin/gh" << STUB
 #!/usr/bin/env bash
 # Serves gh api repos/o/<repo>/contents/<path> --jq <filter> from the fixtures.
 case "\$*" in
-  *repos/o/clean/contents/.github/workflows\ *) echo ci.yml ;;
+  *repos/o/clean/contents/.github/workflows\ *) printf 'ci.yml\nmain-ci-guard.yml\n' ;;
+  *repos/o/clean/contents/.github/workflows/main-ci-guard.yml*) base64 < "$FIX/clean/main-ci-guard.yml" ;;
   *repos/o/viainput/contents/.github/workflows\ *) echo ci.yml ;;
   *repos/o/viainput/contents/.github/workflows/ci.yml*) base64 < "$FIX/viainput/ci.yml" ;;
   *repos/o/twojobs/contents/.github/workflows\ *) echo ci.yml ;;
@@ -88,6 +89,12 @@ is "no silent passes" clean silent ok
 is "continue-on-error and || true, minus the listed one" messy silent 2
 says "continue-on-error located" 'messy: silent: ci.yml:[0-9]+ Flaky \(continue-on-error\)'
 says "|| true located" 'messy: silent: ci.yml:[0-9]+ Quiet \(\|\| true\)'
+is "a guard that calls Pipe's reusable" clean ci_guard ok
+is "no main-ci-guard.yml" messy ci_guard none
+is "no workflows: guard n/a" bare ci_guard n/a
+is "every job with steps is stamped" clean job_stamps ok
+is "an unstamped job; a reusable-only job is skipped" messy job_stamps 1
+says "the unstamped job is located" 'messy: stamps: ci.yml:[0-9]+ hooks'
 lacks "a step listed under informational: is not a finding" 'Status \(informational\)'
 
 echo "JSON for /status/:"
