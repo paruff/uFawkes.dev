@@ -70,8 +70,8 @@ so none rests on a reviewer noticing.
 | PI-5  | `.pre-commit-config.yaml` is the only hook definition, and CI runs it as a required check (AC-AI-09)                                                                                                                    | `make shift-left-audit`                                             |
 | PI-6  | `main` has the `main-protection` ruleset: a pull request, no force push, no deletion, linear history, and the hook job and `🔗 Artifact Chain` as required checks ([the standard](../suite-hygiene/main-protection.md)) | `scripts/check-branch-protection.sh`                                |
 | PI-7  | The repo has its own `.artifact-chain-paths`, so the artifact chain checks the repo's real code paths                                                                                                                   | `scripts/checks/ac-suite-03.sh`                                     |
-| PI-8  | Every PR to `main` passes `main-ci-guard.yml`                                                                                                                                                                           | No check yet (paruff/uFawkes.dev#228)                               |
-| PI-9  | Every CI job starts with a `job-start` step and ends with a `job-finish` step that runs `if: always()`                                                                                                                  | No check yet (paruff/uFawkes.dev#228)                               |
+| PI-8  | Every PR to `main` passes `main-ci-guard.yml`                                                                                                                                                                           | `make ci-determinism-audit`, column `ci_guard`                      |
+| PI-9  | Every CI job starts with a `job-start` step and ends with a `job-finish` step that runs `if: always()`                                                                                                                  | `make ci-determinism-audit`, column `job_stamps`                    |
 | PI-10 | Release Please cuts every release tag. An agent never merges, never pushes to `main` and never passes `--no-verify`                                                                                                     | PI-6; the `commit-msg` hook                                         |
 
 The audits print a matrix and exit non-zero only when the script itself
@@ -90,7 +90,8 @@ above don't cover these yet:
   uFawkesAI's guard is a local script, not uFawkesPipe's reusable
   (paruff/uFawkesAI#289). uFawkesDevX's guard watches `ci.yml`, not the
   pipeline that runs the reusables (paruff/uFawkesDevX#152).
-- **PI-9:** jobs without both stamps in uFawkesObs (11 of its 16 workflow files
+- **PI-9:** uFawkes.dev has 7 jobs without both stamps (paruff/uFawkes.dev#246) and
+  uFawkesPipe 27 (paruff/uFawkesPipe#235). Also jobs without both stamps in uFawkesObs (11 of its 16 workflow files
   have neither, paruff/uFawkesObs#720), fawkes (paruff/fawkes#2313), uFawkesAI
   (paruff/uFawkesAI#289), uFawkesDojo (paruff/uFawkesDojo#126) and uFawkesDevX
   (paruff/uFawkesDevX#152). The stamps are log lines that nothing reads; what

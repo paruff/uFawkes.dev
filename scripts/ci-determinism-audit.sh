@@ -13,6 +13,11 @@
 #   unpinned       ok = none; n = `uses:` without a 40-hex SHA, images without @sha256
 #   silent         ok = none; n = continue-on-error: true / `|| true` not listed
 #                  under `informational:` in .pipeline.yml
+#   ci_guard       ok = main-ci-guard.yml calls Pipe's reusable-main-ci-guard (PI-8);
+#                  local = it exists but calls none; none = no such file
+#   job_stamps     ok = none; n = jobs with steps that don't start with a job-start
+#                  step and end with a job-finish step running `if: always()` (PI-9);
+#                  a job that only calls a reusable is skipped
 #
 # --json <path> also writes the matrix, with the findings behind each cell, for
 # /status/; for _data/ci_determinism.json it is also copied to status/.
@@ -124,7 +129,7 @@ def informational(path):
 
 def audit(repo):
     d = f"{work}/{repo}"
-    res = {"pipe_refs": [], "local_copies": [], "ci_image": "", "unpinned": [], "silent": []}
+    res = {"pipe_refs": [], "local_copies": [], "ci_image": "", "unpinned": [], "silent": [], "ci_guard": "none", "stamps": []}
     listed = informational(f"{d}/pipeline.yml")
     files = sorted(os.listdir(f"{d}/wf"))
     res["has_workflows"] = bool(files)
@@ -138,7 +143,16 @@ def audit(repo):
         if repo.lower() != "ufawkespipe" and os.path.splitext(fn)[0] in REUSABLES:
             res["local_copies"].append(fn)
         root = yaml.compose(open(f"{d}/wf/{fn}"))
+        if fn == "main-ci-guard.yml":
+            res["ci_guard"] = "local"
         for jname, job in pairs(get(root, "jobs")):
+            if fn == "main-ci-guard.yml" and "reusable-main-ci-guard" in text(get(job, "uses")) and PIPE.match(text(get(job, "uses"))):
+                res["ci_guard"] = "ok"
+            steps = items(get(job, "steps"))
+            if steps:
+                first, last = text(get(steps[0], "name")), get(steps[-1], "name")
+                if "job-start" not in first or "job-finish" not in text(last) or "always()" not in text(get(steps[-1], "if")):
+                    res["stamps"].append(f"{fn}:{job.start_mark.line + 1} {text(get(job, 'name')) or jname}")
             container = get(job, "container")
             image = text(get(container, "image") or container)
             if image and "${{" not in image and "@sha256:" not in image:
@@ -224,7 +238,8 @@ def image_releases(sha):
 results = {r: audit(r) for r in repos}
 digests = {re.search(r"sha256:[0-9a-f]+", x["ci_image"]).group(0) for x in results.values() if CI_IMAGE.match(x["ci_image"])}
 COLS = [("pipe_refs", "Pipe release"), ("local_copies", "Local copies"), ("ci_image", "CI image"),
-        ("release_match", "Release match"), ("unpinned", "Unpinned"), ("silent", "Silent passes")]
+        ("release_match", "Release match"), ("unpinned", "Unpinned"), ("silent", "Silent passes"),
+        ("ci_guard", "Main CI guard"), ("job_stamps", "Job stamps")]
 rows, cells = [], {}
 for r in repos:
     x = results[r]
@@ -247,6 +262,8 @@ for r in repos:
         "release_match": "n/a" if not (dev and built) else "ok" if dev == built else "differs",
         "unpinned": str(len(x["unpinned"])) if x["unpinned"] else "ok",
         "silent": str(len(x["silent"])) if x["silent"] else "ok",
+        "ci_guard": "n/a" if not x["has_workflows"] else x["ci_guard"],
+        "job_stamps": str(len(x["stamps"])) if x["stamps"] else "ok",
     }
     rows.append([r] + [cells[r][k] for k, _ in COLS])
 
@@ -256,7 +273,7 @@ for t in table:
     print("  ".join(v.ljust(w) for v, w in zip(t, widths)).rstrip())
 for r in repos:
     x = results[r]
-    for k in ("local_copies", "unpinned", "silent"):
+    for k in ("local_copies", "unpinned", "silent", "stamps"):
         for f in x[k]:
             print(f"{r}: {k}: {f}")
     if len(x["pipe_refs"]) > 1:
@@ -271,7 +288,7 @@ if json_out:
         "columns": [{"id": k, "label": lbl} for k, lbl in COLS],
         "repos": [{"repo": r, "cells": cells[r], "ci_image": results[r]["ci_image"],
                    "devcontainer_release": results[r]["devcontainer_release"], "image_release": results[r]["image_release"],
-                   "findings": {k: results[r][k] for k in ("pipe_refs", "local_copies", "unpinned", "silent")}} for r in repos],
+                   "findings": {k: results[r][k] for k in ("pipe_refs", "local_copies", "unpinned", "silent", "stamps")}} for r in repos],
     }
     with open(json_out, "w") as f:
         json.dump(data, f, indent=2)
