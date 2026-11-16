@@ -95,7 +95,7 @@ above don't cover these yet:
   have neither, paruff/uFawkesObs#720), fawkes (paruff/fawkes#2313), uFawkesAI
   (paruff/uFawkesAI#289), uFawkesDojo (paruff/uFawkesDojo#126) and uFawkesDevX
   (paruff/uFawkesDevX#152). The stamps are log lines that nothing reads; what
-  consumes them is decided with paruff/uFawkes.dev#228.
+  consumes them is still open.
 
 ### Make verification commands
 
