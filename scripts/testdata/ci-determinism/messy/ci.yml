@@ -46,3 +46,19 @@ jobs:
         run: make status
       - name: Guard
         run: grep -q ':latest' Dockerfile || exit 1
+  decoy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: no-job-start-here
+        run: echo start
+      - name: job-finish
+        if: "!always()"
+        run: echo finish
+  badif:
+    runs-on: ubuntu-latest
+    steps:
+      - name: job-start
+        run: echo start
+      - name: job-finish
+        if: "!always()"
+        run: echo finish
