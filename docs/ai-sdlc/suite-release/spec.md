@@ -80,10 +80,10 @@ breaks, so a column that isn't `ok` is the failure to act on.
 **Known departures, read from each repo's `main` on 2026-11-13.** The audits
 above don't cover these yet:
 
-- **PI-1 and PI-2:** uFawkesDevX's `ci-pipeline.yml` calls five uFawkesPipe
-  reusables at `@main` (paruff/uFawkesDevX#160, pinned in #161). Its
-  `reusable-security-scanning` stays one commit ahead of the suite release for
-  the Trivy 0.76.2 install, so `pipe_refs` shows two values until the suite bumps.
+- **PI-2:** uFawkesDevX's `reusable-security-scanning` stays one commit ahead
+  of the suite release for the Trivy 0.76.2 install, so `pipe_refs` shows two
+  values until the suite bumps (paruff/uFawkesDevX#160; its other five calls
+  are pinned to the suite release).
 - **PI-3:** uFawkesAI pins a different `ufawkes-ci` digest from the other six
   repos (paruff/uFawkesAI#289).
 - **PI-8:** uFawkesDojo has no `main-ci-guard.yml` (paruff/uFawkesDojo#126).
@@ -95,7 +95,7 @@ above don't cover these yet:
   have neither, paruff/uFawkesObs#720), fawkes (paruff/fawkes#2313), uFawkesAI
   (paruff/uFawkesAI#289), uFawkesDojo (paruff/uFawkesDojo#126) and uFawkesDevX
   (paruff/uFawkesDevX#152). The stamps are log lines that nothing reads; what
-  consumes them is decided with paruff/uFawkes.dev#228.
+  consumes them is still open.
 
 ### Make verification commands
 
