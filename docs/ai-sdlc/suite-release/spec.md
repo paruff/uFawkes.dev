@@ -81,7 +81,9 @@ breaks, so a column that isn't `ok` is the failure to act on.
 above don't cover these yet:
 
 - **PI-1 and PI-2:** uFawkesDevX's `ci-pipeline.yml` calls five uFawkesPipe
-  reusables at `@main` (paruff/uFawkesDevX#160).
+  reusables at `@main` (paruff/uFawkesDevX#160, pinned in #161). Its
+  `reusable-security-scanning` stays one commit ahead of the suite release for
+  the Trivy 0.76.2 install, so `pipe_refs` shows two values until the suite bumps.
 - **PI-3:** uFawkesAI pins a different `ufawkes-ci` digest from the other six
   repos (paruff/uFawkesAI#289).
 - **PI-8:** uFawkesDojo has no `main-ci-guard.yml` (paruff/uFawkesDojo#126).
