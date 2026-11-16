@@ -93,6 +93,8 @@ REUSABLES = {"reusable-build", "reusable-lint", "reusable-security-scanning", "r
              "reusable-tests", "reusable-preflight", "reusable-main-ci-guard"}
 PIPE = re.compile(r"^paruff/ufawkespipe/\.github/workflows/[^@]+@(.+)$", re.I)
 SHA = re.compile(r"^[0-9a-f]{40}$")
+# `always()` or `${{ always() }}`, nothing else: `!always()` and `always() && x` don't stamp a failed run.
+ALWAYS = re.compile(r"^(\$\{\{\s*)?always\(\)(\s*\}\})?$")
 CI_IMAGE = re.compile(r"^ghcr\.io/paruff/ufawkes-ci@sha256:[0-9a-f]{64}$", re.I)
 
 
@@ -151,7 +153,7 @@ def audit(repo):
             steps = items(get(job, "steps"))
             if steps:
                 first, last = text(get(steps[0], "name")), get(steps[-1], "name")
-                if "job-start" not in first or "job-finish" not in text(last) or "always()" not in text(get(steps[-1], "if")):
+                if not first.startswith("job-start") or not text(last).startswith("job-finish") or not ALWAYS.match(text(get(steps[-1], "if")).strip()):
                     res["stamps"].append(f"{fn}:{job.start_mark.line + 1} {text(get(job, 'name')) or jname}")
             container = get(job, "container")
             image = text(get(container, "image") or container)

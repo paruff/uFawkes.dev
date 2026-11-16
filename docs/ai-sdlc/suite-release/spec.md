@@ -90,8 +90,8 @@ above don't cover these yet:
   uFawkesAI's guard is a local script, not uFawkesPipe's reusable
   (paruff/uFawkesAI#289). uFawkesDevX's guard watches `ci.yml`, not the
   pipeline that runs the reusables (paruff/uFawkesDevX#152).
-- **PI-9:** uFawkes.dev has 7 jobs without both stamps (paruff/uFawkes.dev#246) and
-  uFawkesPipe 27 (paruff/uFawkesPipe#235). Also jobs without both stamps in uFawkesObs (11 of its 16 workflow files
+- **PI-9:** jobs lack both stamps in uFawkes.dev (7 jobs, paruff/uFawkes.dev#246),
+  uFawkesPipe (27, paruff/uFawkesPipe#235), uFawkesObs (11 of its 16 workflow files
   have neither, paruff/uFawkesObs#720), fawkes (paruff/fawkes#2313), uFawkesAI
   (paruff/uFawkesAI#289), uFawkesDojo (paruff/uFawkesDojo#126) and uFawkesDevX
   (paruff/uFawkesDevX#152). The stamps are log lines that nothing reads; what
