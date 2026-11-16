@@ -106,15 +106,15 @@ stack or a cluster get their own targets, named in the repo's release plan.
 Until a repo's `make validate` meets this, its plan names the command that
 does the same job.
 
-| Repo            | `INTENT.md`                                                     | Release docs                                    | Remaining doc cleanup                                                                                             |
-| --------------- | --------------------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| **uFawkes.dev** | ✅                                                              | `docs/ai-sdlc/suite-release/` (this folder)     | Add `/ai/` and `/fawkes/` pages to the nav; retire `/dora/` (ufawkesdora archived) and `/sec/` (merged into Pipe) |
-| **uFawkesAI**   | ❌ (corrected 2026-10-01: only `docs/ai-sdlc/intent.md` exists) | `docs/ai-sdlc/v2.0.0/` ❌                       | Close paruff/uFawkesAI#36 (superseded by this folder)                                                             |
-| **uFawkesDojo** | ✅                                                              | `docs/ai-sdlc/compose-curriculum/` ✅; `0.2` ❌ | Rebase `compose-curriculum/plan.md` on the new order: Dojo `0.2` before any stack lab                             |
-| **uFawkesObs**  | ✅                                                              | `docs/ai-sdlc/v1.0.0/` ✅                       | paruff/uFawkesObs#534 (dead uFawkesRes panels, `TBD` SQL in the tier table)                                       |
-| **uFawkesPipe** | ✅                                                              | `docs/ai-sdlc/v2.0.0/` ❌                       | Consolidate the 3 spec files, 2 design files and `plan-for-the-day.md`                                            |
-| **uFawkesDevX** | ✅                                                              | `docs/ai-sdlc/v0.1.0/` ❌                       | Move root `specification.md`/`design.md`/`plan.md` in; remove uFawkesRes references                               |
-| **fawkes**      | ❌                                                              | `docs/ai-sdlc/tracer-bullet-alpha/` ❌          | Mark `ADR-004 jenkins 4 ci` superseded by ADR-036                                                                 |
+| Repo            | `INTENT.md` | Release docs                                    | Remaining doc cleanup                                                                                             |
+| --------------- | ----------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **uFawkes.dev** | ✅          | `docs/ai-sdlc/suite-release/` (this folder)     | Add `/ai/` and `/fawkes/` pages to the nav; retire `/dora/` (ufawkesdora archived) and `/sec/` (merged into Pipe) |
+| **uFawkesAI**   | ✅          | `docs/ai-sdlc/v2.0.0/` ✅                       | Close paruff/uFawkesAI#36 (superseded by this folder)                                                             |
+| **uFawkesDojo** | ✅          | `docs/ai-sdlc/compose-curriculum/` ✅; `0.2` ❌ | Rebase `compose-curriculum/plan.md` on the new order: Dojo `0.2` before any stack lab                             |
+| **uFawkesObs**  | ✅          | `docs/ai-sdlc/v1.0.0/` ✅                       | paruff/uFawkesObs#534 (dead uFawkesRes panels, `TBD` SQL in the tier table)                                       |
+| **uFawkesPipe** | ✅          | `docs/ai-sdlc/v2.0.0/` ✅                       | Consolidate the 3 spec files, 2 design files and `plan-for-the-day.md`                                            |
+| **uFawkesDevX** | ✅          | `docs/ai-sdlc/first-verified-stable/` ✅        | Move root `specification.md`/`design.md`/`plan.md` in; remove uFawkesRes references                               |
+| **fawkes**      | ✅          | `docs/ai-sdlc/tracer-bullet-alpha/` ✅          | Mark `ADR-004 jenkins 4 ci` superseded by ADR-036                                                                 |
 
 ## 2. Release acceptance criteria
 
