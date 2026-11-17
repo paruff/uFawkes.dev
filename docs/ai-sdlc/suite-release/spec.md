@@ -90,8 +90,7 @@ above don't cover these yet:
   (paruff/uFawkesAI#289). uFawkesDevX's guard watches `ci.yml`, not the
   pipeline that runs the reusables (paruff/uFawkesDevX#152).
 - **PI-9:** jobs lack both stamps in uFawkesObs (11 of its 16 workflow files
-  have neither, paruff/uFawkesObs#720), uFawkesAI (paruff/uFawkesAI#289),
-  uFawkesDojo (paruff/uFawkesDojo#126) and uFawkesDevX (paruff/uFawkesDevX#152).
+  have neither, paruff/uFawkesObs#720) and uFawkesAI (paruff/uFawkesAI#289).
   fawkes keeps 4 jobs the audit counts: `dora-start` and `dora-finish` in
   `main-ci-guard.yml` and `platform-policy-ci.yml` stamp from separate jobs,
   because the job between them is a reusable-workflow call and can't hold steps;
