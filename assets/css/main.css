@@ -108,7 +108,7 @@ body {
 
 .main-nav__link--accent {
   background: #f0fdf4;
-  color: #16a34a;
+  color: #4f46e5;
   font-weight: 600;
 }
 
@@ -139,7 +139,7 @@ body {
 }
 
 .nav-toggle:focus-visible {
-  outline: 2px solid #16a34a;
+  outline: 2px solid #4f46e5;
   outline-offset: 2px;
 }
 
@@ -410,8 +410,8 @@ body {
   display: inline-block;
   padding: 0.75rem 1.5rem;
   margin-top: 1rem;
-  background: #16a34a;
-  color: #fff;
+  background: #f06300;
+  color: #061723;
   font-weight: 600;
   border-radius: 8px;
   text-decoration: none;
@@ -420,13 +420,13 @@ body {
 
 .cta-button:hover,
 .cta-button:focus-visible {
-  background: #15803d;
+  background: #e85800;
 }
 
 .cta-button--secondary {
   background: transparent;
-  color: #16a34a;
-  border: 2px solid #16a34a;
+  color: #4f46e5;
+  border: 2px solid #4f46e5;
 }
 
 .cta-button--secondary:hover,
@@ -615,8 +615,8 @@ pre code {
 
 .stack-card:hover,
 .capability-card:hover {
-  border-color: #16a34a;
-  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.12);
+  border-color: #4f46e5;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.12);
 }
 
 /* Code block styles */
@@ -627,7 +627,7 @@ code {
 pre {
   background: #f9fafb;
   border: 1px solid #e5e7eb;
-  border-left: 3px solid #16a34a;
+  border-left: 3px solid #4f46e5;
   border-radius: 4px;
   padding: 16px;
   font-size: 0.875rem;
@@ -655,7 +655,7 @@ pre code {
 
 .badge--live {
   background: #dcfce7;
-  color: #16a34a;
+  color: #15803d;
 }
 
 .badge--coming-soon {
@@ -665,12 +665,12 @@ pre code {
 
 /* Focus rings */
 a:focus-visible {
-  outline: 2px solid #16a34a;
+  outline: 2px solid #4f46e5;
   outline-offset: 2px;
 }
 
 .cta-button:focus-visible {
-  outline: 2px solid #16a34a;
+  outline: 2px solid #4f46e5;
   outline-offset: 2px;
 }
 
@@ -729,7 +729,7 @@ a:focus-visible {
 }
 
 .breadcrumbs__item a:hover {
-  color: #16a34a;
+  color: #4f46e5;
   text-decoration: underline;
 }
 
@@ -773,9 +773,9 @@ a:focus-visible {
 }
 
 .error-page__links a:hover {
-  border-color: #16a34a;
+  border-color: #4f46e5;
   background: #f0fdf4;
-  color: #16a34a;
+  color: #4f46e5;
 }
 
 /* Nav transition */
@@ -797,7 +797,7 @@ a:focus-visible {
 /* Active nav state */
 .main-nav__link[aria-current="page"] {
   background: #f0fdf4;
-  color: #16a34a;
+  color: #4f46e5;
   font-weight: 600;
 }
 
@@ -815,7 +815,7 @@ a:focus-visible {
 }
 
 .guide-meta__back:hover {
-  color: #16a34a;
+  color: #4f46e5;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -877,7 +877,7 @@ a:focus-visible {
 }
 
 .capability-map__row:hover {
-  border-color: #16a34a;
+  border-color: #4f46e5;
 }
 
 .capability-map__capability h3 {
@@ -1086,7 +1086,7 @@ a:focus-visible {
   content: "→";
   position: absolute;
   left: 0;
-  color: #16a34a;
+  color: #4f46e5;
   font-weight: 600;
 }
 
@@ -1102,7 +1102,7 @@ a:focus-visible {
 }
 
 .stack-hero--green {
-  border-left: 4px solid #16a34a;
+  border-left: 4px solid #4f46e5;
   padding-left: 1rem;
 }
 
@@ -1173,7 +1173,7 @@ a:focus-visible {
 }
 
 .status-timeline__item--next {
-  border-color: #16a34a;
+  border-color: #4f46e5;
   border-width: 2px;
 }
 
@@ -1196,7 +1196,7 @@ a:focus-visible {
 }
 
 .status-card--next {
-  border-color: #16a34a;
+  border-color: #4f46e5;
   border-width: 2px;
 }
 
@@ -1255,12 +1255,12 @@ a:focus-visible {
 }
 
 .status-bar__track::-webkit-progress-value {
-  background: #16a34a;
+  background: #4f46e5;
   border-radius: 4px;
 }
 
 .status-bar__track::-moz-progress-bar {
-  background: #16a34a;
+  background: #4f46e5;
   border-radius: 4px;
 }
 
@@ -1335,7 +1335,7 @@ a:focus-visible {
 }
 
 .status-burnup__done {
-  stroke: #16a34a;
+  stroke: #4f46e5;
   stroke-width: 3;
 }
 
@@ -1420,7 +1420,7 @@ a:focus-visible {
 
   .status-card--next,
   .status-timeline__item--next {
-    border-color: #16a34a;
+    border-color: #4f46e5;
   }
 
   .status-table th,
@@ -1552,14 +1552,14 @@ a:hover {
 }
 
 .cta-button {
-  background: #4f46e5;
-  color: #ffffff;
+  background: #f06300;
+  color: #061723;
 }
 
 .cta-button:hover,
 .cta-button:focus-visible {
-  background: #4338ca;
-  color: #ffffff;
+  background: #e85800;
+  color: #061723;
 }
 
 .cta-button--secondary {
@@ -1665,13 +1665,13 @@ pre {
   }
 
   .cta-button {
-    background: #818cf8;
+    background: #f06300;
     color: #061723;
   }
 
   .cta-button:hover,
   .cta-button:focus-visible {
-    background: #a5b4fc;
+    background: #e85800;
     color: #061723;
   }
 
@@ -1796,7 +1796,7 @@ pre {
 }
 
 .cta-button:visited {
-  color: #ffffff;
+  color: #061723;
 }
 
 .cta-button--secondary:visited {
