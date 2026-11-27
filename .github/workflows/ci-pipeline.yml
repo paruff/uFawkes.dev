@@ -29,7 +29,7 @@ jobs:
   lint:
     name: Lint
     needs: [preflight]
-    uses: paruff/uFawkesPipe/.github/workflows/reusable-lint.yml@271154e53badbd96f3ef173f92ecb06545fc1cfb # v1.16.0-beta.1
+    uses: paruff/uFawkesPipe/.github/workflows/reusable-lint.yml@93650e69ae0fa22d9e1aaff0d4b98236ab52ab14 # v1.16.0-beta.1
 
   # ─── Stage 2: Build & Validate ───────────────────────────────────────────
   build:
