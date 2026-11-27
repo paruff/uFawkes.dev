@@ -16,7 +16,8 @@ for page in ai/index.md fawkes/index.md compatibility/index.md obs/index.md pipe
 done
 
 compat="${COMPAT_FILE:-compatibility/index.md}"
-rows="$(grep -oE 'github\.com/paruff/[A-Za-z.]+/releases/tag/[^)]+' "$compat" | sort -u)"
+# Only the "Current release" column (the 2nd); other columns link older tags as evidence.
+rows="$(awk -F'|' '/^\| *\[/ { print $3 }' "$compat" | grep -oE 'github\.com/paruff/[A-Za-z.]+/releases/tag/[^)]+' | sort -u)"
 [[ -n "$rows" ]] || {
   echo "$compat: no release links found"
   exit 1
@@ -24,7 +25,8 @@ rows="$(grep -oE 'github\.com/paruff/[A-Za-z.]+/releases/tag/[^)]+' "$compat" | 
 while IFS= read -r link; do
   repo="$(cut -d/ -f3 <<< "$link")"
   listed="${link##*/}"
-  if ! latest="$(gh api "repos/paruff/$repo/releases?per_page=1" --jq '.[0].tag_name' 2>&1)"; then
+  # The API's list order isn't by publish date (it gave uFawkesAI v2.2.0 after v3.2.0 shipped).
+  if ! latest="$(gh api "repos/paruff/$repo/releases?per_page=30" --jq 'map(select(.draft | not)) | max_by(.published_at) | .tag_name' 2>&1)"; then
     echo "$repo: cannot read releases ($latest)"
     bad=1
   elif [[ "$listed" != "$latest" ]]; then

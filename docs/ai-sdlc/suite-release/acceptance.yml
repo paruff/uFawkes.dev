@@ -86,7 +86,7 @@
   release: AI 2.0
   title: The 2.0 contract and upgrade path are written down
   check: command
-  run: curl -fsSL -o /dev/null https://raw.githubusercontent.com/paruff/uFawkesAI/main/docs/ai-sdlc/v2.0.0/spec.md
+  run: curl -fsSL -o /dev/null https://raw.githubusercontent.com/paruff/uFawkesAI/v2.2.0/docs/ai-sdlc/v2.0.0/spec.md
   evidence: ""
 
 - id: AC-AI-04

@@ -327,9 +327,9 @@ bash scripts/checks/ac-ai-05.sh > /dev/null && ok "AC-AI-05 accepts a version ta
 printf '{"image": "ghcr.io/paruff/fawkes-space:2.2.0"}\n' > "$RAW/fawkes/main/.devcontainer/devcontainer.json"
 out="$(bash scripts/checks/ac-ai-05.sh 2>&1)" && bad "AC-AI-05 should fail on a bare version tag" \
   || { grep -q "fawkes: does not pin" <<< "$out" && ok "AC-AI-05 rejects a version tag with no digest" || bad "AC-AI-05 failed for the wrong reason: $out"; }
-printf '| [v2.2.0](https://github.com/paruff/uFawkesAI/releases/tag/v2.2.0) |\n| [v1.0.1](https://github.com/paruff/uFawkesObs/releases/tag/v1.0.1) |\n' > "$TMP/compat.md"
-COMPAT_FILE="$TMP/compat.md" bash scripts/checks/ac-site-01.sh > /dev/null && ok "AC-SITE-01 passes when every matrix row is the newest release" || bad "AC-SITE-01 should pass"
-printf '| [v1.0.0](https://github.com/paruff/uFawkesObs/releases/tag/v1.0.0) |\n' > "$TMP/compat.md"
+printf '| [uFawkesAI](/ai/) | [v2.2.0](https://github.com/paruff/uFawkesAI/releases/tag/v2.2.0) | Released |\n| [uFawkesObs](/obs/) | [v1.0.1](https://github.com/paruff/uFawkesObs/releases/tag/v1.0.1) | Released | [evidence](https://github.com/paruff/uFawkesObs/releases/tag/v1.0.0) |\n' > "$TMP/compat.md"
+COMPAT_FILE="$TMP/compat.md" bash scripts/checks/ac-site-01.sh > /dev/null && ok "AC-SITE-01 passes when every matrix row is the newest release, ignoring links in other columns" || bad "AC-SITE-01 should pass"
+printf '| [uFawkesObs](/obs/) | [v1.0.0](https://github.com/paruff/uFawkesObs/releases/tag/v1.0.0) | Released |\n' > "$TMP/compat.md"
 out="$(COMPAT_FILE="$TMP/compat.md" bash scripts/checks/ac-site-01.sh 2>&1)" && bad "AC-SITE-01 should fail on a stale row" \
   || { grep -q "uFawkesObs: matrix says v1.0.0, newest release is v1.0.1" <<< "$out" && ok "AC-SITE-01 names the stale row" || bad "AC-SITE-01 failed for the wrong reason: $out"; }
 unset CHECK_RAW_BASE
