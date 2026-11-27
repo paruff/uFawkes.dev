@@ -1,7 +1,7 @@
 # Plan: uFawkes Suite Release
 
 **Traces to:** [`spec.md`](spec.md) → [`intent.md`](intent.md) |
-**Status:** Draft | **Revision:** 6 (status as of 2026-11-09; audit findings added 2026-11-13)
+**Status:** Draft | **Revision:** 7 (status as of 2026-11-27)
 
 The plan is gate-driven, not date-driven. Each release starts its tag when
 the previous release's gate passes, but work for later releases can run
@@ -17,23 +17,83 @@ means the product repos. Each release has one name, the Project #7 `Release`
 option (`Obs 1.0`, `Pipe 2.0`, `DevX stable`, `fawkes Alpha`, ...); a version
 (`v1.0.1`) names a tag inside it. Issue links are always `owner/repo#N`.
 
-## Status, 2026-11-09
+## Status, 2026-11-27
 
-Collected from `scripts/suite-status.sh` against Project #7 (the
-`/status/` page, generated 2026-11-09 06:25 UTC), `make live-checks`, and each
-repo's GitHub Releases.
+Collected from the live `/status/` page (generated 2026-11-23 06:26 UTC),
+Project #7, each repo's GitHub Releases, and each repo's `main`.
 
 ### Where each release stands
 
-| #   | Release       | Latest tag             | Real state                                                                                                                                                                 |
-| --- | ------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0   | Suite hygiene | n/a                    | **Done.** paruff/uFawkes.dev#155 and paruff/uFawkes.dev#176 closed. AC-SUITE-01/-03 went red when uFawkesAI dropped its root `INTENT.md`; paruff/uFawkesAI#281 restored it |
-| 1   | AI 2.0        | `v2.2.0`, 2026-10-22   | **Shipped** (`v2.0.0` 2026-10-14, goal paruff/uFawkesAI#145 closed). Repos pin `fawkes-space:<version>@sha256:…`. Next is uFawkesAI's own `v2.3.0` plan                    |
-| 2   | Dojo 0.2      | `0.2.0`, 2026-10-07    | **Shipped** (goal paruff/uFawkesDojo#11 closed). The rolling AC-DOJO-04 sits under `Dojo labs`                                                                             |
-| 3   | Obs 1.0       | `v1.0.1`, 2026-10-18   | **Next release.** The alert fix (paruff/uFawkesObs#675) shipped in `v1.0.1`. Left: AC-OBS-01 evidence, AC-OBS-04 (needs the Dojo 0.3 lab), goal paruff/uFawkesObs#600      |
-| 4   | Pipe 2.0      | `v1.16.0-beta.1`       | Not started: paruff/uFawkesPipe#121, paruff/uFawkesPipe#122, paruff/uFawkesPipe#123, paruff/uFawkesPipe#125 open. Goal paruff/uFawkesPipe#120                              |
-| 5   | DevX stable   | `v1.2.0`, 2026-10-17   | 1.x accepted 2026-10-17 (ADR-0001). Needs a clean-host transcript (AC-DEVX-01), goal paruff/uFawkesDevX#146                                                                |
-| 6   | fawkes Alpha  | `v0.3.163`, 2026-10-07 | AC-FAWKES-03 fails: paruff/fawkes#2004 and paruff/fawkes#1797 are open. Goal paruff/fawkes#1804                                                                            |
+| #   | Release       | Latest tag             | Real state                                                                                                                                                                                                                                                                                  |
+| --- | ------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0   | Suite hygiene | n/a                    | **Red, 2 of 4.** AC-SUITE-02 and AC-SITE-01 fail. Neither is new work: issues that are done but still open, and a matrix that fell behind three releases. [The way back to green](#suite-hygiene-the-way-back-to-green) below                                                               |
+| 1   | AI 2.0        | `v3.2.0`, 2026-11-24   | **Shipped**, and since then: the public-release polish (goal paruff/uFawkesAI#310, closed; `v2.3.0`/`v2.3.1`), the SDLC engine seam (`v3.0.0`, breaking for the artifact-chain workflow only), `v3.2.0`. AC-AI-03 is red only because its link points at a folder `main` deleted on purpose |
+| 2   | Dojo 0.2      | `0.2.0`, 2026-10-07    | **Shipped** (goal paruff/uFawkesDojo#11 closed). The rolling AC-DOJO-04 sits under `Dojo labs`                                                                                                                                                                                              |
+| 3   | Obs 1.0       | `v1.1.0`, 2026-11-22   | Every issue on the release is done; AC-OBS-02 passes. Left: manual evidence for AC-OBS-01 (clean-host runs) and AC-OBS-04 (the Dojo lab)                                                                                                                                                    |
+| 4   | Pipe 2.0      | `v2.0.1`, 2026-11-20   | Tagged stable; every issue on the release is done. Left: AC-PIPE-01 evidence, a real run with `notify-obs` (Phase 4, step 4)                                                                                                                                                                |
+| 5   | DevX stable   | `v1.4.0`, 2026-11-18   | Needs a clean-host transcript (AC-DEVX-01), goal paruff/uFawkesDevX#146. Two open issues                                                                                                                                                                                                    |
+| 6   | fawkes Alpha  | `v0.3.163`, 2026-10-07 | AC-FAWKES-03 fails: paruff/fawkes#2004 and paruff/fawkes#1797 are open. Goal paruff/fawkes#1804. 16 open issues                                                                                                                                                                             |
+
+Every repo pins `fawkes-space:2.2.0@sha256:f5d0…`; uFawkesAI has since
+published `fawkes-space:3.2.0`. Each bump so far was a hand-made PR per repo
+(this repo's was paruff/uFawkes.dev#257). See
+[Propagating the CDE image](#propagating-the-cde-image).
+
+### Suite hygiene: the way back to green
+
+Read from the 2026-11-23 status build and checked against each repo on
+2026-11-27.
+
+| AC          | Why it's red                                                                                                                                                                                                                                                                                                                                    | Fix                                                                                                                                                                                                                                                                                                                                                                              | Who            |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| AC-SUITE-02 | paruff/uFawkesAI#313 to paruff/uFawkesAI#322 carry `opencode` or `claude-code` but no `goal` or `model:*` label, so the check counts 0. All ten were done by paruff/uFawkesAI#323 (checks present, invented docs and orphans deleted, `SECURITY.md` in place) and `v2.3.x` shipped, but their goal paruff/uFawkesAI#310 was closed without them | Close the nine that `main` shows done, each with a comment linking paruff/uFawkesAI#323. Keep paruff/uFawkesAI#321 open with `goal`: its target of at most 250 tracked files is missed (317 on 2026-11-27, after the seam added files)                                                                                                                                           | Owner or agent |
+| AC-SITE-01  | The matrix lists uFawkesDevX `v1.2.0` and uFawkesObs `v1.0.1` (newest are `v1.4.0` and `v1.1.0`). uFawkesPipe's row is current, but its "Verified with" cell links the `v2.0.0` tag and the check reads every release link in the file                                                                                                          | Bump the two rows. Make `ac-site-01.sh` read only the "Current release" column, and take the newest release from `gh release list` (the `releases?per_page=1` API call returned uFawkesAI `v2.2.0` while `v3.2.0` was newest, so the uFawkesAI row, three majors behind, passed). Then bump that row too. The "Dev image" column is also stale (says `2.0.0`; repos pin `2.2.0`) | Agent          |
+
+Not part of the gate but on the same page: AC-AI-03 should fetch
+`docs/ai-sdlc/v2.0.0/spec.md` at the `v2.2.0` tag, not `main`, since
+paruff/uFawkesAI#323 removed shipped chains from `main` on purpose. The
+`hygiene` warning lists paruff/uFawkesPipe#96 and paruff/uFawkesDojo#43 as
+closed but not _Done_ on the board; set them to _Done_.
+
+**Keeping it green.** Both failures are drift after a release, not new
+defects. AC-SUITE-02 needs whoever files an OpenCode task to add its `model:*`
+label with the `opencode` one, and a goal's close to close or re-home its
+sub-issues. AC-SITE-01 needs the `release` agent to update this repo's matrix
+row in the same session it tags a release.
+
+### The Needs human queue, in batches
+
+Nine items waited on the owner on 2026-11-27. Taken two or three at a time,
+easiest first. Each line is a recommendation; the owner decides.
+
+| Batch | Item                                                  | What it's waiting for                                                                                              | Recommendation                                                                                                                                                                                      |
+| ----- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1     | paruff/uFawkes.dev#230 (interfaces and invariants)    | Gate _PR review_, but every PR it lists has merged                                                                 | Close it                                                                                                                                                                                            |
+| 1     | paruff/uFawkes.dev#236 (2026-11-13 audit, this repo)  | Gate _PR review_, but no PR is open; paruff/uFawkes.dev#232 to paruff/uFawkes.dev#235 are open and two have no fix | Back to _Ready for agent_ (Claude Code); #232 and #233 also turn AC-SUITE-04 and AC-SITE-02 green                                                                                                   |
+| 1     | paruff/uFawkesDevX#153 (golden paths, docs)           | Same: _PR review_ with no PR, four sub-issues open                                                                 | Back to _Ready for agent_; it feeds DevX stable                                                                                                                                                     |
+| 2     | paruff/fawkes#2314 (DORA view, docs)                  | Same: _PR review_ with no PR; seven sub-issues open                                                                | Back to _Ready for agent_, with paruff/fawkes#2322, paruff/fawkes#2323 and paruff/fawkes#2325 left under it                                                                                         |
+| 2     | paruff/fawkes#2325 (29 BDD tests read a deleted file) | No gate. Every PR that runs `Python BDD Acceptance` fails                                                          | Decide: point the steps at the workflow that replaced the file in paruff/fawkes#2247, or delete those scenarios. Then route it (Nemotron, one repo, known target)                                   |
+| 2     | paruff/fawkes#2322 (canary aborts a healthy rollout)  | No gate. A real AC-FAWKES-01 risk: the one gitops-promote run goes through this analysis                           | Approve the fix direction: treat "no data" as success (`… or vector(0)`) and add a `failureCondition`. Route `goal` (needs a cluster run)                                                           |
+| 3     | paruff/fawkes#2323 (ApplicationSet deletes on drop)   | No gate                                                                                                            | Approve `preserveResourcesOnDeletion: true` (or `applicationsSync: create-update`) on both ApplicationSets. Route `goal`                                                                            |
+| 3     | paruff/fawkes#1797 (15 `CHANGE_ME_*` credentials)     | Real values only the owner has. Gates Alpha (AC-FAWKES-03)                                                         | Owner session with Claude Code: owner supplies values to `kubeseal` locally, agent writes the SealedSecret manifests                                                                                |
+| 3     | paruff/fawkes#684 (purge secrets from history)        | Gate _plan_: rewrite history or not                                                                                | Scan first (`gitleaks git`); rotate anything live. Rewrite history only if a live secret is found, since a rewrite of a public repo breaks every fork and clone and doesn't un-leak what was pushed |
+
+### Next steps for uFawkesAI's public release
+
+uFawkesAI is already public and a template, and `v2.3.x` was its public
+release (goal paruff/uFawkesAI#310). What's left before the `v3.x` line is
+announced:
+
+1. Close paruff/uFawkesAI#313 to paruff/uFawkesAI#322 as above.
+2. paruff/uFawkesAI#321: get tracked files back under 250, or the owner
+   raises the ceiling for the seam in a `Decision:` issue.
+3. Fix AC-AI-03's link, and update the matrix row to `v3.2.0`. Its "Verified
+   with" evidence (paruff/uFawkesAI#172) was for `v2.x`; mark it "not yet
+   verified at 3.x" until a delivery event from `v3.2.0` reaches Loki.
+4. Verify `fawkes-space:3.2.0`'s signature and run the cold-start check
+   (AC-PR-08 and AC-PR-10 in uFawkesAI's `public-release` spec) on the 3.x image.
+5. Propagate the image (next section, paruff/uFawkes.dev#264), then the `release` agent drafts the
+   announcement. The owner posts it.
 
 A release counts as shipped when every `goal:` issue in it is closed. The
 status build then keeps its manual evidence as recorded instead of ageing it
@@ -42,21 +102,12 @@ A dead link still turns it red.
 
 ### Open findings from the live runs
 
-1. **Obs: the default install was noisy; fixed.** About 27 alerts fired on a
-   healthy stack (paruff/uFawkesObs#670). The fix follows
-   [`uFawkesObs/docs/ai-sdlc/healthy-default-alerts/plan.md`](https://github.com/paruff/uFawkesObs/blob/main/docs/ai-sdlc/healthy-default-alerts/plan.md)
-   and shipped in `v1.0.1`. Fresh-clone runs on Linux and macOS show 0 alerts
-   after 30 min (comments on paruff/uFawkesObs#670). The chaos nightly (paruff/uFawkesObs#671)
-   has been green every night since. Both issues meet their "done means" and
-   wait to be closed.
-2. **uFawkesAI's image build is red** (`build-cde-space-image.yml`, Trivy
-   gate). `make live-checks` shows it; it doesn't block a suite release.
-3. **The compatibility matrix fell behind the releases.** It listed uFawkesAI
-   `v2.0.0` and uFawkesObs `v1.0.0` after `v2.2.0` and `v1.0.1` shipped.
-   AC-SUITE-01 looks for retired names and couldn't see this, so AC-SITE-01
-   now runs `scripts/checks/ac-site-01.sh`, which compares each row with the
-   repo's newest GitHub Release. The matrix is updated.
-4. **Suite mode (paruff/uFawkes.dev#70) is not measured.** Only
+Revision 6's findings on the Obs alerts (paruff/uFawkesObs#670,
+paruff/uFawkesObs#671) and uFawkesAI's red image build are closed: the issues
+are done and the image ships as `v2.3.1` and later. The matrix fell behind
+again; see the hygiene table above. Still open:
+
+1. **Suite mode (paruff/uFawkes.dev#70) is not measured.** Only
    `obs-alone-idle.csv` exists. It needs a 16 GB host (the documented one
    has 8 GB) and a Pipe that runs without uFawkesRes.
 
@@ -79,9 +130,10 @@ owner's call.
 
 ### Next steps, in order
 
+0. **Suite hygiene back to green, then uFawkesAI's release steps** (both
+   above), working the Needs human queue in its batches alongside.
 1. **Finish Obs 1.0** (goal paruff/uFawkesObs#600, Claude Code).
-   - Close paruff/uFawkesObs#670 and paruff/uFawkesObs#671 with their evidence. AC-OBS-02 then
-     passes.
+   - AC-OBS-02 passes: paruff/uFawkesObs#670 and paruff/uFawkesObs#671 are done.
    - AC-OBS-01: the owner decides whether the two paruff/uFawkesObs#670 transcripts count as
      clean-host runs (fresh clones, but on working machines). If yes, record a
      comment on paruff/uFawkesObs#600 that links both as `evidence` in `acceptance.yml`. If not,
@@ -260,8 +312,9 @@ paruff/fawkes#1797.
 
 ## Phase 0 — Suite hygiene (gate: AC-SUITE-01, AC-SUITE-02, AC-SUITE-03, AC-SITE-01)
 
-**Done.** Met on 2026-10-02 and rechecked on 2026-10-09
-(paruff/uFawkes.dev#155, paruff/uFawkes.dev#176): every open issue on Project #7 carries one
+**Met on 2026-10-02, red again on 2026-11-23** (see
+[the way back to green](#suite-hygiene-the-way-back-to-green)). Rechecked on
+2026-10-09 (paruff/uFawkes.dev#155, paruff/uFawkes.dev#176): every open issue on Project #7 carries one
 routing label; the seven repos have a root `INTENT.md` and run the artifact
 chain with their own code paths; no public entry point (each repo's README and
 INTENT, and the site) presents a retired name as current. The owner scoped
@@ -277,9 +330,10 @@ security issues not on the board. It warns and doesn't fail.
 
 **Shipped 2026-10-14.** Goal paruff/uFawkesAI#145 is closed, every AC passed
 at release, and the repos pin the image by digest (AC-AI-05). uFawkesAI has
-since shipped `v2.2.0`; its next work is in uFawkesAI's own
-[`v2.3.0` plan](https://github.com/paruff/uFawkesAI/blob/main/docs/ai-sdlc/v2.3.0/plan.md),
-outside this suite plan.
+since shipped `v2.3.x` (its public release, goal paruff/uFawkesAI#310) and
+`v3.2.0`; its own plans live in uFawkesAI's `docs/ai-sdlc/`, outside this
+suite plan. What the suite still owes it is in
+[Next steps for uFawkesAI's public release](#next-steps-for-ufawkesais-public-release).
 
 ## Phase 2 — Dojo 0.2 (gate: AC-DOJO-01..03)
 
@@ -369,6 +423,33 @@ takes three upgrades:
    defining before anything depends on it.
 
 When one lands, update the table in uFawkesRes's README.
+
+## Propagating the CDE image
+
+uFawkesAI's `build-cde-space-image.yml` publishes and signs
+`ghcr.io/paruff/fawkes-space:<version>` on every `v*` tag. The seven product
+repos pin it by tag and digest in `.devcontainer/devcontainer.json`
+(AC-AI-05); the three golden-path repos have no devcontainer. Today each bump is
+a hand-made PR per repo, so the suite sits on `2.2.0` while `3.2.0` ships.
+
+**What any option must keep:** the digest pin (AC-AI-05), a PR per repo that
+merges only when that repo's CI passes, and a person approving a major (the
+`3.0.0` break is in the artifact-chain workflow; the image's compatibility is
+not yet shown). The "Dev image" column on `/compatibility/` should be checked
+against each repo's pin, not typed.
+
+| Option                                                                                                                                                                                                 | Cost                                                                                                                                                                        | Catch                                                                                                                                                                                                             |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **A. Renovate, devcontainer only** (recommended). Install the Renovate app on the seven repos; one shared preset with `enabledManagers: ["devcontainer"]` and a rule for `ghcr.io/paruff/fawkes-space` | One preset plus a three-line `renovate.json` per repo. Renovate's `devcontainer` manager reads the `image` field natively. Its PRs trigger CI. Majors can wait for approval | A third bot beside Dependabot and Release Please. uFawkesPipe's existing `renovate.json` has never produced a PR, so the app isn't installed yet. Picks a release up on its next run (hours), not the same minute |
+| **B. Push from uFawkesAI's release**: a job after signing edits each repo's pin and opens the PRs                                                                                                      | One job. Same-minute PRs                                                                                                                                                    | Needs a GitHub App token with write on seven repos, stored in a public template repo (guard the job with `github.repository == 'paruff/uFawkesAI'`). Adopters inherit dead code                                   |
+| **C. Pull, a reusable workflow in `ufawkes-ci`**: each repo's scheduled caller checks the newest signed tag and opens a PR, the way uFawkesAI's `image-lock-bump.yml` already does                     | No new bot or secret; reuses a pattern the suite already runs                                                                                                               | Code to own. `GITHUB_TOKEN` PRs don't trigger CI, so it must dispatch CI itself (as `image-lock-bump.yml` does), and each repo needs "Allow GitHub Actions to create pull requests" on                            |
+| **D. Dependabot, via a `.devcontainer/Dockerfile`** whose `FROM` holds the pin                                                                                                                         | Dependabot already runs in every repo                                                                                                                                       | Changes all seven devcontainers and the AC-AI-05 check. Dependabot's `devcontainers` ecosystem documents feature updates only, not the `image` field                                                              |
+| ~~E. A floating tag (`fawkes-space:3`)~~                                                                                                                                                               | No PRs at all                                                                                                                                                               | Breaks AC-AI-05 and reproducible builds. Rejected                                                                                                                                                                 |
+
+**Decided 2026-11-27: A** (owner). C is the fallback if Renovate proves
+unworkable. The first run moves the suite to `3.2.0` as a major, so one repo
+goes first (uFawkes.dev, the cheapest CI) before the other six are approved.
+Tracked in paruff/uFawkes.dev#264.
 
 ## Verification Strategy
 
