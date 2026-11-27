@@ -5,6 +5,71 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0](https://github.com/paruff/uFawkes.dev/compare/v1.2.0...v1.3.0) (2026-11-27)
+
+
+### Added
+
+* **infra:** audit PI-8 and PI-9 in ci-determinism-audit ([#228](https://github.com/paruff/uFawkes.dev/issues/228)) ([#245](https://github.com/paruff/uFawkes.dev/issues/245)) ([07a1b59](https://github.com/paruff/uFawkes.dev/commit/07a1b597e3f0719e125f7b7e2862bd86badca52d))
+* **obs:** v1.0.0 screenshots and launch post ([#66](https://github.com/paruff/uFawkes.dev/issues/66)) ([#202](https://github.com/paruff/uFawkes.dev/issues/202)) ([f3f19e7](https://github.com/paruff/uFawkes.dev/commit/f3f19e7b9064164093fb31604f145384a7779121))
+
+
+### Fixed
+
+* **ai:** say v2.0.0 is released on the stack page ([#93](https://github.com/paruff/uFawkes.dev/issues/93)) ([#207](https://github.com/paruff/uFawkes.dev/issues/207)) ([2b0e503](https://github.com/paruff/uFawkes.dev/commit/2b0e50395b20fe2795aebea63f080510bca525c0))
+* **css:** bring main.css in line with DESIGN.md (D9 button, retired green) ([#221](https://github.com/paruff/uFawkes.dev/issues/221)) ([#255](https://github.com/paruff/uFawkes.dev/issues/255)) ([9491342](https://github.com/paruff/uFawkes.dev/commit/9491342ff4e194d25bbe981dfd008ef24ef83dae))
+* **docs:** AC-SITE-01 and AC-AI-03 green; matrix current ([#263](https://github.com/paruff/uFawkes.dev/issues/263)) ([5866867](https://github.com/paruff/uFawkes.dev/commit/586686719418840912da2ccaf22cf2b03d5670ee))
+* **fawkes:** /fawkes/ graduation page + matrix row ([#95](https://github.com/paruff/uFawkes.dev/issues/95)) ([#199](https://github.com/paruff/uFawkes.dev/issues/199)) ([3b3d8ad](https://github.com/paruff/uFawkes.dev/commit/3b3d8adf2c6b955c92046992db7cfa834c0d7346))
+* **infra:** audit counts a hook job in the CI image among several ([#181](https://github.com/paruff/uFawkes.dev/issues/181)) ([#196](https://github.com/paruff/uFawkes.dev/issues/196)) ([1e73365](https://github.com/paruff/uFawkes.dev/commit/1e73365235579ac183e2daa1f7236e09ec5487d4))
+* **infra:** audit counts the ci-image given to Pre-flight ([#181](https://github.com/paruff/uFawkes.dev/issues/181)) ([#194](https://github.com/paruff/uFawkes.dev/issues/194)) ([994bcfc](https://github.com/paruff/uFawkes.dev/commit/994bcfcd4e020798989bed4b882a93868fa3db1e))
+* **infra:** audit resolves a digest-pinned CI image to its release ([#181](https://github.com/paruff/uFawkes.dev/issues/181)) ([#195](https://github.com/paruff/uFawkes.dev/issues/195)) ([4c53b2a](https://github.com/paruff/uFawkes.dev/commit/4c53b2a16f5d802fa0f9fbb3da4ebf455b9190db))
+* **infra:** bump addressable 2.9.2 and nokogiri 1.19.7 (Trivy MEDIUM gate) ([#225](https://github.com/paruff/uFawkes.dev/issues/225)) ([6a0cfd6](https://github.com/paruff/uFawkes.dev/commit/6a0cfd6d29619740a6b00b943913a044e12dcfb3))
+* **infra:** grant package read for CI determinism audit ([#198](https://github.com/paruff/uFawkes.dev/issues/198)) ([c6a1192](https://github.com/paruff/uFawkes.dev/commit/c6a11925999a9c96964fa175db7b453d27e287b0))
+* **infra:** match job stamps by exact name and if ([#228](https://github.com/paruff/uFawkes.dev/issues/228)) ([#250](https://github.com/paruff/uFawkes.dev/issues/250)) ([e8adfaa](https://github.com/paruff/uFawkes.dev/commit/e8adfaaf73973b5e4d46c38d182a6ba3cfd6648f))
+* **infra:** status reads shipped releases as done; suite plan revision 5 ([#224](https://github.com/paruff/uFawkes.dev/issues/224)) ([13792f3](https://github.com/paruff/uFawkes.dev/commit/13792f36b42352130fec519269cb436f7222b3a7))
+
+
+### Docs
+
+* **compat:** bump uFawkesPipe row to v2.0.1 ([#261](https://github.com/paruff/uFawkes.dev/issues/261)) ([9eae841](https://github.com/paruff/uFawkes.dev/commit/9eae841533b992087c2957613d0f9872c7432578))
+* **compatibility:** uFawkesAI v2.0.0 released ([#197](https://github.com/paruff/uFawkes.dev/issues/197)) ([b147aa5](https://github.com/paruff/uFawkes.dev/commit/b147aa54d3e308b2a4951ab12325301fd4513234))
+* **compat:** uFawkesPipe v2.0.0 with uFawkesObs v1.0.1 in the matrix ([#120](https://github.com/paruff/uFawkes.dev/issues/120)) ([#258](https://github.com/paruff/uFawkes.dev/issues/258)) ([b69d814](https://github.com/paruff/uFawkes.dev/commit/b69d81476fc063149039288938bc13dea324e791))
+* **devx:** bump stack page to v1.2.0 ([#214](https://github.com/paruff/uFawkes.dev/issues/214)) ([b6f7000](https://github.com/paruff/uFawkes.dev/commit/b6f7000e9ba370c14decf5f00bb2251c0e7343e9))
+* **devx:** update stack page for v1.1.1 ([#213](https://github.com/paruff/uFawkes.dev/issues/213)) ([d3174d1](https://github.com/paruff/uFawkes.dev/commit/d3174d1051e4bd13df5f64436deec679f8074538))
+* **docs:** board workflow on Project 7, DESIGN.md format, REVIEW.md ([#217](https://github.com/paruff/uFawkes.dev/issues/217)) ([0a99d31](https://github.com/paruff/uFawkes.dev/commit/0a99d315383b853b1538fae9e3765e7526f564ce))
+* **docs:** correct the per-repo table in suite spec section 1 ([#229](https://github.com/paruff/uFawkes.dev/issues/229)) ([#244](https://github.com/paruff/uFawkes.dev/issues/244)) ([9f74141](https://github.com/paruff/uFawkes.dev/commit/9f74141114880ad549291acdf61b76fd63ce60a0))
+* **docs:** DevX reusable refs are pinned, keep pipe_refs entry ([#230](https://github.com/paruff/uFawkes.dev/issues/230)) ([#247](https://github.com/paruff/uFawkes.dev/issues/247)) ([6797369](https://github.com/paruff/uFawkes.dev/commit/67973690d510fb49a402bb90ab63155333b3f3cb))
+* **docs:** Dojo now has main-ci-guard.yml, drop its PI-8 departure ([#230](https://github.com/paruff/uFawkes.dev/issues/230)) ([#249](https://github.com/paruff/uFawkes.dev/issues/249)) ([33a00ba](https://github.com/paruff/uFawkes.dev/commit/33a00bada469e555c4042f65d7254b1519668659))
+* **docs:** fawkes, Dojo, DevX and AI are stamped; update PI-9 ([#253](https://github.com/paruff/uFawkes.dev/issues/253)) ([dc15f3f](https://github.com/paruff/uFawkes.dev/commit/dc15f3f796a267dc3a3e01cf851106d6809a4b1a))
+* **docs:** list uFawkesDevX's unpinned reusable refs as a known departure ([#230](https://github.com/paruff/uFawkes.dev/issues/230)) ([#243](https://github.com/paruff/uFawkes.dev/issues/243)) ([13fc7b3](https://github.com/paruff/uFawkes.dev/commit/13fc7b331424c3768ee000ed25d568ed452b9273))
+* **docs:** record quarterly research review cadence ([#65](https://github.com/paruff/uFawkes.dev/issues/65)) ([#200](https://github.com/paruff/uFawkes.dev/issues/200)) ([0268d0a](https://github.com/paruff/uFawkes.dev/commit/0268d0a1198e081c68b39cb4bd4e6acb10bf96ed))
+* **docs:** show the first research review as scheduled for 2027-01-04 ([#65](https://github.com/paruff/uFawkes.dev/issues/65)) ([#201](https://github.com/paruff/uFawkes.dev/issues/201)) ([cd3e094](https://github.com/paruff/uFawkes.dev/commit/cd3e094b017ef7fcae25886b72110d16ec8ae5b5))
+* **docs:** standard sections in suite release spec and plan ([#230](https://github.com/paruff/uFawkes.dev/issues/230)) ([#231](https://github.com/paruff/uFawkes.dev/issues/231)) ([5a89f43](https://github.com/paruff/uFawkes.dev/commit/5a89f43961f2440737aefd5c8a04c9f9c253124c))
+* **docs:** suite mode definition and measurement harness ([#70](https://github.com/paruff/uFawkes.dev/issues/70)) ([#203](https://github.com/paruff/uFawkes.dev/issues/203)) ([e6837ad](https://github.com/paruff/uFawkes.dev/commit/e6837adba0729788c5a68403d80971e1c0f257a0))
+* **docs:** suite plan rev 7, hygiene to green and CDE propagation ([#262](https://github.com/paruff/uFawkes.dev/issues/262)) ([4713e17](https://github.com/paruff/uFawkes.dev/commit/4713e17b20305e78f57e027e64e2d59168da38ff))
+* **docs:** suite release rev 5, a release is the first version that passes its checks ([#223](https://github.com/paruff/uFawkes.dev/issues/223)) ([3d59402](https://github.com/paruff/uFawkes.dev/commit/3d59402b4a5aa62a517cda8fa2e7185a39724d6f))
+* **docs:** suite spec and plan record the 2026-11-13 audit ([#236](https://github.com/paruff/uFawkes.dev/issues/236)) ([#237](https://github.com/paruff/uFawkes.dev/issues/237)) ([03e975e](https://github.com/paruff/uFawkes.dev/commit/03e975efe3dbc93ee917047253bee71fb398e3db))
+* **docs:** suite status sweep, plan revision 4, DevX 1.x line, make status fix ([#215](https://github.com/paruff/uFawkes.dev/issues/215)) ([c343c8d](https://github.com/paruff/uFawkes.dev/commit/c343c8d81e75b8ccd3238aee68f7fa3f5c563f69))
+* **docs:** sync status evidence, matrix and /ai/ with shipped releases ([#206](https://github.com/paruff/uFawkes.dev/issues/206)) ([918901a](https://github.com/paruff/uFawkes.dev/commit/918901a96ffa008f64d2ac134d23830a5febe64f))
+* **docs:** the pipeline trigger now has a contract ([#230](https://github.com/paruff/uFawkes.dev/issues/230)) ([#248](https://github.com/paruff/uFawkes.dev/issues/248)) ([8b99301](https://github.com/paruff/uFawkes.dev/commit/8b99301c2ba80f25e6f494de2eaf0f2a07d1730c))
+* **docs:** uFawkes.dev and uFawkesPipe have no unstamped jobs, drop them from PI-9 ([#246](https://github.com/paruff/uFawkes.dev/issues/246), [#235](https://github.com/paruff/uFawkes.dev/issues/235)) ([#252](https://github.com/paruff/uFawkes.dev/issues/252)) ([16bf5b5](https://github.com/paruff/uFawkes.dev/commit/16bf5b59ff0eafb89b4cbcf1f244a70a5fbe731f))
+* **docs:** uFawkesObs is stamped; PI-9 keeps only fawkes's wrapper jobs ([#720](https://github.com/paruff/uFawkes.dev/issues/720)) ([#254](https://github.com/paruff/uFawkes.dev/issues/254)) ([886c7f6](https://github.com/paruff/uFawkes.dev/commit/886c7f63c1270bcffaefd3fb33c39a9fbbef0dc3))
+* **docs:** verify or remove the 8 unverified research rows ([#97](https://github.com/paruff/uFawkes.dev/issues/97)) ([#204](https://github.com/paruff/uFawkes.dev/issues/204)) ([715cb8a](https://github.com/paruff/uFawkes.dev/commit/715cb8a2082618c7c521c51d7c277dc36f855755))
+
+
+### Chores
+
+* **agents:** cut CLAUDE.md to stack, hard rules and commit format ([#98](https://github.com/paruff/uFawkes.dev/issues/98)) ([#205](https://github.com/paruff/uFawkes.dev/issues/205)) ([b8d69ec](https://github.com/paruff/uFawkes.dev/commit/b8d69ec40de40e995248617d9a814ce4967978af))
+* **ci:** bump uFawkesPipe reusables to v1.16.0-beta.1 ([#192](https://github.com/paruff/uFawkes.dev/issues/192)) ([75def2d](https://github.com/paruff/uFawkes.dev/commit/75def2d79f85a1c4413b8990f60dd3b6cbc71a24))
+* **deps:** bump actions/download-artifact from 8.0.1 to 8.0.2 ([#210](https://github.com/paruff/uFawkes.dev/issues/210)) ([6a13adc](https://github.com/paruff/uFawkes.dev/commit/6a13adcf5a68355756b57a9ed13eb9c8f318a9f3))
+* **deps:** bump actions/setup-node from 7.0.0 to 7.1.0 ([#209](https://github.com/paruff/uFawkes.dev/issues/209)) ([00ccd0c](https://github.com/paruff/uFawkes.dev/commit/00ccd0c84851eaf4aa5e6bbd242eae757093b1ae))
+* **deps:** bump actions/upload-artifact from 7.0.1 to 7.0.2 ([#211](https://github.com/paruff/uFawkes.dev/issues/211)) ([8673413](https://github.com/paruff/uFawkes.dev/commit/8673413e3570cb59c1db85f7db99110dd4fbabfd))
+* **deps:** bump ruby/setup-ruby from 1.327.0 to 1.328.0 ([#208](https://github.com/paruff/uFawkes.dev/issues/208)) ([f0e76b1](https://github.com/paruff/uFawkes.dev/commit/f0e76b12eb62fa72289e00a1b1941bf388e68415))
+* **deps:** bump ruby/setup-ruby from 1.328.0 to 1.329.0 ([#216](https://github.com/paruff/uFawkes.dev/issues/216)) ([4cc29db](https://github.com/paruff/uFawkes.dev/commit/4cc29dbb93ff7c8dcf567a97f397cde221b2f656))
+* **infra:** ignore Bundler's vendor/ and .bundle/ ([#220](https://github.com/paruff/uFawkes.dev/issues/220)) ([#227](https://github.com/paruff/uFawkes.dev/issues/227)) ([cc325b5](https://github.com/paruff/uFawkes.dev/commit/cc325b5855175c13a28625e315be05e5767de14e))
+* **infra:** Serena connects at startup in this repo ([#265](https://github.com/paruff/uFawkes.dev/issues/265)) ([ecd57a5](https://github.com/paruff/uFawkes.dev/commit/ecd57a5c8e92a9acc956bbb21f609bc95d2d58ff))
+* **opencode:** drop V1-only cross-repo plugin ([#238](https://github.com/paruff/uFawkes.dev/issues/238)) ([c696935](https://github.com/paruff/uFawkes.dev/commit/c6969359a187c1176ebe3e08683e37f647232075))
+
 ## [1.2.0](https://github.com/paruff/uFawkes.dev/compare/v1.1.0...v1.2.0) (2026-10-14)
 
 
