@@ -98,7 +98,7 @@ jobs:
   security:
     name: Security Scanning
     needs: [build]
-    uses: paruff/uFawkesPipe/.github/workflows/reusable-security-scanning.yml@271154e53badbd96f3ef173f92ecb06545fc1cfb # v1.16.0-beta.1
+    uses: paruff/uFawkesPipe/.github/workflows/reusable-security-scanning.yml@93650e69ae0fa22d9e1aaff0d4b98236ab52ab14 # v1.16.0-beta.1
     with:
       scan-type: all
       severity-threshold: MEDIUM
