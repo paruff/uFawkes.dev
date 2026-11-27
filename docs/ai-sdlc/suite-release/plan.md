@@ -92,7 +92,7 @@ announced:
    verified at 3.x" until a delivery event from `v3.2.0` reaches Loki.
 4. Verify `fawkes-space:3.2.0`'s signature and run the cold-start check
    (AC-PR-08 and AC-PR-10 in uFawkesAI's `public-release` spec) on the 3.x image.
-5. Propagate the image (next section), then the `release` agent drafts the
+5. Propagate the image (next section, paruff/uFawkes.dev#264), then the `release` agent drafts the
    announcement. The owner posts it.
 
 A release counts as shipped when every `goal:` issue in it is closed. The
@@ -446,10 +446,10 @@ against each repo's pin, not typed.
 | **D. Dependabot, via a `.devcontainer/Dockerfile`** whose `FROM` holds the pin                                                                                                                         | Dependabot already runs in every repo                                                                                                                                       | Changes all seven devcontainers and the AC-AI-05 check. Dependabot's `devcontainers` ecosystem documents feature updates only, not the `image` field                                                              |
 | ~~E. A floating tag (`fawkes-space:3`)~~                                                                                                                                                               | No PRs at all                                                                                                                                                               | Breaks AC-AI-05 and reproducible builds. Rejected                                                                                                                                                                 |
 
-Pick A unless a third bot is unwanted; then C. Whichever is chosen, the
-first run moves the suite to `3.2.0` as a major, so one repo goes first
-(uFawkes.dev, the cheapest CI) before the other six are approved. The choice
-is the owner's; it goes in a `Decision:` issue and is recorded here.
+**Decided 2026-11-27: A** (owner). C is the fallback if Renovate proves
+unworkable. The first run moves the suite to `3.2.0` as a major, so one repo
+goes first (uFawkes.dev, the cheapest CI) before the other six are approved.
+Tracked in paruff/uFawkes.dev#264.
 
 ## Verification Strategy
 
